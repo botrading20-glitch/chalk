@@ -7,6 +7,7 @@ import { registerSW } from 'virtual:pwa-register';
 import { App } from './App';
 import { ensureLibrary, requestPersistentStorage } from './db';
 import { DataProvider } from './lib/data';
+import { startAutoSync } from './lib/sync';
 
 registerSW({ immediate: true });
 
@@ -20,6 +21,7 @@ async function boot() {
       </DataProvider>
     </StrictMode>,
   );
+  void startAutoSync();
 }
 
 boot().catch((e) => {

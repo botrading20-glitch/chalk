@@ -8,6 +8,7 @@ import { db } from '../db';
 import { useData, useNow } from '../lib/data';
 import { fmtClock, fmtRelativeDay, plural, uid } from '../lib/format';
 import { Link, navigate } from '../lib/router';
+import { useSyncStatus } from '../lib/sync';
 import {
   cloneExercises,
   createRoutinesFromHistory,
@@ -44,6 +45,7 @@ export function WorkoutHome() {
     <div className="page">
       <PageHeader large title="Workout" />
 
+      <SyncWarning />
       {active ? <ResumeCard /> : null}
 
       <button className="btn btn-primary btn-block btn-hero" onClick={() => beginWorkout()}>
@@ -121,6 +123,17 @@ export function WorkoutHome() {
         }
       />
     </div>
+  );
+}
+
+function SyncWarning() {
+  const sync = useSyncStatus();
+  if (!sync.attention) return null;
+  return (
+    <Link to="/settings" className="card sync-warning">
+      <strong>Cloud sync has stopped</strong>
+      <span>{sync.message} Tap to fix it in Settings.</span>
+    </Link>
   );
 }
 

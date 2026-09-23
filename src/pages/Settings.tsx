@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { confirmDialog, toast } from '../components/dialogs';
 import { IconDownload, IconUpload } from '../components/Icons';
 import { Sheet } from '../components/Sheet';
+import { SyncSettings } from '../components/SyncSettings';
 import { PageHeader, Segmented, Stat, Toggle } from '../components/ui';
 import { db } from '../db';
 import { exportBackup, importBackup, wipeAllData } from '../lib/backup';
@@ -73,6 +74,8 @@ export function SettingsPage() {
   return (
     <div className="page">
       <PageHeader back="/profile" title="Settings" />
+
+      <SyncSettings />
 
       <section className="card settings-group">
         <h2 className="card-title">Units</h2>
@@ -147,7 +150,7 @@ export function SettingsPage() {
       <section className="card settings-group">
         <h2 className="card-title">Your data</h2>
         <p className="muted small">
-          Everything is stored on this device only. Back it up now and then — clearing the browser's site data erases it.
+          Your data lives on this device. Without cloud sync, back it up now and then — clearing the browser’s site data erases it.
         </p>
         <button className="btn btn-secondary btn-block" onClick={() => hevyInput.current?.click()}>
           <IconUpload size={18} /> Import from Hevy (CSV)
@@ -216,7 +219,7 @@ export function SettingsPage() {
           onClick={async () => {
             const ok = await confirmDialog({
               title: 'Erase all workouts, routines and your exercises?',
-              message: "This can't be undone. Back up first if you might want them later.",
+              message: "This can't be undone. It also turns off cloud sync here; the copy in your sync repository is kept.",
               confirmLabel: 'Erase everything',
               danger: true,
             });

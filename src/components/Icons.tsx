@@ -93,5 +93,6 @@ export const IconHistory = (p: P) =>
   );
 export const IconList = (p: P) => base(p, <path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" />);
 export const IconChart = (p: P) => base(p, <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />);
+export const IconCloud = (p: P) => base(p, <path d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.1 4.75 4.75 0 0 0 7 18.5Z" />);
 export const IconUpload = (p: P) => base(p, <path d="M12 15V3M7 8l5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />);
 export const IconDownload = (p: P) => base(p, <path d="M12 3v12M7 10l5 5 5-5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />);

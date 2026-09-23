@@ -140,6 +140,15 @@ export function fmtRelativeDay(ts: number) {
   return fmtDate(ts);
 }
 
+/** "just now", "5 min ago", "3 h ago", then a date. */
+export function fmtAgo(ts: number, now = Date.now()) {
+  const min = Math.round((now - ts) / 60_000);
+  if (min < 1) return 'just now';
+  if (min < 60) return `${min} min ago`;
+  if (min < 24 * 60) return `${Math.round(min / 60)} h ago`;
+  return `on ${fmtDate(ts)} at ${fmtTime(ts)}`;
+}
+
 export function defaultWorkoutTitle(ts = Date.now()) {
   const h = new Date(ts).getHours();
   if (h < 5) return 'Night workout';

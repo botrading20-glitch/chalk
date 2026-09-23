@@ -5,6 +5,7 @@ Free, offline-first workout logger (Hevy alternative). React 19 + TypeScript + V
 ## Commands
 - `npm run dev`: dev server on :5173 (also `.claude/launch.json` → `chalk-dev`)
 - `npm run build`: `tsc --noEmit` + production build with service worker
+- `npm test`: vitest (sync engine). The live GitHub check is opt-in: `CHALK_SMOKE_REPO=owner/name CHALK_SMOKE_TOKEN=… npx vitest run github.smoke`. It writes to `data/` in that repo and then deletes it.
 - `npm run exercises`: re-downloads free-exercise-db and rewrites `src/data/exercises.json`. Bump `LIBRARY_VERSION` in `src/db.ts` afterwards so installed apps re-seed.
 
 ## Architecture
@@ -14,6 +15,12 @@ Free, offline-first workout logger (Hevy alternative). React 19 + TypeScript + V
 - **`WorkoutEditor`** has three modes: `live` (checkboxes + rest timer), `edit` (past workout) and `routine` (template).
 - **`DataProvider`** (`src/lib/data.tsx`) loads every exercise and workout and computes personal records once. Pages read them through `useData()`.
 - **Routing** is a tiny hash router (`src/lib/router.tsx`) so the app works from any static path, like GitHub Pages `/<repo>/`.
+- **Cloud sync** writes to a private GitHub repo of the user's choosing through a fine-grained PAT (the owner uses `botrading20-glitch/chalk-data`).
+  - `syncCore.ts` is a pure three-way merge against a per-device base snapshot (hashes of records at the last sync), so deletions need no tombstones.
+  - Workouts are split into 16 shard files by id hash; routines, custom exercises and settings each get one file under `data/`.
+  - `github.ts` uses the Contents API with sha-based optimistic concurrency (409/422 → `SyncConflict` → retry).
+  - `sync.ts` is the IndexedDB adapter plus triggers: Dexie `storagemutated`, `visibilitychange`, `online`, and `updateSettings`.
+  - Synced records must stay plain JSON. The active workout and the exercise library are not synced.
 - **Records:** `computeRecords()` walks workouts oldest to newest. The first session of an exercise sets the baseline and doesn't count as a record.
 
 ## Design

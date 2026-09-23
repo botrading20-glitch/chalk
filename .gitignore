@@ -1,0 +1,7 @@
+node_modules
+dist
+dev-dist
+*.local
+tmp-import
+.DS_Store
+.claude/settings.local.json

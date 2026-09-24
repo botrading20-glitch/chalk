@@ -15,13 +15,15 @@ const H = 1350;
 const M = 80;
 const ROW = 84;
 const C = {
-  bg: '#16181b',
-  line: '#2f343a',
-  text: '#ecebe6',
-  text2: '#a7abb1',
-  text3: '#767b83',
-  accent: '#f4c430',
-  onAccent: '#17181a',
+  bg: '#131217',
+  line: '#2b2a33',
+  text: '#ecebf2',
+  text2: '#a7a5b3',
+  text3: '#76747f',
+  accent: '#7a55e6',
+  accentInk: '#b39dff',
+  ring: '#5f3fc4',
+  onAccent: '#ffffff',
 };
 const DISPLAY = '"Big Shoulders Display Variable", "Archivo Variable", sans-serif';
 const BODY = '"Archivo Variable", system-ui, sans-serif';
@@ -80,14 +82,18 @@ function plate(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {
   ctx.beginPath();
   ctx.arc(x, y, r, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = 'rgba(0,0,0,0.18)';
+  ctx.strokeStyle = C.ring;
   ctx.lineWidth = r * 0.08;
   ctx.beginPath();
-  ctx.arc(x, y, r * 0.62, 0, Math.PI * 2);
+  ctx.arc(x, y, r * 0.68, 0, Math.PI * 2);
   ctx.stroke();
-  ctx.fillStyle = C.onAccent;
+  ctx.fillStyle = C.text;
   ctx.beginPath();
-  ctx.arc(x, y, r * 0.2, 0, Math.PI * 2);
+  ctx.arc(x, y, r * 0.3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = C.bg;
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.22, 0, Math.PI * 2);
   ctx.fill();
 }
 
@@ -109,7 +115,7 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
 
   // Header: plate + wordmark, date on the right.
   plate(ctx, M + 22, M + 22, 22);
-  ctx.fillStyle = C.accent;
+  ctx.fillStyle = C.accentInk;
   ctx.font = `800 48px ${DISPLAY}`;
   ctx.letterSpacing = '3px';
   ctx.fillText('CHALK', M + 58, M + 39);
@@ -186,7 +192,7 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
     ctx.textAlign = 'right';
     if (ex.best) ctx.fillText(ex.best, W - M - trophyWidth, base);
     ctx.textAlign = 'left';
-    if (ex.record) trophy(ctx, W - M - 32, base - 29, 32, C.accent);
+    if (ex.record) trophy(ctx, W - M - 32, base - 29, 32, C.accentInk);
 
     ctx.fillStyle = C.text;
     ctx.font = `600 36px ${BODY}`;

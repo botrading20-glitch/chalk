@@ -1,56 +1,65 @@
-/* Chalk — gym-floor graphite, chalk-white type, bumper-plate colour coding.
-   Set badges are little plates: yellow W (warm-up), red F (failure), blue D (drop),
-   and a checked set turns the row plate-green. */
+/* Chalk — violet-tinted charcoal greys with a midnight-purple accent.
+   Set badges keep bumper-plate colours: yellow W (warm-up), red F (failure),
+   blue D (drop), and a checked set turns the row plate-green. */
 
 :root,
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #16181b;
-  --surface: #1f2226;
-  --surface-2: #292d32;
-  --surface-3: #353a40;
-  --line: #2f343a;
-  --text: #ecebe6;
-  --text-2: #a7abb1;
-  --text-3: #767b83;
-  --accent: #f4c430;
-  --on-accent: #17181a;
-  --accent-ink: #f4c430;
+  --bg: #131217;
+  --surface: #1b1a21;
+  --surface-2: #25242c;
+  --surface-3: #302f38;
+  --line: #2b2a33;
+  --text: #ecebf2;
+  --text-2: #a7a5b3;
+  --text-3: #76747f;
+  /* Fills with white text (4.9:1) and indicators on surfaces (3.5:1). */
+  --accent: #7a55e6;
+  --on-accent: #ffffff;
+  /* Purple text and icons on dark surfaces. */
+  --accent-ink: #b39dff;
   --done: #2e9e5b;
   --done-bg: rgb(46 158 91 / 0.16);
   --warm: #f4c430;
   --fail: #e5484d;
   --drop: #4c8df6;
   --danger: #ff6b6b;
-  --viz: #b98600;
-  --viz-wash: rgb(185 134 0 / 0.1);
-  --grid: #2a2e33;
-  --shadow: 0 10px 30px rgb(0 0 0 / 0.45);
+  --viz: #8b6cf0;
+  --viz-wash: rgb(139 108 240 / 0.12);
+  --grid: #26252d;
+  --shadow: 0 10px 30px rgb(0 0 0 / 0.5);
+  /* Google's sign-in button colours, dark variant. */
+  --google-bg: #131314;
+  --google-line: #8e918f;
+  --google-text: #e3e3e3;
 }
 
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: #f3f4f6;
+  --bg: #f3f3f6;
   --surface: #ffffff;
-  --surface-2: #eceef1;
-  --surface-3: #dfe2e6;
-  --line: #e1e4e8;
-  --text: #16181b;
-  --text-2: #4f555d;
-  --text-3: #7a8089;
-  --accent: #f4c430;
-  --on-accent: #17181a;
-  --accent-ink: #8a6400;
+  --surface-2: #ececf0;
+  --surface-3: #dedde4;
+  --line: #e2e1e8;
+  --text: #16151b;
+  --text-2: #52505e;
+  --text-3: #7a7886;
+  --accent: #5b3cc4;
+  --on-accent: #ffffff;
+  --accent-ink: #5233b3;
   --done: #1f8a4c;
   --done-bg: rgb(31 138 76 / 0.12);
   --warm: #a87a00;
   --fail: #d1343a;
   --drop: #2f6fdb;
   --danger: #c62828;
-  --viz: #a87a00;
-  --viz-wash: rgb(168 122 0 / 0.1);
-  --grid: #e8eaed;
-  --shadow: 0 10px 30px rgb(20 24 28 / 0.14);
+  --viz: #6a4bd6;
+  --viz-wash: rgb(106 75 214 / 0.1);
+  --grid: #e9e8ee;
+  --shadow: 0 10px 30px rgb(20 18 28 / 0.14);
+  --google-bg: #ffffff;
+  --google-line: #747775;
+  --google-text: #1f1f1f;
 }
 
 :root {
@@ -482,7 +491,7 @@ p {
 }
 
 .toggle input:checked + .toggle-track {
-  background: var(--done);
+  background: var(--accent);
 }
 
 .toggle input:checked + .toggle-track::after {

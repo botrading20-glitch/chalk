@@ -26,7 +26,7 @@ function useTheme() {
     const apply = () => {
       const resolved = theme === 'system' ? (media.matches ? 'light' : 'dark') : theme;
       document.documentElement.dataset.theme = resolved;
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', resolved === 'light' ? '#f3f4f6' : '#16181b');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', resolved === 'light' ? '#f3f3f6' : '#131217');
     };
     apply();
     media.addEventListener('change', apply);

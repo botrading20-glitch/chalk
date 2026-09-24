@@ -31,7 +31,7 @@ Free, offline-first workout logger (Hevy alternative). React 19 + TypeScript + V
 - **Records:** `computeRecords()` walks workouts oldest to newest. The first session of an exercise sets the baseline and doesn't count as a record.
 
 ## Design
-- **Tokens** are in `src/styles.css` (dark default, light via `[data-theme]`).
+- **Tokens** are in `src/styles.css` (dark default, light via `[data-theme]`). The palette is violet-tinted charcoal greys with a purple accent: `--accent` #7a55e6 dark / #5b3cc4 light for fills (white text) and indicators, and `--accent-ink` for purple text. The app icons in `public/` are drawn in the same colours.
 - **Fonts:** Big Shoulders Display for titles, clocks and badges; Archivo for everything else. Both are self-hosted through Fontsource so they work offline.
-- **Set badges** use bumper-plate colours: W yellow, F red, D blue. A done row is green.
-- **Chart colour** is `--viz`: brass #b98600 dark / #a87a00 light, checked with the dataviz palette validator.
+- **Set badges** keep bumper-plate colours: W yellow, F red, D blue. A done row is green. Toggles use the accent.
+- **Chart colour** is `--viz`: #8b6cf0 dark / #6a4bd6 light, checked with the dataviz palette validator against `--surface`.

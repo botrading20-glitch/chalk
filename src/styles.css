@@ -968,6 +968,54 @@ dialog.sheet-full {
   gap: 8px;
 }
 
+.install-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px 12px 12px;
+}
+
+.install-icon {
+  flex: none;
+  border-radius: 10px;
+}
+
+.install-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--text-2);
+}
+
+.install-text strong {
+  color: var(--text);
+  font-size: 15px;
+}
+
+.install-card .icon-btn {
+  margin-left: -4px;
+}
+
+.install-how {
+  display: grid;
+  gap: 14px;
+}
+
+.inline-icon {
+  display: inline-block;
+  vertical-align: -3px;
+  color: var(--text);
+}
+
+.install-note {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  font-size: 14px;
+}
+
 .routine-list {
   display: grid;
   gap: 12px;

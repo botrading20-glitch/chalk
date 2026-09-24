@@ -36,6 +36,18 @@ export const IconMore = (p: P) =>
       <circle cx="19" cy="12" r="1.3" fill="currentColor" />
     </>,
   );
+/** Chrome's ⋮ menu. */
+export const IconMoreVertical = (p: P) =>
+  base(
+    p,
+    <>
+      <circle cx="12" cy="5" r="1.3" fill="currentColor" />
+      <circle cx="12" cy="12" r="1.3" fill="currentColor" />
+      <circle cx="12" cy="19" r="1.3" fill="currentColor" />
+    </>,
+  );
+/** Safari's share button: a box with an arrow leaving the top. */
+export const IconShare = (p: P) => base(p, <path d="M9 9.5H7.5a2 2 0 0 0-2 2V19a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-7.5a2 2 0 0 0-2-2H15M12 3v11M8.5 6.5 12 3l3.5 3.5" />);
 export const IconSearch = (p: P) =>
   base(
     p,

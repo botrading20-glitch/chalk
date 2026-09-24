@@ -2,6 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useState } from 'react';
 import { confirmDialog, toast } from '../components/dialogs';
 import { IconCopy, IconEdit, IconMore, IconPlay, IconPlus, IconTrash } from '../components/Icons';
+import { InstallBanner } from '../components/InstallPrompt';
 import { ActionSheet } from '../components/Sheet';
 import { Empty, PageHeader } from '../components/ui';
 import { db } from '../db';
@@ -47,6 +48,7 @@ export function WorkoutHome() {
 
       <SyncWarning />
       {active ? <ResumeCard /> : null}
+      <InstallBanner />
 
       <button className="btn btn-primary btn-block btn-hero" onClick={() => beginWorkout()}>
         <IconPlus /> Start empty workout

@@ -2,6 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useRef, useState } from 'react';
 import { confirmDialog, toast } from '../components/dialogs';
 import { IconDownload, IconUpload } from '../components/Icons';
+import { InstallSettings } from '../components/InstallPrompt';
 import { Sheet } from '../components/Sheet';
 import { SyncSettings } from '../components/SyncSettings';
 import { PageHeader, Segmented, Stat, Toggle } from '../components/ui';
@@ -75,6 +76,7 @@ export function SettingsPage() {
     <div className="page">
       <PageHeader back="/profile" title="Settings" />
 
+      <InstallSettings />
       <SyncSettings />
 
       <section className="card settings-group">

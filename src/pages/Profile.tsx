@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { BodyWeightCard } from '../components/BodyWeight';
 import { BarChart, HBars } from '../components/Charts';
 import { useUsageCounts } from '../components/ExerciseList';
 import { IconSettings } from '../components/Icons';
@@ -67,6 +68,7 @@ export function Profile() {
         >
           Weekly training time, volume, muscle split and consistency — all from the workouts you log.
         </Empty>
+        <BodyWeightCard />
       </div>
     );
   }
@@ -96,6 +98,8 @@ export function Profile() {
         <Stat label="Week streak" value={fmtNum(streak, 0)} />
         <Stat label="Time trained" value={`${fmtNum(Math.round(totalSeconds / 3600), 0)} h`} />
       </div>
+
+      <BodyWeightCard />
 
       <section className="card chart-card">
         <h2 className="card-title">{titles[metric]}</h2>

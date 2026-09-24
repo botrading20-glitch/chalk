@@ -5,6 +5,7 @@ import { IconEdit, IconTrophy } from '../components/Icons';
 import { Empty, ExerciseAvatar, PageHeader, Segmented } from '../components/ui';
 import { db } from '../db';
 import { useData } from '../lib/data';
+import { reassignExercise } from '../lib/exercises';
 import { fmtClock, fmtDate, fmtNum, kgTo, kmTo, plural } from '../lib/format';
 import { EQUIPMENT_LABEL, IMAGE_BASE, MUSCLE_LABEL, TYPE_LABEL } from '../lib/meta';
 import { Link, navigate } from '../lib/router';
@@ -55,9 +56,11 @@ function recordFormat(kind: RecordKind, v: number, s: Settings) {
 }
 
 export function ExerciseDetail({ id }: { id: string }) {
-  const { exerciseMap, workouts, records } = useData();
+  const { exerciseMap, exercises, workouts, records } = useData();
   const settings = useSettings();
   const ex = exerciseMap.get(id);
+  const original = ex?.replaces ? exerciseMap.get(ex.replaces) : undefined;
+  const replacedBy = ex?.source === 'library' ? exercises.find((e) => e.replaces === ex.id) : undefined;
   const sessions = useMemo(() => sessionsFor(id, workouts), [id, workouts]);
   const hasHowTo = !!ex && (ex.instructions.length > 0 || ex.images.length > 0);
   const [tab, setTab] = useState<Tab>(sessions.length || !hasHowTo ? 'progress' : 'howto');
@@ -94,7 +97,7 @@ export function ExerciseDetail({ id }: { id: string }) {
         back="/exercises"
         title=""
         actions={
-          ex.source === 'custom' && (
+          !replacedBy && (
             <Link to={`/exercises/${id}/edit`} className="icon-btn" aria-label="Edit exercise">
               <IconEdit />
             </Link>
@@ -111,10 +114,17 @@ export function ExerciseDetail({ id }: { id: string }) {
           </p>
           <p className="muted small">
             {EQUIPMENT_LABEL[ex.equipment]} · {TYPE_LABEL[ex.type]}
-            {ex.source === 'custom' && ' · Your exercise'}
+            {ex.source === 'custom' && (original ? ' · Your version' : ' · Your exercise')}
           </p>
         </div>
       </div>
+
+      {replacedBy && (
+        <Link to={`/exercises/${replacedBy.id}`} className="card replaced-note">
+          <strong>You use your own version of this exercise</strong>
+          <span>Your workouts are logged under “{replacedBy.name}”. Tap to open it.</span>
+        </Link>
+      )}
 
       <Segmented options={tabs} value={tab} onChange={setTab} label="Exercise sections" />
 
@@ -245,7 +255,27 @@ export function ExerciseDetail({ id }: { id: string }) {
         </section>
       )}
 
-      {ex.source === 'custom' && (
+      {original && (
+        <button
+          className="btn btn-danger-ghost btn-block"
+          onClick={async () => {
+            const ok = await confirmDialog({
+              title: `Go back to “${original.name}”?`,
+              message: 'Your workouts and routines switch back to the library exercise, and your version is deleted.',
+              confirmLabel: 'Use the original',
+              danger: true,
+            });
+            if (!ok) return;
+            await reassignExercise(ex.id, original.id);
+            await db.exercises.delete(ex.id);
+            navigate(`/exercises/${original.id}`, { replace: true });
+          }}
+        >
+          Go back to the library version
+        </button>
+      )}
+
+      {ex.source === 'custom' && !original && (
         <button
           className="btn btn-danger-ghost btn-block"
           onClick={async () => {

@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
-import type { Exercise, Routine, Settings, Workout } from './types';
+import type { BodyWeight, Exercise, Routine, Settings, Workout } from './types';
 
 interface KV {
   key: string;
@@ -10,6 +10,7 @@ export const db = new Dexie('chalk') as Dexie & {
   exercises: EntityTable<Exercise, 'id'>;
   workouts: EntityTable<Workout, 'id'>;
   routines: EntityTable<Routine, 'id'>;
+  bodyweight: EntityTable<BodyWeight, 'id'>;
   kv: EntityTable<KV, 'key'>;
 };
 
@@ -18,6 +19,10 @@ db.version(1).stores({
   workouts: 'id, startTime, *exerciseIds',
   routines: 'id, order',
   kv: 'key',
+});
+
+db.version(2).stores({
+  bodyweight: 'id, date',
 });
 
 /** Bump when src/data/exercises.json changes so existing installs pick it up. */

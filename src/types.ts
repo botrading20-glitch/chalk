@@ -59,6 +59,8 @@ export interface Exercise {
   /** Paths relative to the free-exercise-db image folder. */
   images: string[];
   source: ExerciseSource;
+  /** Library exercise this one is the user's edited version of; the original is hidden. */
+  replaces?: string;
 }
 
 export type SetType = 'normal' | 'warmup' | 'failure' | 'dropset';
@@ -121,6 +123,15 @@ export interface ActiveWorkout {
   /** Present when editing a workout that was already saved. */
   editingId?: string;
   endTime?: number;
+}
+
+/** One weigh-in per day; `date` is local midnight of that day. */
+export interface BodyWeight {
+  id: string;
+  date: number;
+  /** kg */
+  weight: number;
+  updatedAt: number;
 }
 
 export type WeightUnit = 'kg' | 'lbs';

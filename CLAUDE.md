@@ -21,6 +21,9 @@ Free, offline-first workout logger (Hevy alternative). React 19 + TypeScript + V
   - `github.ts` uses the Contents API with sha-based optimistic concurrency (409/422 → `SyncConflict` → retry).
   - `sync.ts` is the IndexedDB adapter plus triggers: Dexie `storagemutated`, `visibilitychange`, `online`, and `updateSettings`.
   - Synced records must stay plain JSON. The active workout and the exercise library are not synced.
+- **Library exercises** are re-seeded with `bulkPut` whenever `LIBRARY_VERSION` changes, so they're never edited in place. Editing one saves a custom copy with `replaces: <library id>` and moves history onto it (`reassignExercise` in `src/lib/exercises.ts`). `useData().exercises` hides replaced originals, but `exerciseMap` keeps them so old references still resolve.
+- **Body weight** has its own `bodyweight` table: one weigh-in per day, in kg, with `date` at local midnight. It syncs and backs up like workouts.
+- **Share card:** `src/lib/shareCard.ts` draws the workout summary PNG (1080×1350) on a canvas. Change its colours if the tokens change.
 - **Records:** `computeRecords()` walks workouts oldest to newest. The first session of an exercise sets the baseline and doesn't count as a record.
 
 ## Design

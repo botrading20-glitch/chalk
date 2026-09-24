@@ -194,7 +194,9 @@ export async function planHevyImport(parsed: ParsedWorkout[]): Promise<ImportPla
   const existing = await db.exercises.toArray();
   // Custom exercises win over library ones with the same name.
   const byName = new Map<string, Exercise>();
-  for (const e of existing.filter((x) => x.source === 'library')) byName.set(normalize(e.name), e);
+  // A library exercise the user replaced with their own version imports as that version.
+  const replacement = new Map(existing.flatMap((x) => (x.replaces ? [[x.replaces, x] as const] : [])));
+  for (const e of existing.filter((x) => x.source === 'library')) byName.set(normalize(e.name), replacement.get(e.id) ?? e);
   for (const e of existing.filter((x) => x.source === 'custom')) byName.set(normalize(e.name), e);
 
   const newExercises: Exercise[] = [];

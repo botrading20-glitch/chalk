@@ -44,6 +44,7 @@ export const localStore: LocalStore = {
     for (const w of await db.workouts.toArray()) out.set(recKey('workouts', w.id), w as unknown as Rec);
     for (const r of await db.routines.toArray()) out.set(recKey('routines', r.id), r as unknown as Rec);
     for (const e of await db.exercises.where('source').equals('custom').toArray()) out.set(recKey('exercises', e.id), e as unknown as Rec);
+    for (const b of await db.bodyweight.toArray()) out.set(recKey('bodyweight', b.id), b as unknown as Rec);
     const settings = await getKV<Record<string, unknown>>('settings');
     if (settings) out.set(recKey('settings', 'settings'), { ...settings, id: 'settings' });
     return out;
@@ -54,8 +55,9 @@ export const localStore: LocalStore = {
       workouts: db.workouts as unknown as SyncedTable,
       routines: db.routines as unknown as SyncedTable,
       exercises: db.exercises as unknown as SyncedTable,
+      bodyweight: db.bodyweight as unknown as SyncedTable,
     };
-    await db.transaction('rw', db.workouts, db.routines, db.exercises, db.kv, async () => {
+    await db.transaction('rw', db.workouts, db.routines, db.exercises, db.bodyweight, db.kv, async () => {
       for (const [key, rec] of puts) {
         const [kind] = splitKey(key);
         if (kind === 'settings') {
@@ -152,7 +154,7 @@ export function requestSync(delay = 4000) {
   }, delay);
 }
 
-const SYNCED_TABLES = /\/(workouts|routines|exercises)\//;
+const SYNCED_TABLES = /\/(workouts|routines|exercises|bodyweight)\//;
 
 export async function startAutoSync() {
   const config = await getSyncConfig();
@@ -182,6 +184,7 @@ export async function hasLocalData() {
     db.workouts.count(),
     db.routines.count(),
     db.exercises.where('source').equals('custom').count(),
+    db.bodyweight.count(),
   ]);
   return counts.some(Boolean);
 }

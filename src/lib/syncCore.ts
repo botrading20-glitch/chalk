@@ -7,10 +7,10 @@
 // by a hash of their id so a sync only rewrites a small file; routines,
 // custom exercises and settings each get one file.
 
-export type Kind = 'workouts' | 'routines' | 'exercises' | 'settings';
+export type Kind = 'workouts' | 'routines' | 'exercises' | 'bodyweight' | 'settings';
 export type Rec = { id: string } & Record<string, unknown>;
 
-const KINDS: Kind[] = ['workouts', 'routines', 'exercises', 'settings'];
+const KINDS: Kind[] = ['workouts', 'routines', 'exercises', 'bodyweight', 'settings'];
 const FORMAT = 'chalk-sync/1';
 
 export const recKey = (kind: Kind, id: string) => `${kind}:${id}`;

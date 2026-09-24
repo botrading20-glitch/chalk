@@ -49,7 +49,7 @@ export function toCsv(rows: (string | number | undefined | null)[][]) {
 }
 
 /** Phones get the share sheet (save to Files, Drive, mail…); desktops get a download. */
-export async function saveFile(name: string, content: string, type: string) {
+export async function saveFile(name: string, content: BlobPart, type: string) {
   const file = new File([content], name, { type });
   const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   if (mobile && navigator.canShare?.({ files: [file] })) {
@@ -60,10 +60,14 @@ export async function saveFile(name: string, content: string, type: string) {
       if ((e as DOMException).name === 'AbortError') return;
     }
   }
+  downloadFile(file);
+}
+
+export function downloadFile(file: File) {
   const url = URL.createObjectURL(file);
   const a = document.createElement('a');
   a.href = url;
-  a.download = name;
+  a.download = file.name;
   document.body.append(a);
   a.click();
   a.remove();

@@ -1690,6 +1690,31 @@ dialog.sheet-full {
   letter-spacing: 0.01em;
 }
 
+.saved-share {
+  justify-self: start;
+  margin-top: 8px;
+  background: var(--on-accent);
+  color: var(--accent);
+}
+
+.share-preview {
+  display: grid;
+  gap: 12px;
+}
+
+.share-preview img,
+.share-placeholder {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+}
+
+.share-placeholder {
+  background: var(--surface-2);
+}
+
 @keyframes stamp {
   from {
     transform: scale(0.94);
@@ -2061,6 +2086,76 @@ dialog.sheet-full {
   min-width: 0;
 }
 
+/* ---------- Body weight ---------- */
+
+.bw-card {
+  display: grid;
+  gap: 10px;
+}
+
+.bw-card .card-title {
+  margin: 0;
+}
+
+.bw-latest {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.bw-value {
+  font: 700 34px/1 var(--font-display);
+}
+
+.bw-more {
+  justify-self: start;
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.bw-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.bw-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bw-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 4px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  text-align: left;
+}
+
+.bw-row-date {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+}
+
+.bw-row-value {
+  min-width: 5.5rem;
+  text-align: right;
+  font-weight: 650;
+}
+
+.form-actions .spacer {
+  flex: 1;
+}
+
 /* ---------- Settings ---------- */
 
 .settings-group {
@@ -2144,6 +2239,18 @@ dialog.sheet-full {
 }
 
 .choice-card span {
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.replaced-note {
+  display: grid;
+  gap: 2px;
+  text-decoration: none;
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+}
+
+.replaced-note span {
   font-size: 14px;
   color: var(--text-2);
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { confirmDialog, toast } from '../components/dialogs';
-import { IconCopy, IconEdit, IconMore, IconPlay, IconTrash, IconTrophy } from '../components/Icons';
+import { IconCopy, IconEdit, IconMore, IconPlay, IconShare, IconTrash, IconTrophy } from '../components/Icons';
+import { ShareWorkoutSheet } from '../components/ShareWorkout';
 import { ActionSheet } from '../components/Sheet';
 import { Empty, ExerciseAvatar, PageHeader, Stat } from '../components/ui';
 import { db } from '../db';
@@ -26,6 +27,7 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
   const { workouts, exerciseMap, typeOf, records } = useData();
   const settings = useSettings();
   const [menu, setMenu] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const w = workouts.find((x) => x.id === id);
 
   if (!w) {
@@ -57,6 +59,9 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
           <span className="eyebrow">Workout {number} saved</span>
           <strong className="saved-headline">{prs ? `${prs} new ${prs === 1 ? 'record' : 'records'}` : 'Logged'}</strong>
           {prs > 0 && <span className="muted">Marked with a trophy below.</span>}
+          <button className="btn btn-small saved-share" onClick={() => setSharing(true)}>
+            <IconShare size={16} /> Share
+          </button>
         </div>
       )}
 
@@ -112,11 +117,14 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
         })}
       </div>
 
+      <ShareWorkoutSheet workout={w} open={sharing} onClose={() => setSharing(false)} />
+
       <ActionSheet
         open={menu}
         onClose={() => setMenu(false)}
         title={w.title}
         actions={[
+          { label: 'Share summary', icon: <IconShare />, onSelect: () => setSharing(true) },
           { label: 'Edit workout', icon: <IconEdit />, onSelect: () => navigate(`/history/${w.id}/edit`) },
           {
             label: 'Do this workout again',

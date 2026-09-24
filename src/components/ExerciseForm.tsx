@@ -6,20 +6,24 @@ import type { Equipment, Exercise, ExerciseType, Muscle } from '../types';
 
 export function ExerciseForm({
   initial,
+  copyOf,
   defaultName = '',
   onSaved,
   onCancel,
 }: {
   initial?: Exercise;
+  /** A library exercise to save the user's own version of. */
+  copyOf?: Exercise;
   defaultName?: string;
   onSaved: (e: Exercise) => void;
   onCancel: () => void;
 }) {
-  const [name, setName] = useState(initial?.name ?? defaultName);
-  const [type, setType] = useState<ExerciseType>(initial?.type ?? 'weight_reps');
-  const [equipment, setEquipment] = useState<Equipment>(initial?.equipment ?? 'machine');
-  const [primary, setPrimary] = useState<Muscle>(initial?.primaryMuscle ?? 'chest');
-  const [secondary, setSecondary] = useState<Muscle[]>(initial?.secondaryMuscles ?? []);
+  const from = initial ?? copyOf;
+  const [name, setName] = useState(from?.name ?? defaultName);
+  const [type, setType] = useState<ExerciseType>(from?.type ?? 'weight_reps');
+  const [equipment, setEquipment] = useState<Equipment>(from?.equipment ?? 'machine');
+  const [primary, setPrimary] = useState<Muscle>(from?.primaryMuscle ?? 'chest');
+  const [secondary, setSecondary] = useState<Muscle[]>(from?.secondaryMuscles ?? []);
   const [error, setError] = useState('');
 
   async function save() {
@@ -28,7 +32,11 @@ export function ExerciseForm({
       setError('Give the exercise a name.');
       return;
     }
-    const clash = await db.exercises.filter((e) => e.name.toLowerCase() === trimmed.toLowerCase() && e.id !== initial?.id).first();
+    // The library original being replaced may keep its name.
+    const replaces = initial?.replaces ?? copyOf?.id;
+    const clash = await db.exercises
+      .filter((e) => e.name.toLowerCase() === trimmed.toLowerCase() && e.id !== initial?.id && e.id !== replaces)
+      .first();
     if (clash) {
       setError(`"${clash.name}" already exists. Pick a different name.`);
       return;
@@ -40,9 +48,10 @@ export function ExerciseForm({
       equipment,
       primaryMuscle: primary,
       secondaryMuscles: secondary.filter((m) => m !== primary),
-      instructions: initial?.instructions ?? [],
-      images: initial?.images ?? [],
+      instructions: from?.instructions ?? [],
+      images: from?.images ?? [],
       source: 'custom',
+      ...(replaces ? { replaces } : {}),
     };
     await db.exercises.put(exercise);
     onSaved(exercise);
@@ -65,7 +74,7 @@ export function ExerciseForm({
             setError('');
           }}
           placeholder="e.g. Pendulum Squat (Machine)"
-          autoFocus={!initial}
+          autoFocus={!from}
         />
       </label>
       <label className="field">
@@ -123,7 +132,7 @@ export function ExerciseForm({
           Cancel
         </button>
         <button type="submit" className="btn btn-primary">
-          {initial ? 'Save changes' : 'Create exercise'}
+          {initial || copyOf ? 'Save changes' : 'Create exercise'}
         </button>
       </div>
     </form>

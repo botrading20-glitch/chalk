@@ -5,6 +5,7 @@ import { useData } from './lib/data';
 import { useRoute } from './lib/router';
 import { useSettings } from './lib/settings';
 import { ActiveWorkoutPage } from './pages/ActiveWorkout';
+import { BodyWeightPage } from './pages/BodyWeight';
 import { EditWorkout } from './pages/EditWorkout';
 import { ExerciseDetail } from './pages/ExerciseDetail';
 import { ExerciseEdit } from './pages/ExerciseEdit';
@@ -65,7 +66,7 @@ export function App() {
       page = <RoutineEdit id={s1 === 'new' ? undefined : s1} />;
       break;
     case 'profile':
-      page = <Profile />;
+      page = s1 === 'bodyweight' ? <BodyWeightPage /> : <Profile />;
       break;
     case 'settings':
       page = <SettingsPage />;

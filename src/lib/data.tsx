@@ -6,7 +6,9 @@ import { computeRecords, typeLookup, type Records, type TypeOf } from './stats';
 
 interface AppData {
   ready: boolean;
+  /** Everything the user can pick: library exercises they replaced with their own version are left out. */
   exercises: Exercise[];
+  /** Every exercise, including replaced ones, so old references still resolve. */
   exerciseMap: Map<string, Exercise>;
   /** Newest first. */
   workouts: Workout[];
@@ -23,9 +25,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AppData>(() => {
     const list = exercises ?? [];
     const typeOf = typeLookup(list);
+    const replaced = new Set(list.flatMap((e) => (e.replaces ? [e.replaces] : [])));
     return {
       ready: exercises !== undefined && workouts !== undefined,
-      exercises: list,
+      exercises: replaced.size ? list.filter((e) => !replaced.has(e.id)) : list,
       exerciseMap: new Map(list.map((e) => [e.id, e])),
       workouts: workouts ?? [],
       typeOf,

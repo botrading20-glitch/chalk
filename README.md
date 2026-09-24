@@ -7,6 +7,7 @@ A free workout logger inspired by Hevy. It runs in the browser, installs to your
 - **1,000+ exercises**, most with pictures and instructions. Add your own in seconds and pick what you log: weight & reps, bodyweight, assisted, time, distance… Edit any library exercise and your history moves to your version.
 - **Progress.** Personal records, a chart for each exercise (heaviest weight, est. 1RM, volume…), weekly time/volume/sets, sets per muscle, a consistency calendar and body-weight tracking.
 - **Share.** Turn any workout into a summary image with your records, ready for the share sheet.
+- **Plate calculator.** What goes on each side of the bar (or a plate-loaded machine) for any weight, using the plates your gym has.
 - **Hevy import.** Brings in your whole Hevy history from its CSV export. You can also export to the same CSV format, and back up or restore everything as JSON.
 - **Cloud sync (optional).** Keeps your data in a private GitHub repository and syncs it between your phone and computer, with the full history of every change.
 - kg/lbs, km/mi, dark/light theme.

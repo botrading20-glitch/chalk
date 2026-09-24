@@ -17,12 +17,14 @@ import {
   IconLink,
   IconMore,
   IconNote,
+  IconPlate,
   IconPlus,
   IconSwap,
   IconTimer,
   IconTrash,
   IconUp,
 } from './Icons';
+import { PlateSheet } from './PlateCalculator';
 import { ActionSheet, Sheet } from './Sheet';
 import { ExerciseAvatar } from './ui';
 
@@ -61,6 +63,7 @@ export function WorkoutEditor({
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const [setMenu, setSetMenu] = useState<{ ex: string; set: string } | null>(null);
   const [restFor, setRestFor] = useState<string | null>(null);
+  const [platesFor, setPlatesFor] = useState<string | null>(null);
 
   const supersetLetters = useMemo(() => {
     const map = new Map<number, string>();
@@ -182,6 +185,16 @@ export function WorkoutEditor({
   const setMenuEx = exercises.find((we) => we.id === setMenu?.ex);
   const setMenuSet = setMenuEx?.sets.find((s) => s.id === setMenu?.set);
   const restEx = exercises.find((we) => we.id === restFor);
+  const platesEx = exercises.find((we) => we.id === platesFor);
+  const plates = platesEx && plateTarget(platesEx);
+
+  /** The set the plate calculator loads for: the next one to do, else the last one. */
+  function plateTarget(we: WorkoutExercise) {
+    const next = mode === 'live' ? we.sets.findIndex((s) => !s.completed) : we.sets.findIndex((s) => s.weight === undefined);
+    const i = next === -1 ? we.sets.length - 1 : next;
+    const set = we.sets[i];
+    return set && { set, label: setLabels(we.sets)[i], kg: set.weight ?? placeholderFor(we, i)?.weight };
+  }
 
   return (
     <div className="editor">
@@ -333,6 +346,12 @@ export function WorkoutEditor({
                   hidden: menuEx.notes !== undefined,
                   onSelect: () => updateEx(menuEx.id, (x) => ({ ...x, notes: '' })),
                 },
+                {
+                  label: 'Plate calculator',
+                  icon: <IconPlate />,
+                  hidden: !fieldsFor(exerciseMap.get(menuEx.exerciseId)?.type ?? 'weight_reps').includes('weight'),
+                  onSelect: () => setPlatesFor(menuEx.id),
+                },
                 { label: 'Replace exercise', icon: <IconSwap />, onSelect: () => setPicker({ replace: menuEx.id }) },
                 { label: 'Move up', icon: <IconUp />, hidden: menuIndex <= 0, onSelect: () => move(menuEx.id, -1) },
                 {
@@ -363,6 +382,22 @@ export function WorkoutEditor({
                 },
               ]
             : []
+        }
+      />
+
+      <PlateSheet
+        open={!!platesEx}
+        onClose={() => setPlatesFor(null)}
+        exercise={platesEx && exerciseMap.get(platesEx.exerciseId)}
+        initialKg={plates?.kg}
+        use={
+          platesEx && plates
+            ? {
+                label: `Use {weight} for set ${plates.label}`,
+                current: plates.set.weight,
+                apply: (kg) => updateSet(platesEx.id, plates.set.id, { weight: kg }),
+              }
+            : undefined
         }
       />
 

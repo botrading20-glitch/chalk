@@ -56,6 +56,16 @@ export const IconSearch = (p: P) =>
       <path d="m20 20-4.2-4.2" />
     </>,
   );
+/** A bumper plate, for the plate calculator. */
+export const IconPlate = (p: P) =>
+  base(
+    p,
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1.2" fill="currentColor" />
+    </>,
+  );
 export const IconTimer = (p: P) =>
   base(
     p,

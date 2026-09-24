@@ -148,4 +148,9 @@ export interface Settings {
   timerLockScreen: boolean;
   timerVibrate: boolean;
   keepAwake: boolean;
+  /** Plate sizes the user's gym has, in each unit (plate calculator). */
+  platesKg: number[];
+  platesLbs: number[];
+  /** Bar weight in kg remembered per exercise id (plate calculator). */
+  plateBars: Record<string, number>;
 }

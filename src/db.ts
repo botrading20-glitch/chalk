@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
+import { DEFAULT_PLATES } from './lib/plates';
 import type { BodyWeight, Exercise, Routine, Settings, Workout } from './types';
 
 interface KV {
@@ -37,6 +38,9 @@ export const DEFAULT_SETTINGS: Settings = {
   timerLockScreen: true,
   timerVibrate: true,
   keepAwake: true,
+  platesKg: DEFAULT_PLATES.kg,
+  platesLbs: DEFAULT_PLATES.lbs,
+  plateBars: {},
 };
 
 export async function getKV<T>(key: string): Promise<T | undefined> {

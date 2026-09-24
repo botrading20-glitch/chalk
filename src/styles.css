@@ -1412,6 +1412,85 @@ dialog.sheet-full {
   min-height: 42px;
 }
 
+/* ---------- Plate calculator ---------- */
+
+.plates {
+  display: grid;
+  gap: 16px;
+}
+
+.plate-diagram {
+  display: flex;
+  align-items: center;
+  height: 112px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.bar-shaft {
+  flex: 0 0 28px;
+  height: 10px;
+  background: var(--text-3);
+}
+
+.bar-collar {
+  flex: none;
+  width: 8px;
+  height: 26px;
+  border-radius: 2px;
+  background: var(--text-2);
+}
+
+.plate {
+  flex: none;
+  width: var(--w);
+  height: var(--h);
+  margin-left: 2px;
+  border-radius: 3px;
+  background: var(--plate);
+  box-shadow: inset -2px 0 0 rgb(0 0 0 / 0.18);
+}
+
+.bar-sleeve {
+  flex: 1;
+  min-width: 16px;
+  height: 14px;
+  margin-left: 2px;
+  border-radius: 0 4px 4px 0;
+  background: var(--text-3);
+}
+
+.plates-result {
+  display: grid;
+  gap: 8px;
+  min-height: 2.6em;
+}
+
+.plates-side {
+  font: 700 28px/1.1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.plates-side .muted {
+  display: block;
+  font: 600 12px var(--font-body);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.plates-near {
+  display: grid;
+  gap: 8px;
+}
+
+.plates-owned summary {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
 /* ---------- Exercise lists & picker ---------- */
 
 .filters {

@@ -12,8 +12,9 @@ export function unlockAudio() {
   }
 }
 
+/** Plays the rest beep; false when audio isn't available (no tap on the page yet, or suspended). */
 export function beep() {
-  if (!ctx) return;
+  if (!ctx || ctx.state !== 'running') return false;
   const start = ctx.currentTime + 0.05;
   [880, 880, 1320].forEach((freq, i) => {
     const osc = ctx!.createOscillator();
@@ -28,6 +29,7 @@ export function beep() {
     osc.start(t);
     osc.stop(t + 0.5);
   });
+  return true;
 }
 
 export function buzz() {

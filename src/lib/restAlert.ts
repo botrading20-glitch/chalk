@@ -1,26 +1,38 @@
-// Opt-in rest alert that works with the screen off. A locked phone freezes
-// the page's timers but keeps media playing, so while resting Chalk plays a
-// generated track: near-silence for what's left of the rest, then the beep.
-// The alert comes from the audio itself, with no timer involved.
+// Opt-in rest alert that works with the screen off.
 //
-// Chrome on Android only treats audible playback as "media": the quiet track
-// doesn't take audio focus (other apps' music keeps playing) and gets no
-// lock-screen player. A regular notification shows the rest instead, while
-// the app is in the background.
+// While resting, Chalk plays a generated, near-silent track. It makes no sound
+// on time: it keeps the app running while the phone is locked (Android keeps
+// apps that play media alive) and shows the rest as a player on the lock
+// screen. The beep itself is the in-app Web Audio beep, fired by a timer. Web
+// Audio doesn't take audio focus, so other apps' music keeps playing. Tested on
+// Android: an audible <audio> track takes focus and pauses Spotify for good,
+// which is why the track stays quiet.
+//
+// If the app was frozen anyway and the timer can't beep, the track's own beep
+// FALLBACK seconds later still wakes you, at the cost of pausing the music.
 
-import { fmtTime } from './format';
+import { beep } from './timer';
 
 const RATE = 8000;
 /** Longer rests fall back to the in-app beep rather than build a huge file. */
 const MAX_SECONDS = 20 * 60;
-/** Playback starts a moment after play(); starting the beep early evens it out. */
-const START_LAG = 0.2;
+const FALLBACK = 3;
+
+export interface RestControls {
+  skip: () => void;
+  adjust: (seconds: number) => void;
+}
 
 let audio: HTMLAudioElement | null = null;
 let url = '';
-/** The rest end the current track was built for, once it's actually playing. */
-let covering = 0;
 let target = 0;
+/** The rest end the track is playing for. */
+let covering = 0;
+let rang = 0;
+let timer: ReturnType<typeof setTimeout> | undefined;
+
+// Lock-screen text follows the phone's clock format, unlike the app's 24 h times.
+const clock = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
 
 function wav(samples: Int16Array) {
   const buf = new ArrayBuffer(44 + samples.length * 2);
@@ -54,7 +66,7 @@ const BEEP_SECONDS = 2.1;
 function buildTrack(silence: number) {
   const lead = Math.round(silence * RATE);
   const samples = new Int16Array(lead + Math.round(BEEP_SECONDS * RATE));
-  // A whisper of noise (about −80 dB) so nothing treats the track as silent.
+  // A whisper of noise (about −80 dB): inaudible, but still a playing track.
   for (let i = 0; i < lead; i++) samples[i] = (Math.random() * 7 - 3) | 0;
   for (const tone of TONES) {
     const start = lead + Math.round(tone.at * RATE);
@@ -68,97 +80,50 @@ function buildTrack(silence: number) {
   return wav(samples);
 }
 
-const TAG = 'chalk-rest';
-let fallback: Notification | null = null;
+const ACTIONS: MediaSessionAction[] = ['pause', 'nexttrack', 'seekforward', 'seekbackward'];
 
-async function registration() {
+function showPlayer(endsAt: number, rest: number, controls: RestControls) {
+  const ms = navigator.mediaSession;
+  if (!ms) return;
+  const icon = (size: number) => ({ src: `${import.meta.env.BASE_URL}icon-${size}.png`, sizes: `${size}x${size}`, type: 'image/png' });
+  ms.metadata = new MediaMetadata({ title: `Resting until ${clock.format(endsAt)}`, artist: 'Chalk', artwork: [icon(192), icon(512)] });
+  const handlers: Record<string, MediaSessionActionHandler> = {
+    // Nothing to pause in a rest, and pausing would drop the backup beep: end the rest instead.
+    pause: controls.skip,
+    nexttrack: controls.skip,
+    seekforward: () => controls.adjust(15),
+    seekbackward: () => controls.adjust(-15),
+  };
+  for (const action of ACTIONS) {
+    try {
+      ms.setActionHandler(action, handlers[action]);
+    } catch {
+      // Not every browser knows every action.
+    }
+  }
   try {
-    return await navigator.serviceWorker?.getRegistration();
+    // The bar runs to the end of the rest, not to the backup beep.
+    ms.setPositionState({ duration: rest, position: 0, playbackRate: 1 });
   } catch {
-    return undefined;
+    // Optional.
   }
 }
 
-/** "Resting until 21:43" in the notification shade and on the lock screen. */
-async function showRestNotification(endsAt: number) {
-  if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
-  const title = `Resting until ${fmtTime(endsAt)}`;
-  const options = {
-    body: 'Chalk beeps when it’s time for your next set.',
-    tag: TAG,
-    silent: true,
-    icon: `${import.meta.env.BASE_URL}icon-192.png`,
-    timestamp: endsAt,
-  } as NotificationOptions;
-  const reg = await registration();
-  if (reg) await reg.showNotification(title, options).catch(() => {});
-  else {
-    // No service worker (the dev server): desktop browsers still take this.
+function hidePlayer() {
+  const ms = navigator.mediaSession;
+  if (!ms) return;
+  ms.metadata = null;
+  for (const action of ACTIONS) {
     try {
-      fallback = new Notification(title, options);
+      ms.setActionHandler(action, null);
     } catch {
-      // Android only shows notifications through a service worker.
+      // Ignore.
     }
   }
 }
 
-async function closeRestNotification() {
-  fallback?.close();
-  fallback = null;
-  const reg = await registration();
-  for (const n of (await reg?.getNotifications({ tag: TAG }).catch(() => [])) ?? []) n.close();
-}
-
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden') {
-    if (covering && covering === target) void showRestNotification(covering);
-  } else {
-    void closeRestNotification();
-  }
-});
-
-/** Asks for notification permission; the beep works either way. */
-export async function allowRestNotifications() {
-  if (typeof Notification === 'undefined') return false;
-  if (Notification.permission === 'default') await Notification.requestPermission().catch(() => {});
-  return Notification.permission === 'granted';
-}
-
-/** Starts (or re-times) the track for a rest ending at `endsAt`. */
-export function startRestAlert(endsAt: number) {
-  if (endsAt === target) return;
-  const remaining = (endsAt - Date.now()) / 1000 - START_LAG;
-  if (remaining < 1 || remaining > MAX_SECONDS) {
-    stopRestAlert();
-    return;
-  }
-  target = endsAt;
+function silenceTrack() {
   covering = 0;
-  if (url) URL.revokeObjectURL(url);
-  url = URL.createObjectURL(buildTrack(remaining));
-  audio ??= new Audio();
-  audio.src = url;
-  audio.onended = () => {
-    if (target === endsAt || target === 0) void closeRestNotification();
-  };
-  audio
-    .play()
-    .then(() => {
-      if (target !== endsAt) return;
-      covering = endsAt;
-      // Re-timed with ±15 s while in the background: update the notification.
-      if (document.visibilityState === 'hidden') void showRestNotification(endsAt);
-    })
-    // Blocked (no tap on the page yet) or unsupported: the in-app beep takes over.
-    .catch(() => {});
-}
-
-export function stopRestAlert() {
-  // When the rest ends on time the app clears it as the beep starts; let the beep play out.
-  const beeping = covering !== 0 && Date.now() >= covering - 1000;
-  target = 0;
-  covering = 0;
-  if (beeping) return;
   if (audio) {
     audio.onended = null;
     audio.pause();
@@ -167,10 +132,55 @@ export function stopRestAlert() {
   }
   if (url) URL.revokeObjectURL(url);
   url = '';
-  void closeRestNotification();
+  hidePlayer();
 }
 
-/** True when the track is handling the beep for this rest, so the app shouldn't beep too. */
-export function restAlertCovers(endsAt: number) {
-  return covering === endsAt;
+/**
+ * Beeps once for the rest ending at `endsAt`. When the in-app beep can play,
+ * the track stops before its backup beep, so music from other apps carries on.
+ */
+export function ringRest(endsAt: number) {
+  if (rang === endsAt) return;
+  rang = endsAt;
+  if (beep() || covering !== endsAt) silenceTrack();
+}
+
+/** Starts (or re-times) the alert for a rest ending at `endsAt`. */
+export function startRestAlert(endsAt: number, controls: RestControls) {
+  if (endsAt === target) return;
+  clearTimeout(timer);
+  const rest = (endsAt - Date.now()) / 1000;
+  if (rest < 1 || rest > MAX_SECONDS) {
+    stopRestAlert();
+    return;
+  }
+  target = endsAt;
+  // A single timer, not chained to others, so a hidden page still runs it within about a second.
+  timer = setTimeout(() => ringRest(endsAt), endsAt - Date.now());
+
+  covering = 0;
+  if (url) URL.revokeObjectURL(url);
+  url = URL.createObjectURL(buildTrack(rest + FALLBACK));
+  audio ??= new Audio();
+  audio.src = url;
+  audio.onended = () => {
+    if (target === endsAt || target === 0) hidePlayer();
+  };
+  audio
+    .play()
+    .then(() => {
+      if (target !== endsAt) return;
+      covering = endsAt;
+      showPlayer(endsAt, rest, controls);
+    })
+    // Blocked or unsupported: the timer's in-app beep still runs while the app is awake.
+    .catch(() => {});
+}
+
+export function stopRestAlert() {
+  clearTimeout(timer);
+  // The in-app beep couldn't play for the rest that just ended: let the track's backup beep sound.
+  const backup = covering !== 0 && rang === covering;
+  target = 0;
+  if (!backup) silenceTrack();
 }

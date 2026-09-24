@@ -3,7 +3,7 @@ import { useNow } from '../lib/data';
 import { fmtClock } from '../lib/format';
 import { Link, useRoute } from '../lib/router';
 import { useSettings } from '../lib/settings';
-import { restAlertCovers, startRestAlert, stopRestAlert } from '../lib/restAlert';
+import { ringRest, startRestAlert, stopRestAlert } from '../lib/restAlert';
 import { beep, buzz } from '../lib/timer';
 import { updateActive, useActiveWorkout } from '../lib/workouts';
 import { IconBarbell, IconChart, IconHistory, IconList, IconTimer } from './Icons';
@@ -84,7 +84,7 @@ function RestTimer() {
   const lockScreen = settings.timerSound && settings.timerLockScreen;
 
   useEffect(() => {
-    if (endsAt && lockScreen) startRestAlert(endsAt);
+    if (endsAt && lockScreen) startRestAlert(endsAt, { skip: skipRest, adjust: adjustRest });
     else stopRestAlert();
   }, [endsAt, lockScreen]);
 
@@ -93,11 +93,15 @@ function RestTimer() {
     fired.current = endsAt;
     // Skip the alert when the app was closed long past the end of the rest.
     if (now - endsAt < 5000) {
-      if (settings.timerSound && !restAlertCovers(endsAt)) beep();
+      // Whichever notices first, this or the alert's own timer, rings; the other is a no-op.
+      if (settings.timerSound) {
+        if (lockScreen) ringRest(endsAt);
+        else beep();
+      }
       if (settings.timerVibrate) buzz();
     }
     void updateActive((a) => (a.restEndsAt === endsAt ? { ...a, restEndsAt: undefined, restTotal: undefined } : a));
-  }, [now, endsAt, settings.timerSound, settings.timerVibrate]);
+  }, [now, endsAt, settings.timerSound, settings.timerVibrate, lockScreen]);
 
   if (!active || !endsAt) return null;
   const remaining = Math.max(0, Math.ceil((endsAt - now) / 1000));

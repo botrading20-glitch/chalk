@@ -1997,18 +1997,59 @@ dialog.sheet-full {
   gap: 16px;
 }
 
-.howto-images {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+/* Exercise demo: start and end photos flipping like a short clip. */
+.demo {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 3 / 2;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #fff;
 }
 
-.howto-images img {
+.demo img {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 12px;
-  background: #fff;
+  height: 100%;
+  object-fit: contain;
+}
+
+.demo-end {
+  opacity: 0;
+  animation: demo-flip 1.8s infinite;
+}
+
+.demo.paused .demo-end {
+  animation-play-state: paused;
+}
+
+@keyframes demo-flip {
+  0%,
+  42% {
+    opacity: 0;
+  }
+  50%,
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.demo-toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(20 18 28 / 0.45);
+  color: #fff;
 }
 
 .steps {

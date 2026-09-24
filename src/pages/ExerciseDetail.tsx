@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { LineChart } from '../components/Charts';
+import { ExerciseDemo } from '../components/ExerciseDemo';
 import { confirmDialog, toast } from '../components/dialogs';
 import { IconEdit, IconTrophy } from '../components/Icons';
 import { Empty, ExerciseAvatar, PageHeader, Segmented } from '../components/ui';
@@ -7,7 +8,7 @@ import { db } from '../db';
 import { useData } from '../lib/data';
 import { reassignExercise } from '../lib/exercises';
 import { fmtClock, fmtDate, fmtNum, kgTo, kmTo, plural } from '../lib/format';
-import { EQUIPMENT_LABEL, IMAGE_BASE, MUSCLE_LABEL, TYPE_LABEL } from '../lib/meta';
+import { EQUIPMENT_LABEL, MUSCLE_LABEL, TYPE_LABEL } from '../lib/meta';
 import { Link, navigate } from '../lib/router';
 import { fmtSet, setLabels } from '../lib/sets';
 import { useSettings } from '../lib/settings';
@@ -62,7 +63,7 @@ export function ExerciseDetail({ id }: { id: string }) {
   const original = ex?.replaces ? exerciseMap.get(ex.replaces) : undefined;
   const replacedBy = ex?.source === 'library' ? exercises.find((e) => e.replaces === ex.id) : undefined;
   const sessions = useMemo(() => sessionsFor(id, workouts), [id, workouts]);
-  const hasHowTo = !!ex && (ex.instructions.length > 0 || ex.images.length > 0);
+  const hasHowTo = !!ex && ex.instructions.length > 0;
   const [tab, setTab] = useState<Tab>(sessions.length || !hasHowTo ? 'progress' : 'howto');
   const metrics = ex ? metricsFor(ex.type) : [];
   const [metric, setMetric] = useState<SessionMetric>(metrics[0] ?? 'maxReps');
@@ -104,8 +105,9 @@ export function ExerciseDetail({ id }: { id: string }) {
           )
         }
       />
+      <ExerciseDemo exercise={ex} />
       <div className="exercise-hero">
-        <ExerciseAvatar exercise={ex} size={64} />
+        {!ex.images.length && <ExerciseAvatar exercise={ex} size={64} />}
         <div>
           <h1 className="detail-title">{ex.name}</h1>
           <p className="muted">
@@ -238,13 +240,6 @@ export function ExerciseDetail({ id }: { id: string }) {
 
       {tab === 'howto' && (
         <section className="howto">
-          {ex.images.length > 0 && (
-            <div className="howto-images">
-              {ex.images.map((img, i) => (
-                <img key={img} src={IMAGE_BASE + img} alt={`${ex.name}, ${i === 0 ? 'start' : 'end'} position`} loading="lazy" />
-              ))}
-            </div>
-          )}
           {ex.instructions.length > 0 && (
             <ol className="steps">
               {ex.instructions.map((step, i) => (

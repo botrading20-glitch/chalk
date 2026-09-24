@@ -94,6 +94,7 @@ export const IconCopy = (p: P) =>
     </>,
   );
 export const IconPlay = (p: P) => base(p, <path d="M7 4.5v15l12-7.5-12-7.5Z" fill="currentColor" />);
+export const IconPause = (p: P) => base(p, <path d="M8 5v14M16 5v14" strokeWidth={3.5} />);
 export const IconSettings = (p: P) =>
   base(
     p,

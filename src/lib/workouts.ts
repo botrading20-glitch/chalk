@@ -102,7 +102,8 @@ export async function saveRoutine(r: Omit<Routine, 'order' | 'createdAt' | 'upda
   const existing = await db.routines.get(r.id);
   const now = Date.now();
   const order = existing?.order ?? ((await db.routines.orderBy('order').last())?.order ?? 0) + 1;
-  const routine: Routine = { ...r, order, createdAt: existing?.createdAt ?? now, updatedAt: now };
+  // Fields the caller doesn't manage (like the folder) carry over from the stored routine.
+  const routine: Routine = { ...existing, ...r, order, createdAt: existing?.createdAt ?? now, updatedAt: now };
   await db.routines.put(routine);
   return routine;
 }

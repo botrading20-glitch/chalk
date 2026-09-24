@@ -9,7 +9,8 @@ import { goBack, navigate } from '../lib/router';
 import { saveRoutine } from '../lib/workouts';
 import type { Routine } from '../types';
 
-export function RoutineEdit({ id }: { id?: string }) {
+/** `folder` files a new routine straight into that folder. */
+export function RoutineEdit({ id, folder }: { id?: string; folder?: string }) {
   const existing = useLiveQuery(async () => (id ? ((await db.routines.get(id)) ?? null) : null), [id]);
   if (existing === undefined) return null;
   if (id && !existing) {
@@ -20,10 +21,10 @@ export function RoutineEdit({ id }: { id?: string }) {
       </div>
     );
   }
-  return <Editor key={id ?? 'new'} existing={existing} />;
+  return <Editor key={id ?? 'new'} existing={existing} folder={folder} />;
 }
 
-function Editor({ existing }: { existing: Routine | null }) {
+function Editor({ existing, folder }: { existing: Routine | null; folder?: string }) {
   const [title, setTitle] = useState(existing?.title ?? '');
   const [notes, setNotes] = useState(existing?.notes ?? '');
   const [exercises, setExercises] = useState(existing?.exercises ?? []);
@@ -35,7 +36,13 @@ function Editor({ existing }: { existing: Routine | null }) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    await saveRoutine({ id: existing?.id ?? uid(), title: title.trim(), notes: notes.trim() || undefined, exercises });
+    await saveRoutine({
+      id: existing?.id ?? uid(),
+      title: title.trim(),
+      notes: notes.trim() || undefined,
+      exercises,
+      ...(!existing && folder ? { folder } : {}),
+    });
     toast(existing ? 'Routine saved' : 'Routine created');
     goBack('/');
   }

@@ -3,7 +3,7 @@
 A free workout logger inspired by Hevy. It runs in the browser, installs to your phone's home screen, and works offline. Your data stays on your device, plus an optional synced copy in your own private GitHub repository.
 
 - **Log workouts.** Sets with weight/reps/time/distance, warm-up, failure and drop sets, RPE, notes and supersets. Your previous numbers show next to every set, and a rest timer starts when you check a set off.
-- **Routines.** Build them yourself, save one from any past workout, or create them from your history in one tap.
+- **Routines.** Build them yourself, save one from any past workout, or create them from your history in one tap. Group them in folders, like a split or a program.
 - **1,000+ exercises**, most with pictures and instructions. Add your own in seconds and pick what you log: weight & reps, bodyweight, assisted, time, distance… Edit any library exercise and your history moves to your version.
 - **Progress.** Personal records, a chart for each exercise (heaviest weight, est. 1RM, volume…), weekly time/volume/sets, sets per muscle, a consistency calendar and body-weight tracking.
 - **Share.** Turn any workout into a summary image with your records, ready for the share sheet.

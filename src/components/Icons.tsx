@@ -66,6 +66,9 @@ export const IconPlate = (p: P) =>
       <circle cx="12" cy="12" r="1.2" fill="currentColor" />
     </>,
   );
+export const IconFolder = (p: P) => base(p, <path d="M3.5 7a2 2 0 0 1 2-2h4l2 2.5h7a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V7Z" />);
+export const IconFolderPlus = (p: P) =>
+  base(p, <path d="M3.5 7a2 2 0 0 1 2-2h4l2 2.5h7a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V7ZM12 10.5v5M9.5 13h5" />);
 export const IconTimer = (p: P) =>
   base(
     p,

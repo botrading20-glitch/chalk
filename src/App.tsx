@@ -63,7 +63,7 @@ export function App() {
       );
       break;
     case 'routines':
-      page = <RoutineEdit id={s1 === 'new' ? undefined : s1} />;
+      page = <RoutineEdit id={s1 === 'new' ? undefined : s1} folder={query.get('folder') ?? undefined} />;
       break;
     case 'profile':
       page = s1 === 'bodyweight' ? <BodyWeightPage /> : <Profile />;

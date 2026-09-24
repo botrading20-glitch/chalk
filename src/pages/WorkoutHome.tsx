@@ -1,12 +1,14 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { confirmDialog, toast } from '../components/dialogs';
-import { IconCopy, IconEdit, IconMore, IconPlay, IconPlus, IconTrash } from '../components/Icons';
+import { IconChevron, IconCopy, IconEdit, IconFolder, IconFolderPlus, IconMore, IconPlay, IconPlus, IconTrash } from '../components/Icons';
 import { InstallBanner } from '../components/InstallPrompt';
+import { FolderSheet, MoveToFolderSheet } from '../components/RoutineFolders';
 import { ActionSheet } from '../components/Sheet';
 import { Empty, PageHeader } from '../components/ui';
 import { db } from '../db';
 import { useData, useNow } from '../lib/data';
+import { groupRoutines, removeFolder, toggleFolder, useCollapsedFolders, type Folder } from '../lib/folders';
 import { fmtClock, fmtRelativeDay, plural, uid } from '../lib/format';
 import { Link, navigate } from '../lib/router';
 import { useSyncStatus } from '../lib/sync';
@@ -41,6 +43,12 @@ export function WorkoutHome() {
   const routines = useLiveQuery(() => db.routines.orderBy('order').toArray(), []);
   const { workouts } = useData();
   const [menu, setMenu] = useState<Routine | null>(null);
+  const [folderMenu, setFolderMenu] = useState<Folder | null>(null);
+  const [folderSheet, setFolderSheet] = useState<{ folder?: string } | null>(null);
+  const [moving, setMoving] = useState<Routine | null>(null);
+  const collapsed = useCollapsedFolders();
+  const { folders, loose } = groupRoutines(routines ?? []);
+  const card = (r: Routine) => <RoutineCard key={r.id} routine={r} onMenu={() => setMenu(r)} />;
 
   return (
     <div className="page">
@@ -57,9 +65,16 @@ export function WorkoutHome() {
       <section className="section">
         <div className="section-head">
           <h2 className="section-title">Routines</h2>
-          <Link to="/routines/new" className="btn btn-ghost btn-small">
-            <IconPlus size={18} /> New routine
-          </Link>
+          <div className="section-actions">
+            {!!routines?.length && (
+              <button className="icon-btn" onClick={() => setFolderSheet({})} aria-label="New folder">
+                <IconFolderPlus />
+              </button>
+            )}
+            <Link to="/routines/new" className="btn btn-ghost btn-small">
+              <IconPlus size={18} /> New routine
+            </Link>
+          </div>
         </div>
 
         {routines && routines.length === 0 && (
@@ -83,11 +98,13 @@ export function WorkoutHome() {
           </Empty>
         )}
 
-        <div className="routine-list">
-          {routines?.map((r) => (
-            <RoutineCard key={r.id} routine={r} onMenu={() => setMenu(r)} />
-          ))}
-        </div>
+        {folders.map((f) => (
+          <FolderSection key={f.name} folder={f} collapsed={collapsed.has(f.name)} onMenu={() => setFolderMenu(f)}>
+            {f.routines.map(card)}
+          </FolderSection>
+        ))}
+        {folders.length > 0 && loose.length > 0 && <h3 className="list-label">Not in a folder</h3>}
+        <div className="routine-list">{loose.map(card)}</div>
       </section>
 
       <ActionSheet
@@ -98,11 +115,18 @@ export function WorkoutHome() {
           menu
             ? [
                 { label: 'Edit routine', icon: <IconEdit />, onSelect: () => navigate(`/routines/${menu.id}`) },
+                { label: menu.folder ? 'Move to another folder' : 'Move to a folder', icon: <IconFolder />, onSelect: () => setMoving(menu) },
                 {
                   label: 'Duplicate',
                   icon: <IconCopy />,
                   onSelect: async () => {
-                    await saveRoutine({ id: uid(), title: `${menu.title} (copy)`, notes: menu.notes, exercises: cloneExercises(menu.exercises) });
+                    await saveRoutine({
+                      id: uid(),
+                      title: `${menu.title} (copy)`,
+                      notes: menu.notes,
+                      exercises: cloneExercises(menu.exercises),
+                      ...(menu.folder ? { folder: menu.folder } : {}),
+                    });
                     toast('Routine duplicated');
                   },
                 },
@@ -124,7 +148,62 @@ export function WorkoutHome() {
             : []
         }
       />
+
+      <ActionSheet
+        open={!!folderMenu}
+        onClose={() => setFolderMenu(null)}
+        title={folderMenu?.name}
+        actions={
+          folderMenu
+            ? [
+                {
+                  label: 'New routine in this folder',
+                  icon: <IconPlus />,
+                  onSelect: () => navigate(`/routines/new?folder=${encodeURIComponent(folderMenu.name)}`),
+                },
+                { label: 'Rename or change routines', icon: <IconEdit />, onSelect: () => setFolderSheet({ folder: folderMenu.name }) },
+                {
+                  label: 'Remove folder',
+                  icon: <IconTrash />,
+                  danger: true,
+                  onSelect: async () => {
+                    const ok = await confirmDialog({
+                      title: `Remove the folder “${folderMenu.name}”?`,
+                      message:
+                        folderMenu.routines.length === 1
+                          ? 'Its routine stays, just outside a folder.'
+                          : `Its ${folderMenu.routines.length} routines stay, just outside a folder.`,
+                      confirmLabel: 'Remove folder',
+                    });
+                    if (ok) await removeFolder(folderMenu.name);
+                  },
+                },
+              ]
+            : []
+        }
+      />
+
+      <FolderSheet open={!!folderSheet} onClose={() => setFolderSheet(null)} folder={folderSheet?.folder} routines={routines ?? []} />
+      <MoveToFolderSheet routine={moving} routines={routines ?? []} onClose={() => setMoving(null)} />
     </div>
+  );
+}
+
+function FolderSection({ folder, collapsed, onMenu, children }: { folder: Folder; collapsed: boolean; onMenu: () => void; children: ReactNode }) {
+  return (
+    <section className="folder">
+      <div className="folder-head">
+        <button className="folder-toggle" aria-expanded={!collapsed} onClick={() => toggleFolder(folder.name)}>
+          <IconChevron size={18} className={`folder-chevron ${collapsed ? '' : 'open'}`} />
+          <span className="folder-name">{folder.name}</span>
+          <span className="folder-count">{folder.routines.length}</span>
+        </button>
+        <button className="icon-btn" onClick={onMenu} aria-label={`Options for folder ${folder.name}`}>
+          <IconMore />
+        </button>
+      </div>
+      {!collapsed && <div className="routine-list">{children}</div>}
+    </section>
   );
 }
 

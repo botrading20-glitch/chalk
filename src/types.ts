@@ -104,6 +104,8 @@ export interface Routine {
   id: string;
   title: string;
   notes?: string;
+  /** Folder name; routines sharing it are grouped. Folders exist only while they hold a routine. */
+  folder?: string;
   exercises: WorkoutExercise[];
   order: number;
   createdAt: number;

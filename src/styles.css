@@ -1021,6 +1021,85 @@ dialog.sheet-full {
   gap: 12px;
 }
 
+.section-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.folder {
+  display: grid;
+  gap: 10px;
+}
+
+.folder-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: -8px;
+}
+
+.folder-toggle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.folder-chevron {
+  flex: none;
+  color: var(--text-3);
+  transition: transform 0.15s ease;
+}
+
+.folder-chevron.open {
+  transform: rotate(90deg);
+}
+
+.folder-name {
+  min-width: 0;
+  font: 700 19px/1.1 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.folder-count {
+  flex: none;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.move-folder {
+  display: grid;
+  gap: 18px;
+}
+
+.move-folder-name {
+  flex: 1;
+  min-width: 0;
+}
+
+.new-folder-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 8px;
+}
+
 .routine-card {
   display: grid;
   gap: 8px;

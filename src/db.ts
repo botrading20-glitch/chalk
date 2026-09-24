@@ -34,6 +34,7 @@ export const DEFAULT_SETTINGS: Settings = {
   defaultRest: 90,
   theme: 'dark',
   timerSound: true,
+  timerLockScreen: false,
   timerVibrate: true,
   keepAwake: true,
 };

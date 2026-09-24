@@ -23,6 +23,7 @@ Free, offline-first workout logger (Hevy alternative). React 19 + TypeScript + V
   - Synced records must stay plain JSON. The active workout and the exercise library are not synced.
 - **Library exercises** are re-seeded with `bulkPut` whenever `LIBRARY_VERSION` changes, so they're never edited in place. Editing one saves a custom copy with `replaces: <library id>` and moves history onto it (`reassignExercise` in `src/lib/exercises.ts`). `useData().exercises` hides replaced originals, but `exerciseMap` keeps them so old references still resolve.
 - **Body weight** has its own `bodyweight` table: one weigh-in per day, in kg, with `date` at local midnight. It syncs and backs up like workouts.
+- **Rest alert with the screen off** (`src/lib/restAlert.ts`, opt-in setting `timerLockScreen`): a page's timers freeze when the phone locks, but media keeps playing, so the rest plays as a generated WAV (near-silence, then the beep) with a Media Session countdown on the lock screen. The beep comes from the audio itself. The trade-off is that it takes audio focus and pauses other apps' music, which the setting says.
 - **Share card:** `src/lib/shareCard.ts` draws the workout summary PNG (1080×1350) on a canvas. Change its colours if the tokens change.
 - **Records:** `computeRecords()` walks workouts oldest to newest. The first session of an exercise sets the baseline and doesn't count as a record.
 

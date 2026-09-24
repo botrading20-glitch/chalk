@@ -124,6 +124,19 @@ export function SettingsPage() {
           </select>
         </label>
         <Toggle label="Sound when rest ends" checked={settings.timerSound} onChange={(timerSound) => updateSettings({ timerSound })} />
+        {settings.timerSound && (
+          <div>
+            <Toggle
+              label="Rest alert with the screen off"
+              checked={settings.timerLockScreen}
+              onChange={(timerLockScreen) => updateSettings({ timerLockScreen })}
+            />
+            <p className="muted small">
+              Plays the rest timer as media, so the beep sounds with the phone locked or in your pocket and the countdown shows on
+              the lock screen. It uses your media volume, and music from other apps pauses while you rest.
+            </p>
+          </div>
+        )}
         <Toggle
           label="Vibrate when rest ends (Android)"
           checked={settings.timerVibrate}

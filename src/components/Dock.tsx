@@ -3,6 +3,7 @@ import { useNow } from '../lib/data';
 import { fmtClock } from '../lib/format';
 import { Link, useRoute } from '../lib/router';
 import { useSettings } from '../lib/settings';
+import { restAlertCovers, startRestAlert, stopRestAlert } from '../lib/restAlert';
 import { beep, buzz } from '../lib/timer';
 import { updateActive, useActiveWorkout } from '../lib/workouts';
 import { IconBarbell, IconChart, IconHistory, IconList, IconTimer } from './Icons';
@@ -65,19 +66,34 @@ function ActiveBanner() {
   );
 }
 
+const adjustRest = (delta: number) =>
+  updateActive((a) => {
+    if (!a.restEndsAt) return a;
+    const next = Math.max(Date.now() + 1000, a.restEndsAt + delta * 1000);
+    return { ...a, restEndsAt: next, restTotal: Math.max(1, (a.restTotal ?? 0) + delta) };
+  });
+
+const skipRest = () => updateActive((a) => ({ ...a, restEndsAt: undefined, restTotal: undefined }));
+
 function RestTimer() {
   const active = useActiveWorkout();
   const settings = useSettings();
   const endsAt = active?.restEndsAt;
   const now = useNow(250, !!endsAt);
   const fired = useRef<number | undefined>(undefined);
+  const lockScreen = settings.timerSound && settings.timerLockScreen;
+
+  useEffect(() => {
+    if (endsAt && lockScreen) startRestAlert(endsAt, { skip: skipRest, adjust: adjustRest });
+    else stopRestAlert();
+  }, [endsAt, lockScreen]);
 
   useEffect(() => {
     if (!endsAt || now < endsAt || fired.current === endsAt) return;
     fired.current = endsAt;
     // Skip the alert when the app was closed long past the end of the rest.
     if (now - endsAt < 5000) {
-      if (settings.timerSound) beep();
+      if (settings.timerSound && !restAlertCovers(endsAt)) beep();
       if (settings.timerVibrate) buzz();
     }
     void updateActive((a) => (a.restEndsAt === endsAt ? { ...a, restEndsAt: undefined, restTotal: undefined } : a));
@@ -87,13 +103,7 @@ function RestTimer() {
   const remaining = Math.max(0, Math.ceil((endsAt - now) / 1000));
   if (remaining <= 0) return null;
   const total = Math.max(active.restTotal ?? remaining, remaining);
-
-  const adjust = (delta: number) =>
-    updateActive((a) => {
-      if (!a.restEndsAt) return a;
-      const next = Math.max(Date.now() + 1000, a.restEndsAt + delta * 1000);
-      return { ...a, restEndsAt: next, restTotal: Math.max(1, (a.restTotal ?? 0) + delta) };
-    });
+  const adjust = adjustRest;
 
   return (
     <div className="rest-bar" role="timer" aria-label={`Rest: ${fmtClock(remaining)} left`}>
@@ -107,7 +117,7 @@ function RestTimer() {
         <button onClick={() => adjust(15)} aria-label="15 seconds more">
           +15
         </button>
-        <button className="rest-skip" onClick={() => updateActive((a) => ({ ...a, restEndsAt: undefined, restTotal: undefined }))}>
+        <button className="rest-skip" onClick={skipRest}>
           Skip
         </button>
       </div>

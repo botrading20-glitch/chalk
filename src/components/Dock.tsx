@@ -84,7 +84,7 @@ function RestTimer() {
   const lockScreen = settings.timerSound && settings.timerLockScreen;
 
   useEffect(() => {
-    if (endsAt && lockScreen) startRestAlert(endsAt, { skip: skipRest, adjust: adjustRest });
+    if (endsAt && lockScreen) startRestAlert(endsAt);
     else stopRestAlert();
   }, [endsAt, lockScreen]);
 

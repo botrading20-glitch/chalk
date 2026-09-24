@@ -1,10 +1,12 @@
-// Opt-in rest alert that works with the screen off. Phones freeze a
-// backgrounded page's timers but keep media playing, so while resting Chalk
-// plays a generated track: near-silence for what's left of the rest, then the
-// beep. The alert comes from the audio itself, with no timer involved, and the
-// Media Session puts the countdown on the lock screen. The catch, which the
-// setting spells out: media playback takes audio focus, so music from other
-// apps pauses during rests.
+// Opt-in rest alert that works with the screen off. A locked phone freezes
+// the page's timers but keeps media playing, so while resting Chalk plays a
+// generated track: near-silence for what's left of the rest, then the beep.
+// The alert comes from the audio itself, with no timer involved.
+//
+// Chrome on Android only treats audible playback as "media": the quiet track
+// doesn't take audio focus (other apps' music keeps playing) and gets no
+// lock-screen player. A regular notification shows the rest instead, while
+// the app is in the background.
 
 import { fmtTime } from './format';
 
@@ -13,11 +15,6 @@ const RATE = 8000;
 const MAX_SECONDS = 20 * 60;
 /** Playback starts a moment after play(); starting the beep early evens it out. */
 const START_LAG = 0.2;
-
-export interface RestControls {
-  skip: () => void;
-  adjust: (seconds: number) => void;
-}
 
 let audio: HTMLAudioElement | null = null;
 let url = '';
@@ -71,47 +68,64 @@ function buildTrack(silence: number) {
   return wav(samples);
 }
 
-function setMediaSession(endsAt: number, duration: number, controls: RestControls) {
-  const ms = navigator.mediaSession;
-  if (!ms) return;
-  const icon = (size: number) => ({ src: `${import.meta.env.BASE_URL}icon-${size}.png`, sizes: `${size}x${size}`, type: 'image/png' });
-  ms.metadata = new MediaMetadata({ title: `Rest · ends at ${fmtTime(endsAt)}`, artist: 'Chalk', artwork: [icon(192), icon(512)] });
-  const actions: [MediaSessionAction, MediaSessionActionHandler | null][] = [
-    // The lock screen's pause button has nothing to pause, so it ends the rest.
-    ['pause', controls.skip],
-    ['nexttrack', controls.skip],
-    ['seekforward', () => controls.adjust(15)],
-    ['seekbackward', () => controls.adjust(-15)],
-  ];
-  for (const [action, handler] of actions) {
-    try {
-      ms.setActionHandler(action, handler);
-    } catch {
-      // Not every browser knows every action.
-    }
-  }
+const TAG = 'chalk-rest';
+let fallback: Notification | null = null;
+
+async function registration() {
   try {
-    ms.setPositionState({ duration, position: 0, playbackRate: 1 });
+    return await navigator.serviceWorker?.getRegistration();
   } catch {
-    // Optional.
+    return undefined;
   }
 }
 
-function clearMediaSession() {
-  const ms = navigator.mediaSession;
-  if (!ms) return;
-  ms.metadata = null;
-  for (const action of ['pause', 'nexttrack', 'seekforward', 'seekbackward'] as MediaSessionAction[]) {
+/** "Resting until 21:43" in the notification shade and on the lock screen. */
+async function showRestNotification(endsAt: number) {
+  if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+  const title = `Resting until ${fmtTime(endsAt)}`;
+  const options = {
+    body: 'Chalk beeps when it’s time for your next set.',
+    tag: TAG,
+    silent: true,
+    icon: `${import.meta.env.BASE_URL}icon-192.png`,
+    timestamp: endsAt,
+  } as NotificationOptions;
+  const reg = await registration();
+  if (reg) await reg.showNotification(title, options).catch(() => {});
+  else {
+    // No service worker (the dev server): desktop browsers still take this.
     try {
-      ms.setActionHandler(action, null);
+      fallback = new Notification(title, options);
     } catch {
-      // Ignore.
+      // Android only shows notifications through a service worker.
     }
   }
+}
+
+async function closeRestNotification() {
+  fallback?.close();
+  fallback = null;
+  const reg = await registration();
+  for (const n of (await reg?.getNotifications({ tag: TAG }).catch(() => [])) ?? []) n.close();
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    if (covering && covering === target) void showRestNotification(covering);
+  } else {
+    void closeRestNotification();
+  }
+});
+
+/** Asks for notification permission; the beep works either way. */
+export async function allowRestNotifications() {
+  if (typeof Notification === 'undefined') return false;
+  if (Notification.permission === 'default') await Notification.requestPermission().catch(() => {});
+  return Notification.permission === 'granted';
 }
 
 /** Starts (or re-times) the track for a rest ending at `endsAt`. */
-export function startRestAlert(endsAt: number, controls: RestControls) {
+export function startRestAlert(endsAt: number) {
   if (endsAt === target) return;
   const remaining = (endsAt - Date.now()) / 1000 - START_LAG;
   if (remaining < 1 || remaining > MAX_SECONDS) {
@@ -125,14 +139,15 @@ export function startRestAlert(endsAt: number, controls: RestControls) {
   audio ??= new Audio();
   audio.src = url;
   audio.onended = () => {
-    if (target === endsAt || target === 0) clearMediaSession();
+    if (target === endsAt || target === 0) void closeRestNotification();
   };
   audio
     .play()
     .then(() => {
       if (target !== endsAt) return;
       covering = endsAt;
-      setMediaSession(endsAt, remaining + BEEP_SECONDS, controls);
+      // Re-timed with ±15 s while in the background: update the notification.
+      if (document.visibilityState === 'hidden') void showRestNotification(endsAt);
     })
     // Blocked (no tap on the page yet) or unsupported: the in-app beep takes over.
     .catch(() => {});
@@ -152,7 +167,7 @@ export function stopRestAlert() {
   }
   if (url) URL.revokeObjectURL(url);
   url = '';
-  clearMediaSession();
+  void closeRestNotification();
 }
 
 /** True when the track is handling the beep for this rest, so the app shouldn't beep too. */

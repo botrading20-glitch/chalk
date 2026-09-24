@@ -13,6 +13,7 @@ import { useData } from '../lib/data';
 import { fmtDate, fmtRest, plural } from '../lib/format';
 import { applyImport, parseHevyCsv, planHevyImport, toHevyCsv, type ImportPlan } from '../lib/hevy';
 import { navigate } from '../lib/router';
+import { allowRestNotifications } from '../lib/restAlert';
 import { updateSettings, useSettings } from '../lib/settings';
 import { createRoutinesFromHistory } from '../lib/workouts';
 
@@ -129,11 +130,16 @@ export function SettingsPage() {
             <Toggle
               label="Rest alert with the screen off"
               checked={settings.timerLockScreen}
-              onChange={(timerLockScreen) => updateSettings({ timerLockScreen })}
+              onChange={async (timerLockScreen) => {
+                await updateSettings({ timerLockScreen });
+                if (timerLockScreen && !(await allowRestNotifications())) {
+                  toast('Notifications are off for Chalk, so the rest won’t show on the lock screen. The beep still works.');
+                }
+              }}
             />
             <p className="muted small">
-              Plays the rest timer as media, so the beep sounds with the phone locked or in your pocket and the countdown shows on
-              the lock screen. It uses your media volume, and music from other apps pauses while you rest.
+              The beep sounds even with your phone locked or in your pocket, through your media volume. While you rest, a
+              notification shows when your next set is due.
             </p>
           </div>
         )}

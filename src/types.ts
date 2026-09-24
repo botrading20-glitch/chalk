@@ -144,7 +144,7 @@ export interface Settings {
   defaultRest: number;
   theme: Theme;
   timerSound: boolean;
-  /** Play the rest alert as media so it works with the screen off (pauses other apps' music). */
+  /** Keep the rest alert working with the screen off (silent keep-alive track + lock-screen player). */
   timerLockScreen: boolean;
   timerVibrate: boolean;
   keepAwake: boolean;

@@ -1,4 +1,4 @@
-// Opt-in rest alert that works with the screen off.
+// Rest alert that works with the screen off (setting `timerLockScreen`, on by default).
 //
 // While resting, Chalk plays a generated, near-silent track. It makes no sound
 // on time: it keeps the app running while the phone is locked (Android keeps

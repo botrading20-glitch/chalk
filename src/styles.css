@@ -12,7 +12,7 @@
   --line: #2b2a33;
   --text: #ecebf2;
   --text-2: #a7a5b3;
-  --text-3: #76747f;
+  --text-3: #888692;
   /* Fills with white text (4.9:1) and indicators on surfaces (3.5:1). */
   --accent: #7a55e6;
   --on-accent: #ffffff;
@@ -43,7 +43,7 @@
   --line: #e2e1e8;
   --text: #16151b;
   --text-2: #52505e;
-  --text-3: #7a7886;
+  --text-3: #656371;
   --accent: #5b3cc4;
   --on-accent: #ffffff;
   --accent-ink: #5233b3;
@@ -377,6 +377,14 @@ p {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+}
+
+/* Two labels like "Restore backup" don't fit side by side on a phone: wrap them. */
+.button-pair > .btn {
+  min-width: 0;
+  padding-inline: 12px;
+  white-space: normal;
+  line-height: 1.2;
 }
 
 /* ---------- Chips, segmented, toggles ---------- */
@@ -1306,8 +1314,20 @@ dialog.sheet-full {
 }
 
 .set-table {
+  --field-w: 4.25rem;
   display: grid;
   gap: 3px;
+}
+
+/* Narrow phones: give the Previous column room for values like "23.75 × 14". */
+@media (max-width: 379px) {
+  .set-table {
+    --field-w: 4rem;
+  }
+
+  .set-table .set-row {
+    gap: 4px;
+  }
 }
 
 .set-row {
@@ -1638,6 +1658,12 @@ dialog.sheet-full {
 
 .search input:focus {
   outline: none;
+}
+
+/* The input's own outline is off, so the whole field shows keyboard focus. */
+.search:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .search input::-webkit-search-cancel-button {
@@ -2096,6 +2122,9 @@ dialog.sheet-full {
 
 .chart {
   position: relative;
+  /* As a grid item it would otherwise keep the SVG's first-render width
+     (320 px) and overflow narrow phones; the chart re-measures from here. */
+  min-width: 0;
   touch-action: pan-y;
 }
 
@@ -2261,6 +2290,7 @@ dialog.sheet-full {
 
 .cal-grid {
   flex: 1;
+  min-width: 0;
   display: grid;
   gap: 3px;
 }

@@ -38,18 +38,22 @@ function compact(v: number) {
 }
 
 function SrTable({ caption, rows }: { caption: string; rows: [string, string][] }) {
+  // A table ignores the 1px width of .sr-only and grows to its longest row,
+  // which widened the page on phones; the wrapper does the clipping.
   return (
-    <table className="sr-only">
-      <caption>{caption}</caption>
-      <tbody>
-        {rows.map(([k, v], i) => (
-          <tr key={i}>
-            <th scope="row">{k}</th>
-            <td>{v}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="sr-only">
+      <table>
+        <caption>{caption}</caption>
+        <tbody>
+          {rows.map(([k, v], i) => (
+            <tr key={i}>
+              <th scope="row">{k}</th>
+              <td>{v}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

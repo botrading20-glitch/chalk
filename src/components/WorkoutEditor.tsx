@@ -211,7 +211,7 @@ export function WorkoutEditor({
         const fields = fieldsFor(type);
         const labels = setLabels(we.sets);
         const letter = we.supersetId !== undefined ? supersetLetters.get(we.supersetId) : undefined;
-        const cols = `2.5rem minmax(0,1fr) ${fields.map(() => '4.25rem').join(' ')}${mode === 'live' ? ' 2.75rem' : ''}`;
+        const cols = `2.5rem minmax(0,1fr) ${fields.map(() => 'var(--field-w)').join(' ')}${mode === 'live' ? ' 2.75rem' : ''}`;
 
         return (
           <section key={we.id} className={`ex-block ${letter ? 'in-superset' : ''}`}>
@@ -282,7 +282,7 @@ export function WorkoutEditor({
                       }}
                       aria-label={prev ? `Copy previous: ${fmtSet(prev, type, settings)}` : 'No previous set'}
                     >
-                      {prev ? fmtSet(prev, type, settings) : '—'}
+                      {prev ? fmtSet(prev, type, settings, true) : '—'}
                     </button>
                     {fields.map((f) => (
                       <SetInput

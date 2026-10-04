@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import type { WorkoutSet } from '../types';
 import { parseCsv, toCsv } from './csv';
 import { fmtClock, fmtDuration, fmtRest, inputNum, kgTo, parseClock, parseNum, toKg } from './format';
+import { fmtSet } from './sets';
 
 describe('number input', () => {
   it('accepts both decimal separators', () => {
@@ -41,6 +43,24 @@ describe('clock', () => {
     expect(fmtRest(0)).toBe('Off');
     expect(fmtRest(90)).toBe('1min 30s');
     expect(fmtRest(45)).toBe('45s');
+  });
+});
+
+describe('fmtSet', () => {
+  const kg = { weightUnit: 'kg', distanceUnit: 'km' } as const;
+  const s = (extra: Partial<WorkoutSet>): WorkoutSet => ({ id: 's', type: 'normal', completed: true, ...extra });
+
+  it('summarises a set with units', () => {
+    expect(fmtSet(s({ weight: 48.75, reps: 10 }), 'weight_reps', kg)).toBe('48.75 kg × 10');
+    expect(fmtSet(s({ weight: 10, reps: 8 }), 'weighted_bodyweight', kg)).toBe('+10 kg × 8');
+    expect(fmtSet(s({ distance: 2.014, duration: 343 }), 'distance_duration', kg)).toBe('2.01 km · 5:43');
+    expect(fmtSet(s({ weight: 100, reps: 5 }), 'weight_reps', { weightUnit: 'lbs', distanceUnit: 'mi' })).toBe('220.5 lbs × 5');
+  });
+
+  it('leaves units out for columns that already name them', () => {
+    expect(fmtSet(s({ weight: 48.75, reps: 10 }), 'weight_reps', kg, true)).toBe('48.75 × 10');
+    expect(fmtSet(s({ weight: 20, reps: 8 }), 'assisted_bodyweight', kg, true)).toBe('−20 × 8');
+    expect(fmtSet(s({ reps: 12 }), 'bodyweight_reps', kg, true)).toBe('12 reps');
   });
 });
 

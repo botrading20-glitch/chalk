@@ -99,7 +99,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Affected:** `src/styles.css`.
 - **Acceptance:** dark #888692 (5.21 on bg) and light #656371 (5.30 on bg); `.search:focus-within` ring.
 - **Validation:** contrast script; screenshots in both themes.
-- **Status:** TODO
+- **Status:** VERIFIED. Inactive tabs compute to rgb(136,134,146) (#888692) in dark, and the token reads #656371 in light; the contrast script gives 5.21 and 5.30 on the background. The search field outlines when its input has focus-visible. Screenshots of History and the live workout in both themes look right.
 
 ### SEC-001: Content Security Policy in production
 - **Objective:** a CSP meta tag in production builds limits scripts to the app's origin and network to GitHub's API and the exercise image host.
@@ -114,7 +114,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Objective:** check the main screens at 375 px, 768 px and desktop in both themes with sample data, and fix real defects.
 - **Priority / risk:** P2 / LOW.
 - **Dependencies:** DX-001, A11Y-001.
-- **Status:** TODO
+- **Status:** VERIFIED at 375, 360 and 1280 px, dark and light, with sample data. Defects found and fixed: (1) charts kept their 320 px first-render width and overflowed phones narrower than about 386 px (`.chart { min-width: 0 }`); (2) the charts' screen-reader table widened the page, because a table ignores `width: 1px` (it's now wrapped in the `.sr-only` div); (3) the 17-week calendar overflowed at 360 px (minmax(0, 1fr) columns); (4) the Back up / Restore button pair overflowed Settings (labels now wrap); (5) Previous values such as "48.75 kg × 10" were cut off, hiding reps (units dropped in that column, inputs narrower below 380 px). Sweep: no page-level overflow on 12 routes at 360 px, and no clipped Previous value.
 
 ### DOC-001: Project memory
 - **Objective:** `.ai/` files plus a pointer and new architecture notes in `CLAUDE.md`.

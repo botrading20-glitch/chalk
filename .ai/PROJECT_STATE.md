@@ -7,7 +7,7 @@
 - **Stack:** React 19, TypeScript 7, Vite 8, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB), Vitest 5 (+ fake-indexeddb in tests). No backend.
 
 ## Current status
-- **Phase:** the quality pass is finished on branch `quality-pass` (14 commits ahead of `main`), waiting for the owner's go-ahead to merge (REL-100)
+- **Phase:** the quality pass is finished on branch `quality-pass` (ahead of `main`; `git log main..quality-pass` lists the commits), waiting for the owner's go-ahead to merge (REL-100)
 - **Completion:** all product requirements work. Quality requirements REQ-Q01–Q05 are done, apart from screen-reader and real-device checks.
 - **Release decision:** READY WITH DOCUMENTED LIMITATIONS (`RELEASE_CHECKLIST.md`)
 

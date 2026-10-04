@@ -126,7 +126,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Objective:** merge `quality-pass` into `main` and push, which deploys to https://botrading20-glitch.github.io/chalk/.
 - **Risk:** MEDIUM. It changes the live app the owner trains with. Rollback is `git revert` of the merge, then push; the service worker picks up the reverted build on the next visit.
 - **Before merging:** smoke tests S-01 to S-11 pass (see `TEST_STATUS.md`). After deploy, open the live URL on the phone and run S-03, S-04 and S-06 in a real workout.
-- **Status:** BLOCKED. Needs the owner's go-ahead (NN-15).
+- **Status:** DONE (2026-10-04, owner approved). Merged as 6d15c2e (`--no-ff`); on `main` before the push, 59 tests passed, the build passed and the lockfile passed `npm ci --dry-run`. Pushed 0698dc1..6d15c2e; the Pages run 37229036212 succeeded. The live page serves `index-Cd64usJi.js` (474 kB) with the CSP meta, and `sw.js` returns 200. Loaded in the built-in browser: renders, exercise photos load, no CSP violations, no console errors. Still to do: the owner's on-phone checks (`RELEASE_CHECKLIST.md`).
 
 ---
 
@@ -154,6 +154,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 | UX-004 | The new and edit exercise form has no draft or discard prompt. | Low | Short form; ADR-001 leaves it out on purpose. |
 | A11Y-002 | `Segmented` uses `role="radio"` buttons without arrow-key movement (each option is a tab stop). | Low | Works with Tab and Enter; arrow keys would match the radio pattern. |
 | DX-002 | No linter is configured (only strict `tsc`). | Low | Adding ESLint means new dev dependencies and a style decision for the owner. |
+| ENV-002 | GitHub moves the `ubuntu-latest` runner to Ubuntu 26 from 2026-10-19 (deploy annotation). | Low | Nothing to change now; if a deploy fails after that date, pin `runs-on: ubuntu-24.04` in `.github/workflows/deploy.yml`. |
 
 ## Traceability
 

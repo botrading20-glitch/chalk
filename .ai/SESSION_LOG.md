@@ -33,3 +33,22 @@ All work is committed on `quality-pass`. `main` is untouched, and nothing is pus
 
 ### Next session should start with
 Ask the owner whether to merge and deploy (REL-100). If yes, follow `CURRENT_TASK.md` → Next exact action.
+
+## Session: 2026-10-04 21:28–21:35 (release)
+
+### Objective
+Merge and deploy the quality pass (the owner said "merge and push it").
+
+### Completed
+- Merged `quality-pass` into `main` with `--no-ff` (6d15c2e). Tests (59) and build passed on `main`, then pushed.
+- Pages run 37229036212 succeeded. The live page serves the new bundle with the CSP; it renders with no console errors or CSP violations.
+
+### Problems discovered
+- `git merge -F -` doesn't read stdin; use a message file.
+- A deploy annotation says `ubuntu-latest` moves to Ubuntu 26 on 2026-10-19 (ENV-002).
+
+### Exact stopping point
+Released. Waiting for the owner's on-phone checks.
+
+### Next session should start with
+Ask how the release behaved on the phone (`RELEASE_CHECKLIST.md` → After deploy).

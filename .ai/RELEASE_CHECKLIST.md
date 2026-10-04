@@ -2,7 +2,7 @@
 
 For merging `quality-pass` into `main` (REL-100). Pushing `main` deploys to the live app (NN-15).
 
-**Decision (2026-10-04): READY WITH DOCUMENTED LIMITATIONS.** Waiting for the owner's go-ahead to merge.
+**Decision (2026-10-04): READY WITH DOCUMENTED LIMITATIONS.** The owner approved; merged as 6d15c2e and deployed the same day (Pages run 37229036212). On-phone checks below are still open.
 
 | Area | Item | State |
 |------|------|-------|

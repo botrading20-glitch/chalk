@@ -50,7 +50,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Approach:** a class error boundary around `<App/>` inside `DataProvider`. The backup uses `exportBackup()` and `saveFile()`, plain Dexie with no React. The boot failure path in `main.tsx` gets the same backup button.
 - **Acceptance:** a thrown render error shows the screen; *Download backup* produces a valid backup; *Reload* recovers.
 - **Validation:** inject a throw in dev and screenshot; restore the downloaded backup.
-- **Status:** TODO
+- **Status:** VERIFIED. Browser: a malformed workout (exercises: null) showed the recovery screen; Download a backup produced a valid file (66 workouts) with the file save stubbed; Go to Workout recovered once the record was removed. The boot-failure path renders the same screen (not forced).
 
 ### REL-002: Failures in async actions are visible
 - **Objective:** a failed save shows a message and doesn't leave buttons stuck.
@@ -59,7 +59,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Affected:** `src/main.tsx` (global `unhandledrejection` → toast), `src/pages/ActiveWorkout.tsx`.
 - **Acceptance:** a forced rejection in a click handler shows a toast. A finish failure re-enables the button and keeps the workout.
 - **Validation:** inject a failure in dev.
-- **Status:** TODO
+- **Status:** VERIFIED. Browser: rejected promises show one deduplicated toast and AbortError is ignored. A forced write failure on Save workout showed the message, re-enabled the button and kept the workout; the retry saved it.
 
 ### REL-003: Plate calculator freezes on huge targets
 - **Objective:** an absurd target (a typo such as 1000000) shows a message instead of freezing the page.
@@ -68,7 +68,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Affected:** `src/lib/plates.ts` (`MAX_LOAD`), `src/components/PlateCalculator.tsx`.
 - **Acceptance:** targets above 1,000 kg (2,200 lb) return `tooHeavy` immediately; the sheet says so.
 - **Validation:** `plates.test.ts` timing case.
-- **Status:** TODO
+- **Status:** VERIFIED. Unit test (10,000,000 kg returns tooHeavy in under 50 ms). Browser: typing 1 → 10,000,000 in the sheet took 271 ms in total and showed the message; 145 kg still loads 25+25+20+2.5 per side.
 
 ### DATA-001: Validated, confirmed backup restore
 - **Objective:** `importBackup` checks every record's shape before writing. A file with invalid records is rejected as a whole with a clear message. The user sees what will be restored and confirms. Restored weigh-ins keep one per day.

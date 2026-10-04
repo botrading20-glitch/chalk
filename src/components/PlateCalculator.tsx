@@ -1,6 +1,6 @@
 import { useState, type CSSProperties } from 'react';
 import { fmtNum, kgTo, toKg } from '../lib/format';
-import { BAR_OPTIONS, calculatePlates, DEFAULT_PLATES, defaultBar, type Load } from '../lib/plates';
+import { BAR_OPTIONS, calculatePlates, DEFAULT_PLATES, defaultBar, MAX_TARGET, type Load } from '../lib/plates';
 import { updateSettings, useSettings } from '../lib/settings';
 import type { Exercise, WeightUnit } from '../types';
 import { NumberField } from './fields';
@@ -75,7 +75,8 @@ function PlateCalculator({ exercise, initialKg, use, onDone }: { exercise?: Exer
   const [bar, setBar] = useState(remembered !== undefined ? barIn(remembered, unit) : defaultBar(exercise?.equipment, unit));
 
   const barOptions = [...new Set([...BAR_OPTIONS[unit], bar])].sort((a, b) => b - a);
-  const result = target !== undefined && target > 0 ? calculatePlates(target, bar, owned) : undefined;
+  const tooHeavy = target !== undefined && target > MAX_TARGET[unit];
+  const result = target !== undefined && target > 0 && !tooHeavy ? calculatePlates(target, bar, owned) : undefined;
   const shown = result?.exact ?? result?.below;
 
   function chooseBar(value: number) {
@@ -111,7 +112,9 @@ function PlateCalculator({ exercise, initialKg, use, onDone }: { exercise?: Exer
       <PlateDiagram load={shown} unit={unit} hasBar={bar > 0} />
 
       <div className="plates-result" role="status">
-        {!result ? (
+        {tooHeavy ? (
+          <p className="form-error">That’s more than any bar holds ({fmt(MAX_TARGET[unit])} max). Check the number.</p>
+        ) : !result ? (
           <p className="muted">Enter a weight to see what goes on each side.</p>
         ) : result.underBar ? (
           <p className="form-error">That’s lighter than the bar ({fmt(bar)}).</p>

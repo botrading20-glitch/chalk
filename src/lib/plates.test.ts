@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculatePlates, DEFAULT_PLATES } from './plates';
+import { calculatePlates, DEFAULT_PLATES, MAX_TARGET } from './plates';
 
 const kg = DEFAULT_PLATES.kg;
 
@@ -28,6 +28,14 @@ describe('calculatePlates', () => {
 
   it('flags targets lighter than the bar', () => {
     expect(calculatePlates(15, 20, kg)).toEqual({ underBar: true });
+  });
+
+  it('refuses absurd targets at once instead of freezing', () => {
+    const started = performance.now();
+    expect(calculatePlates(10_000_000, 20, kg)).toEqual({ underBar: false, tooHeavy: true });
+    expect(performance.now() - started).toBeLessThan(50);
+    expect(calculatePlates(MAX_TARGET.kg, 20, kg).exact?.total).toBe(MAX_TARGET.kg);
+    expect(calculatePlates(MAX_TARGET.lbs, 45, DEFAULT_PLATES.lbs).tooHeavy).toBeUndefined();
   });
 
   it('handles pounds', () => {

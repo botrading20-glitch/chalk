@@ -915,6 +915,24 @@ dialog.sheet-full {
   gap: 8px;
 }
 
+.recovery {
+  min-height: 100dvh;
+  justify-content: center;
+}
+
+.recovery-details {
+  max-width: 100%;
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.recovery-details code {
+  display: block;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
 .stat-row {
   display: flex;
   flex-wrap: wrap;

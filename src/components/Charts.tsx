@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
+import { useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
 
 // Small hand-rolled SVG charts: one series each, so no legend (the card title
 // names the metric). Every chart has a hover/tap readout and a screen-reader table.
@@ -6,10 +6,13 @@ import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as R
 function useWidth<T extends HTMLElement>() {
   const ref = useRef<T>(null);
   const [width, setWidth] = useState(320);
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const ro = new ResizeObserver(([entry]) => setWidth(Math.max(200, Math.floor(entry.contentRect.width))));
+    const measure = (w: number) => setWidth(Math.max(200, Math.floor(w)));
+    // Measure before the first paint, so a chart never shows at the placeholder width.
+    measure(el.getBoundingClientRect().width);
+    const ro = new ResizeObserver(([entry]) => measure(entry.contentRect.width));
     ro.observe(el);
     return () => ro.disconnect();
   }, []);

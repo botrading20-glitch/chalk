@@ -23,15 +23,17 @@ export function fmtSet(s: WorkoutSet, type: ExerciseType, units: Units, bare = f
   const dist = km !== undefined && !bare ? `${km} ${units.distanceUnit}` : km;
   const time = s.duration !== undefined ? fmtClock(s.duration) : undefined;
   const reps = s.reps !== undefined ? fmtNum(s.reps, 1) : undefined;
+  // Bare values sit in a narrow column; when they wrap, the reps keep their ×.
+  const x = bare ? ' ×\u00a0' : ' × ';
   switch (type) {
     case 'weight_reps':
-      return w && reps ? `${w} × ${reps}` : w ?? (reps ? `${reps} reps` : '');
+      return w && reps ? `${w}${x}${reps}` : w ?? (reps ? `${reps} reps` : '');
     case 'bodyweight_reps':
       return reps ? `${reps} reps` : '';
     case 'weighted_bodyweight':
-      return reps ? `${w && s.weight ? `+${w} × ` : ''}${reps}${w && s.weight ? '' : ' reps'}` : '';
+      return reps ? `${w && s.weight ? `+${w}${x}` : ''}${reps}${w && s.weight ? '' : ' reps'}` : '';
     case 'assisted_bodyweight':
-      return reps ? `${w && s.weight ? `−${w} × ` : ''}${reps}${w && s.weight ? '' : ' reps'}` : '';
+      return reps ? `${w && s.weight ? `−${w}${x}` : ''}${reps}${w && s.weight ? '' : ' reps'}` : '';
     case 'duration':
       return time ?? '';
     case 'weight_duration':

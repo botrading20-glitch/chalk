@@ -247,7 +247,10 @@ export function WorkoutEditor({
             <div className="set-table" style={{ '--cols': cols } as CSSProperties}>
               <div className="set-row set-head" aria-hidden="true">
                 <span>Set</span>
-                <span className="prev-col">Previous</span>
+                <span className="prev-col">
+                  <span className="prev-long">Previous</span>
+                  <span className="prev-short">Last</span>
+                </span>
                 {fields.map((f) => (
                   <span key={f}>{fieldHeader(f, type, settings)}</span>
                 ))}

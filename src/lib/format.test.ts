@@ -57,9 +57,9 @@ describe('fmtSet', () => {
     expect(fmtSet(s({ weight: 100, reps: 5 }), 'weight_reps', { weightUnit: 'lbs', distanceUnit: 'mi' })).toBe('220.5 lbs × 5');
   });
 
-  it('leaves units out for columns that already name them', () => {
-    expect(fmtSet(s({ weight: 48.75, reps: 10 }), 'weight_reps', kg, true)).toBe('48.75 × 10');
-    expect(fmtSet(s({ weight: 20, reps: 8 }), 'assisted_bodyweight', kg, true)).toBe('−20 × 8');
+  it('leaves units out for columns that already name them, keeping × with the reps', () => {
+    expect(fmtSet(s({ weight: 48.75, reps: 10 }), 'weight_reps', kg, true)).toBe('48.75 × 10');
+    expect(fmtSet(s({ weight: 20, reps: 8 }), 'assisted_bodyweight', kg, true)).toBe('−20 × 8');
     expect(fmtSet(s({ reps: 12 }), 'bodyweight_reps', kg, true)).toBe('12 reps');
   });
 });

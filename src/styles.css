@@ -1330,6 +1330,32 @@ dialog.sheet-full {
   }
 }
 
+.set-head .prev-short {
+  display: none;
+}
+
+/* Smallest phones (and large Android display sizes): Previous wraps onto two
+   short lines, "28.75" over "× 13", which still fits the row height. */
+@media (max-width: 339px) {
+  .set-table {
+    --field-w: 3.75rem;
+  }
+
+  .set-table .prev {
+    font-size: 11px;
+    line-height: 1.15;
+    white-space: normal;
+  }
+
+  .set-head .prev-long {
+    display: none;
+  }
+
+  .set-head .prev-short {
+    display: inline;
+  }
+}
+
 .set-row {
   display: grid;
   grid-template-columns: var(--cols);

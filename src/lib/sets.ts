@@ -8,21 +8,32 @@ export function fmtSetWeight(kg: number, units: Units) {
   return `${fmtNum(kgTo(kg, units.weightUnit), units.weightUnit === 'kg' ? 2 : 1)} ${units.weightUnit}`;
 }
 
-/** One-line summary such as "66 kg × 15", "+10 kg × 8", "2.01 km · 5:43". */
-export function fmtSet(s: WorkoutSet, type: ExerciseType, units: Units) {
-  const w = s.weight !== undefined ? fmtSetWeight(s.weight, units) : undefined;
-  const dist = s.distance !== undefined ? `${fmtNum(kmTo(s.distance, units.distanceUnit), 2)} ${units.distanceUnit}` : undefined;
+/**
+ * One-line summary such as "66 kg × 15", "+10 kg × 8", "2.01 km · 5:43".
+ * `bare` leaves out the units, for columns whose header already names them.
+ */
+export function fmtSet(s: WorkoutSet, type: ExerciseType, units: Units, bare = false) {
+  const w =
+    s.weight === undefined
+      ? undefined
+      : bare
+        ? fmtNum(kgTo(s.weight, units.weightUnit), units.weightUnit === 'kg' ? 2 : 1)
+        : fmtSetWeight(s.weight, units);
+  const km = s.distance !== undefined ? fmtNum(kmTo(s.distance, units.distanceUnit), 2) : undefined;
+  const dist = km !== undefined && !bare ? `${km} ${units.distanceUnit}` : km;
   const time = s.duration !== undefined ? fmtClock(s.duration) : undefined;
   const reps = s.reps !== undefined ? fmtNum(s.reps, 1) : undefined;
+  // Bare values sit in a narrow column; when they wrap, the reps keep their ×.
+  const x = bare ? ' ×\u00a0' : ' × ';
   switch (type) {
     case 'weight_reps':
-      return w && reps ? `${w} × ${reps}` : w ?? (reps ? `${reps} reps` : '');
+      return w && reps ? `${w}${x}${reps}` : w ?? (reps ? `${reps} reps` : '');
     case 'bodyweight_reps':
       return reps ? `${reps} reps` : '';
     case 'weighted_bodyweight':
-      return reps ? `${w && s.weight ? `+${w} × ` : ''}${reps}${w && s.weight ? '' : ' reps'}` : '';
+      return reps ? `${w && s.weight ? `+${w}${x}` : ''}${reps}${w && s.weight ? '' : ' reps'}` : '';
     case 'assisted_bodyweight':
-      return reps ? `${w && s.weight ? `−${w} × ` : ''}${reps}${w && s.weight ? '' : ' reps'}` : '';
+      return reps ? `${w && s.weight ? `−${w}${x}` : ''}${reps}${w && s.weight ? '' : ' reps'}` : '';
     case 'duration':
       return time ?? '';
     case 'weight_duration':

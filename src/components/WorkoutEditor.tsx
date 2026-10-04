@@ -211,7 +211,7 @@ export function WorkoutEditor({
         const fields = fieldsFor(type);
         const labels = setLabels(we.sets);
         const letter = we.supersetId !== undefined ? supersetLetters.get(we.supersetId) : undefined;
-        const cols = `2.5rem minmax(0,1fr) ${fields.map(() => '4.25rem').join(' ')}${mode === 'live' ? ' 2.75rem' : ''}`;
+        const cols = `2.5rem minmax(0,1fr) ${fields.map(() => 'var(--field-w)').join(' ')}${mode === 'live' ? ' 2.75rem' : ''}`;
 
         return (
           <section key={we.id} className={`ex-block ${letter ? 'in-superset' : ''}`}>
@@ -247,7 +247,10 @@ export function WorkoutEditor({
             <div className="set-table" style={{ '--cols': cols } as CSSProperties}>
               <div className="set-row set-head" aria-hidden="true">
                 <span>Set</span>
-                <span className="prev-col">Previous</span>
+                <span className="prev-col">
+                  <span className="prev-long">Previous</span>
+                  <span className="prev-short">Last</span>
+                </span>
                 {fields.map((f) => (
                   <span key={f}>{fieldHeader(f, type, settings)}</span>
                 ))}
@@ -282,7 +285,7 @@ export function WorkoutEditor({
                       }}
                       aria-label={prev ? `Copy previous: ${fmtSet(prev, type, settings)}` : 'No previous set'}
                     >
-                      {prev ? fmtSet(prev, type, settings) : '—'}
+                      {prev ? fmtSet(prev, type, settings, true) : '—'}
                     </button>
                     {fields.map((f) => (
                       <SetInput

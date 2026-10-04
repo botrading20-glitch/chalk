@@ -7,7 +7,7 @@ import { Sheet } from '../components/Sheet';
 import { SyncSettings } from '../components/SyncSettings';
 import { PageHeader, Segmented, Stat, Toggle } from '../components/ui';
 import { db } from '../db';
-import { exportBackup, importBackup, wipeAllData } from '../lib/backup';
+import { exportBackup, parseBackup, restoreBackup, wipeAllData, type ParsedBackup } from '../lib/backup';
 import { saveFile } from '../lib/csv';
 import { useData } from '../lib/data';
 import { fmtDate, fmtRest, plural } from '../lib/format';
@@ -18,6 +18,8 @@ import { createRoutinesFromHistory } from '../lib/workouts';
 
 const REST_OPTIONS = [0, 30, 45, 60, 75, 90, 120, 150, 180, 240, 300];
 const today = () => new Date().toISOString().slice(0, 10);
+/** "a", "a and b", "a, b and c" */
+const listJoin = (items: string[]) => (items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
 
 export function SettingsPage() {
   const settings = useSettings();
@@ -45,6 +47,42 @@ export function SettingsPage() {
     } catch (e) {
       toast((e as Error).message);
     }
+  }
+
+  async function onBackupFile(file: File) {
+    let backup: ParsedBackup;
+    try {
+      backup = parseBackup(await file.text());
+    } catch (e) {
+      toast((e as Error).message);
+      return;
+    }
+    const parts = [
+      [backup.workouts.length, 'workout'],
+      [backup.routines.length, 'routine'],
+      [backup.exercises.length, 'exercise'],
+      [backup.bodyweight.length, 'weigh-in'],
+    ] as const;
+    const contents = parts.filter(([n]) => n > 0).map(([n, word]) => plural(n, word));
+    if (!contents.length && !backup.settings) {
+      toast(backup.skipped ? 'Everything in this backup is damaged, so there is nothing to restore.' : 'This backup is empty.');
+      return;
+    }
+    const ok = await confirmDialog({
+      title: 'Restore this backup?',
+      message: [
+        `${backup.exportedAt ? `From ${fmtDate(backup.exportedAt)}: ` : ''}${contents.length ? listJoin(contents) : 'settings only'}.`,
+        'Anything also on this device is replaced by the backup’s copy. Nothing else is deleted.',
+        backup.settings ? 'Your settings are replaced too.' : '',
+        backup.skipped ? `${plural(backup.skipped, 'damaged record')} in the file will be left out.` : '',
+      ]
+        .filter(Boolean)
+        .join(' '),
+      confirmLabel: 'Restore',
+    });
+    if (!ok) return;
+    await restoreBackup(backup);
+    toast(`Restored ${contents.length ? listJoin(contents) : 'your settings'}`);
   }
 
   async function runImport() {
@@ -203,13 +241,7 @@ export function SettingsPage() {
           onChange={async (e) => {
             const f = e.target.files?.[0];
             e.target.value = '';
-            if (!f) return;
-            try {
-              const r = await importBackup(await f.text());
-              toast(`Restored ${plural(r.workouts, 'workout')} and ${plural(r.routines, 'routine')}`);
-            } catch (err) {
-              toast((err as Error).message);
-            }
+            if (f) await onBackupFile(f);
           }}
         />
         <button

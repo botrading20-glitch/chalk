@@ -37,9 +37,17 @@ export interface PlateResult {
   above?: Load;
   /** The target is lighter than the empty bar. */
   underBar: boolean;
+  /** The target is beyond anything a bar holds (most likely a typo). */
+  tooHeavy?: boolean;
 }
 
+/** Heaviest load worth solving, per unit. Above it the input is a typo. */
+export const MAX_TARGET: Record<WeightUnit, number> = { kg: 1000, lbs: 2200 };
+
 const UNIT = 100; // work in hundredths so 1.25 and 2.5 stay integers
+// The solver's table grows with the load, and a stray extra zero froze the page
+// for minutes, so refuse anything past MAX_TARGET in either unit.
+const MAX_SIDE = (MAX_TARGET.lbs / 2) * UNIT;
 
 /**
  * Fewest plates for every per-side amount up to `max` (in hundredths), with
@@ -72,6 +80,7 @@ function solve(max: number, plates: number[]) {
 export function calculatePlates(target: number, bar: number, plates: number[]): PlateResult {
   const side = Math.round(((target - bar) / 2) * UNIT);
   if (side < 0) return { underBar: true };
+  if (side > MAX_SIDE) return { underBar: false, tooHeavy: true };
   const biggest = Math.round(Math.max(0, ...plates) * UNIT);
   const { reachable, platesFor } = solve(side + biggest, plates);
   const load = (amount: number): Load => {

@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useState } from 'react';
-import { confirmDialog } from '../components/dialogs';
+import { confirmDialog, toast } from '../components/dialogs';
 import { BufferedText } from '../components/fields';
 import { IconDown } from '../components/Icons';
 import { Sheet } from '../components/Sheet';
@@ -158,8 +158,13 @@ function FinishForm({ active, onCancel }: { active: ActiveWorkout; onCancel: () 
         e.preventDefault();
         if (saving || !savedSets) return;
         setSaving(true);
-        const w = await finishActive({ title, description, keepUnchecked, updateRoutine });
-        navigate(`/history/${w.id}?saved=1`, { replace: true });
+        try {
+          const w = await finishActive({ title, description, keepUnchecked, updateRoutine });
+          navigate(`/history/${w.id}?saved=1`, { replace: true });
+        } catch (err) {
+          setSaving(false);
+          toast(`Couldn't save the workout: ${(err as Error).message}. It's still here; try again.`);
+        }
       }}
     >
       <div className="stat-row">

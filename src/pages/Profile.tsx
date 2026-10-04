@@ -186,7 +186,7 @@ function Calendar() {
 
   return (
     <div className="calendar" role="img" aria-label={`${plural(trained, 'training day')} in the last ${CAL_WEEKS} weeks`}>
-      <div className="cal-months" style={{ gridTemplateColumns: `repeat(${CAL_WEEKS}, 1fr)` }}>
+      <div className="cal-months" style={{ gridTemplateColumns: `repeat(${CAL_WEEKS}, minmax(0, 1fr))` }}>
         {weeks.map((wk, i) => {
           const prev = i ? new Date(weeks[i - 1]).getMonth() : -1;
           return <span key={wk}>{new Date(wk).getMonth() !== prev ? monthFmt.format(wk) : ''}</span>;
@@ -198,7 +198,7 @@ function Calendar() {
             <span key={i}>{d}</span>
           ))}
         </div>
-        <div className="cal-grid" style={{ gridTemplateColumns: `repeat(${CAL_WEEKS}, 1fr)` }}>
+        <div className="cal-grid" style={{ gridTemplateColumns: `repeat(${CAL_WEEKS}, minmax(0, 1fr))` }}>
           {weeks.map((wk) => (
             <div key={wk} className="cal-week">
               {Array.from({ length: 7 }, (_, d) => {

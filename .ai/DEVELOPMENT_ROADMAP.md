@@ -71,15 +71,15 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Status:** VERIFIED. Unit test (10,000,000 kg returns tooHeavy in under 50 ms). Browser: typing 1 → 10,000,000 in the sheet took 271 ms in total and showed the message; 145 kg still loads 25+25+20+2.5 per side.
 
 ### DATA-001: Validated, confirmed backup restore
-- **Objective:** `importBackup` checks every record's shape before writing. A file with invalid records is rejected as a whole with a clear message. The user sees what will be restored and confirms. Restored weigh-ins keep one per day.
+- **Objective:** `importBackup` checks every record's shape before writing. Damaged records are left out and counted, and the rest restores (changed from "reject the whole file" after REL-001 showed a crash-screen backup can contain the record that caused the crash). The user sees what will be restored and confirms. Restored weigh-ins keep one per day.
 - **Why:** restore writes whatever the file holds. A wrong or corrupted file can write records that crash rendering (see REL-001) or create duplicate weigh-ins.
 - **Priority / risk:** P0 / MEDIUM (writes user data; NN-07 must hold).
 - **Dependencies:** TEST-001 (backup round-trip test first).
 - **Affected:** `src/lib/backup.ts`, `src/lib/validate.ts` (new), `src/pages/Settings.tsx`.
 - **Approach:** add pure validators (`isWorkout`, `isRoutine`, `isExercise`, `isBodyWeight`). Parse, validate, then confirm with counts, then write in one transaction. Same-day weigh-ins from the file replace the local ones.
-- **Acceptance:** a backup from any earlier version restores unchanged. Malformed JSON, a wrong app id or bad records are rejected with nothing written. The confirm sheet shows the counts.
+- **Acceptance:** a backup from any earlier version restores unchanged. Malformed JSON or a wrong app id is rejected with nothing written; damaged records are skipped and reported. The confirm sheet shows the counts.
 - **Validation:** `backup.test.ts` (fake-indexeddb is not installed, so the pure parse/validate step is tested and the write path is checked in the browser).
-- **Status:** TODO
+- **Status:** VERIFIED. 56 tests pass (damaged/repairable records, settings cleaning, one weigh-in per day). Browser: the confirm sheet listed 65 workouts, 6 routines, 1 exercise, 16 weigh-ins and "1 damaged record … left out"; Restore wrote them; cleaning every stored record left all of them byte-identical (canonical JSON), so a restore causes no sync churn.
 
 ### UX-001: Editor drafts survive leaving the screen
 - **Objective:** changes in the routine editor and the past-workout editor survive the back gesture, tapping an exercise link, closing the tab or the app being killed. The visible Back button asks before discarding changes.

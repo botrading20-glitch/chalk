@@ -1,35 +1,36 @@
 # Current task
 
 ## Task
-REL-100: merge `quality-pass` into `main` and deploy
+Post-release: on-phone checks of the deployed quality pass
 
 ## Objective
-Ship the quality pass to the live app once the owner agrees.
+Confirm on the owner's Android phone that the live app (main @ 6d15c2e) behaves as tested in the browser.
 
 ## Status
-BLOCKED: waiting for the owner's go-ahead (pushing `main` deploys; NN-15)
+BLOCKED: needs the owner and their phone
 
 ## Work completed
-- Every task in phases 0–14 of `DEVELOPMENT_ROADMAP.md` is DONE or VERIFIED (DX-001, TEST-001, REL-001/002/003, DATA-001, UX-001, A11Y-001, SEC-001, QA-001, DOC-001).
+- REL-100: merged `quality-pass` into `main` (6d15c2e), pushed, deployed and verified on the live URL (see `DEVELOPMENT_ROADMAP.md` → REL-100).
 
 ## Work in progress
-None. The working tree is clean after the final docs commit.
+None. The working tree is clean.
 
 ## Files modified
-See `PROGRESS.md` for the commit list. `git diff main..quality-pass --stat` shows the whole change.
+None since the merge, apart from these docs.
 
 ## Important details
-- The dev browser at localhost:5173 holds the sample data (65 workouts). The preview origin (4173) holds a copy too. Both are test data only.
-- `tmp-import/chalk-sample-backup.json` is git-ignored; regenerate it with `node scripts/sample-backup.mjs`.
+- Installed copies update themselves on the next open (`registerType: 'autoUpdate'`). Expect one automatic reload.
+- `quality-pass` still exists locally, fully merged; delete it with `git branch -d quality-pass` whenever.
+- After `git switch`, files come back with CRLF endings (autocrlf). Scripted edits that match on `\n` miss; use the edit tool or normalise first.
 
 ## Known issues
-Low-severity items in the roadmap "Discovered" table.
+Low-severity items are in the roadmap "Discovered" table, plus ENV-002 (Ubuntu 26 runner from 2026-10-19).
 
 ## Verification
-All automated checks and smoke tests pass (`TEST_STATUS.md`). Real-device checks are pending until after deploy.
+Live page: new bundle, CSP present, renders, no console errors. Real-device behaviour: NOT RUN.
 
 ## Next exact action
-If the owner approves: `git switch main`, `git merge --no-ff quality-pass`, `npm test`, `npm run build`, then push `main` with `$env:GH_TOKEN = gh auth token --user botrading20-glitch` set for the push. Watch the Pages workflow, then run the on-phone checks in `RELEASE_CHECKLIST.md`.
+Ask the owner for the results of the four checks under "After deploy" in `RELEASE_CHECKLIST.md`. Fix anything they report, then pick the next item with them.
 
 ## Last updated
-2026-10-04 21:25
+2026-10-04 21:35

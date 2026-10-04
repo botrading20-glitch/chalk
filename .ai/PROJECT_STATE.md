@@ -3,13 +3,13 @@
 ## Project
 - **Name:** Chalk
 - **Purpose:** a free, offline-first workout logger that replaces Hevy for its owner, possibly published to app stores later
-- **Version:** 0.1.0 (`package.json`). The live app at https://botrading20-glitch.github.io/chalk/ runs `main` @ 0698dc1.
+- **Version:** 0.1.0 (`package.json`). The live app at https://botrading20-glitch.github.io/chalk/ runs `main` @ 6d15c2e, the quality-pass merge, deployed 2026-10-04.
 - **Stack:** React 19, TypeScript 7, Vite 8, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB), Vitest 5 (+ fake-indexeddb in tests). No backend.
 
 ## Current status
-- **Phase:** the quality pass is finished on branch `quality-pass` (ahead of `main`; `git log main..quality-pass` lists the commits), waiting for the owner's go-ahead to merge (REL-100)
+- **Phase:** the quality pass is merged and live (REL-100 done). Next: the owner checks it on the phone.
 - **Completion:** all product requirements work. Quality requirements REQ-Q01–Q05 are done, apart from screen-reader and real-device checks.
-- **Release decision:** READY WITH DOCUMENTED LIMITATIONS (`RELEASE_CHECKLIST.md`)
+- **Release decision:** READY WITH DOCUMENTED LIMITATIONS, released 2026-10-04 (`RELEASE_CHECKLIST.md`)
 
 ## Architecture
 A static PWA. Pages read everything through `DataProvider` (`useData()`), which loads all exercises and workouts and computes records once. Writes go straight to Dexie, and live queries re-render. The in-progress workout, editor drafts and other per-device state live in the `kv` table. Optional sync merges three ways against a private GitHub repo. An error boundary wraps the app, and backups are checked before restore. Full notes are in `CLAUDE.md`.
@@ -33,9 +33,8 @@ None known at medium or high severity. Low-severity items are in the roadmap "Di
 - Sync is shipped but unused by the owner. A Google Drive replacement is parked on the local-only branch `google-sync`; merging it needs its origins added to the CSP `connect-src`.
 
 ## Immediate next steps
-1. Owner decides on REL-100: merge `quality-pass` into `main` and push (deploys).
-2. After deploy, run the on-phone checks in `RELEASE_CHECKLIST.md`.
-3. Then pick from the deferred list or the owner's own requests.
+1. The owner runs the on-phone checks in `RELEASE_CHECKLIST.md` at the next workout and reports anything odd.
+2. Then pick from the deferred list or the owner's own requests.
 
 ## Last verified
-2026-10-04 21:20: typecheck, 59 tests, build, and smoke S-01 to S-11 on dev and the `/chalk/` preview build.
+2026-10-04: typecheck, 59 tests, build, and smoke S-01 to S-11 on dev and the `/chalk/` preview; the live deploy loads cleanly.

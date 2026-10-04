@@ -2481,6 +2481,26 @@ dialog.sheet-full {
   color: var(--text-2);
 }
 
+.draft-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 10px 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 14px;
+  color: var(--text-2);
+}
+
+.draft-bar span {
+  flex: 1;
+}
+
+.draft-bar strong {
+  color: var(--text);
+}
+
 .sync-warning {
   display: grid;
   gap: 2px;

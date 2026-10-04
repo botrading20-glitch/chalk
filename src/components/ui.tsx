@@ -7,19 +7,22 @@ import { IconBack } from './Icons';
 export function PageHeader({
   title,
   back,
+  onBack,
   actions,
   large = false,
 }: {
   title: ReactNode;
   /** Fallback route for the back button; omit to hide it. */
   back?: string;
+  /** Replaces the plain "go back", e.g. to ask about unsaved changes first. */
+  onBack?: () => void;
   actions?: ReactNode;
   large?: boolean;
 }) {
   return (
     <header className={`page-head ${large ? 'large' : ''}`}>
       {back !== undefined && (
-        <button className="icon-btn" onClick={() => goBack(back)} aria-label="Back">
+        <button className="icon-btn" onClick={onBack ?? (() => goBack(back))} aria-label="Back">
           <IconBack />
         </button>
       )}

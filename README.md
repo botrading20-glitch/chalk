@@ -73,6 +73,7 @@ To import from Hevy: in Hevy go to **Profile → Settings → Export & import da
 
 ```
 scripts/build-exercises.mjs   regenerates src/data/exercises.json (npm run exercises)
+scripts/sample-backup.mjs     writes a sample backup to restore in a dev browser for testing
 src/db.ts                     IndexedDB schema (Dexie) and exercise library seeding
 src/lib/                      stats & records, Hevy CSV import/export, backups, cloud sync, routing, formatting
 src/components/               workout editor, exercise picker, charts, sheets

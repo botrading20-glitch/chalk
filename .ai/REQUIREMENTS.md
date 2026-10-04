@@ -28,14 +28,14 @@ Status: DONE (built and verified) · PARTIAL · TODO · DEFERRED.
 
 | ID | Requirement | Pri | Status | Tasks |
 |----|-------------|-----|--------|-------|
-| REQ-Q01 | Never lose or hide user data silently. A crash shows a recovery screen that can still export a backup. A restore validates its input. Edits in the routine and workout editors survive leaving the screen by accident. | P0 | See roadmap | REL-001, REL-002, DATA-001, UX-001 |
-| REQ-Q02 | Critical calculations and formats are covered by automated tests: records, weekly stats, Hevy CSV, backup, parsing. | P1 | See roadmap | TEST-001 |
-| REQ-Q03 | Text meets WCAG AA contrast (4.5:1) in both themes, and every control shows keyboard focus. | P1 | See roadmap | A11Y-001 |
-| REQ-Q04 | Defence in depth for the stored GitHub token: a Content Security Policy in production builds. | P2 | See roadmap | SEC-001 |
-| REQ-Q05 | A new session can rebuild the project's state from the repo (`CLAUDE.md` + `.ai/`). | P1 | See roadmap | DOC-001 |
+| REQ-Q01 | Never lose or hide user data silently. A crash shows a recovery screen that can still export a backup. A restore validates its input. Edits in the routine and workout editors survive leaving the screen by accident. | P0 | DONE | REL-001, REL-002, DATA-001, UX-001 |
+| REQ-Q02 | Critical calculations and formats are covered by automated tests: records, weekly stats, Hevy CSV, backup, parsing. | P1 | DONE | TEST-001 |
+| REQ-Q03 | Text meets WCAG AA contrast (4.5:1) in both themes, and every control shows keyboard focus. | P1 | PARTIAL (no screen-reader pass) | A11Y-001 |
+| REQ-Q04 | Defence in depth for the stored GitHub token: a Content Security Policy in production builds. | P2 | DONE | SEC-001 |
+| REQ-Q05 | A new session can rebuild the project's state from the repo (`CLAUDE.md` + `.ai/`). | P1 | DONE | DOC-001 |
 
 ## Acceptance notes
 
 - **REQ-Q01, crash recovery:** any render error shows a screen with *Reload* and *Download backup*. The backup download works without React.
-- **REQ-Q01, restore:** a malformed file or record is rejected with a plain message and nothing is written. Valid records are summarised and the user confirms first. A restore never leaves two weigh-ins on one day.
+- **REQ-Q01, restore:** a file that isn't a Chalk backup is rejected with a plain message and nothing is written. Damaged records inside a backup are left out and counted. Valid records are summarised and the user confirms first. Fields from newer versions are kept. A restore never leaves two weigh-ins on one day.
 - **REQ-Q01, drafts:** after leaving the routine or past-workout editor any way other than Save or an explicit Discard, reopening it shows the unsaved changes with a way to discard them.

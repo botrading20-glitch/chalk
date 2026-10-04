@@ -118,12 +118,14 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 
 ### DOC-001: Project memory
 - **Objective:** `.ai/` files plus a pointer and new architecture notes in `CLAUDE.md`.
-- **Status:** IN_PROGRESS
+- **Status:** DONE. `.ai/` holds the state, current task, requirements, invariants, roadmap, progress, decisions and ADR-001, test status, session log, smoke tests and release checklist. `CLAUDE.md` gained a pointer to `.ai/`, the test and sample commands, the Git Bash build note, and architecture notes on crash recovery, restore checks, drafts and the CSP. `README.md` lists the sample script.
 
 ## Phase 15: Release
 
 ### REL-100: Merge and deploy
-- **Objective:** merge `quality-pass` into `main` and push, which deploys.
+- **Objective:** merge `quality-pass` into `main` and push, which deploys to https://botrading20-glitch.github.io/chalk/.
+- **Risk:** MEDIUM. It changes the live app the owner trains with. Rollback is `git revert` of the merge, then push; the service worker picks up the reverted build on the next visit.
+- **Before merging:** smoke tests S-01 to S-11 pass (see `TEST_STATUS.md`). After deploy, open the live URL on the phone and run S-03, S-04 and S-06 in a real workout.
 - **Status:** BLOCKED. Needs the owner's go-ahead (NN-15).
 
 ---
@@ -140,7 +142,18 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 | FEAT-006 | Warm-up badge colour other than yellow | Offered to the owner, no answer yet. |
 | QA-002 | iPhone testing | No device. Expected caveats: no vibration, separate Safari and home-screen storage, locked-screen beep uncertain. |
 | QA-003 | Lock-screen ±15 s / pause buttons on Android | Needs the owner's phone; never reported on. |
-| PERF-001 | Route-level code splitting | Main chunk is 145 kB gzip and everything is precached for offline. No measured problem; revisit if startup is slow on the phone. |
+| PERF-001 | Route-level code splitting | Main chunk is 149 kB gzip and everything is precached for offline. No measured problem; revisit if startup is slow on the phone. |
+
+## Discovered during the 2026-10-04 pass (valid, not yet done)
+
+| ID | Item | Severity | Why it remains |
+|----|------|----------|----------------|
+| DATA-002 | Records arriving through sync aren't shape-checked. A damaged one would show the crash screen (with a backup button) rather than be skipped. | Low | Filtering sync input would turn into a cloud deletion (see `DECISIONS.md`). A safe fix is a "data check" in Settings that lists damaged records for the user to delete. |
+| UX-002 | Deleting a custom exercise checks workouts but not routines, so routines then show "Deleted exercise". | Low | Small; needs a decision: block, or remove it from routines. |
+| UX-003 | "Best session volume" also shows for assisted-bodyweight exercises, where it multiplies assistance by reps. | Low | Cosmetic. Use `COUNTS_VOLUME` in `ExerciseDetail`. |
+| UX-004 | The new and edit exercise form has no draft or discard prompt. | Low | Short form; ADR-001 leaves it out on purpose. |
+| A11Y-002 | `Segmented` uses `role="radio"` buttons without arrow-key movement (each option is a tab stop). | Low | Works with Tab and Enter; arrow keys would match the radio pattern. |
+| DX-002 | No linter is configured (only strict `tsc`). | Low | Adding ESLint means new dev dependencies and a style decision for the owner. |
 
 ## Traceability
 

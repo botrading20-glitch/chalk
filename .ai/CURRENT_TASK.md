@@ -1,35 +1,35 @@
 # Current task
 
 ## Task
-DX-001: sample data script for QA
+REL-100: merge `quality-pass` into `main` and deploy
 
 ## Objective
-`node scripts/sample-backup.mjs` writes a realistic Chalk backup to `tmp-import/` that restores through Settings.
+Ship the quality pass to the live app once the owner agrees.
 
 ## Status
-IN_PROGRESS
+BLOCKED: waiting for the owner's go-ahead (pushing `main` deploys; NN-15)
 
 ## Work completed
-- Discovery, baseline and the `.ai/` plan (ENV-001, DISC-001, REQ-001)
+- Every task in phases 0–14 of `DEVELOPMENT_ROADMAP.md` is DONE or VERIFIED (DX-001, TEST-001, REL-001/002/003, DATA-001, UX-001, A11Y-001, SEC-001, QA-001, DOC-001).
 
 ## Work in progress
-- Writing `scripts/sample-backup.mjs`
+None. The working tree is clean after the final docs commit.
 
 ## Files modified
-- `.ai/*` (new)
+See `PROGRESS.md` for the commit list. `git diff main..quality-pass --stat` shows the whole change.
 
 ## Important details
-- Branch `quality-pass` was created from `main` @ 0698dc1.
-- The dev database at localhost:5173 is empty, so it's safe to seed.
+- The dev browser at localhost:5173 holds the sample data (65 workouts). The preview origin (4173) holds a copy too. Both are test data only.
+- `tmp-import/chalk-sample-backup.json` is git-ignored; regenerate it with `node scripts/sample-backup.mjs`.
 
 ## Known issues
-See `TEST_STATUS.md`.
+Low-severity items in the roadmap "Discovered" table.
 
 ## Verification
-None yet for this task.
+All automated checks and smoke tests pass (`TEST_STATUS.md`). Real-device checks are pending until after deploy.
 
 ## Next exact action
-Write `scripts/sample-backup.mjs` using library ids such as `lib-x-chest-fly-machine` and `lib-x-lat-pulldown-machine`. Run it, then restore the file in the dev app through Settings → Restore backup.
+If the owner approves: `git switch main`, `git merge --no-ff quality-pass`, `npm test`, `npm run build`, then push `main` with `$env:GH_TOKEN = gh auth token --user botrading20-glitch` set for the push. Watch the Pages workflow, then run the on-phone checks in `RELEASE_CHECKLIST.md`.
 
 ## Last updated
-2026-10-04 20:35
+2026-10-04 21:25

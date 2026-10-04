@@ -111,6 +111,19 @@ describe('backup', () => {
     expect(b.settings).toEqual({ defaultRest: 120, timerSound: false });
   });
 
+  it('keeps fields from a newer Chalk it doesn’t know, but drops known fields that fail their check', () => {
+    const newer = {
+      ...workout,
+      heartRate: 142,
+      description: 42,
+      exercises: [{ ...workout.exercises[0], tempo: '3-1-1', sets: [{ ...workout.exercises[0].sets[0], velocity: 0.8 }] }],
+    };
+    const [w] = parseBackup(JSON.stringify({ app: 'chalk', workouts: [newer] })).workouts as unknown as Record<string, unknown>[];
+    expect(w.heartRate).toBe(142);
+    expect('description' in w).toBe(false);
+    expect(w.exercises).toEqual([{ ...workout.exercises[0], tempo: '3-1-1', sets: [{ ...workout.exercises[0].sets[0], velocity: 0.8 }] }]);
+  });
+
   it('keeps a single weigh-in per day after a restore', async () => {
     const day = new Date(2026, 8, 24).getTime();
     await db.bodyweight.bulkPut([

@@ -5,7 +5,8 @@ import { EQUIPMENT, EXERCISE_TYPES, MUSCLES } from './meta';
 // Shape checks for records that come from outside the app (backup files).
 // A record whose identity or structure is broken is rejected (null). Fields
 // Chalk can fill in safely are repaired: derived ids, unknown labels, and the
-// nulls JSON writes in place of NaN.
+// nulls JSON writes in place of NaN. Fields this version doesn't know, written
+// by a newer Chalk, pass through untouched so a restore never drops data.
 
 type Obj = Record<string, unknown>;
 
@@ -17,6 +18,18 @@ const oneOf = <T extends string>(list: readonly T[], v: unknown, fallback: T): T
 
 const SET_TYPES: SetType[] = ['normal', 'warmup', 'failure', 'dropset'];
 const SET_NUMBERS = ['weight', 'reps', 'distance', 'duration', 'rpe'] as const;
+
+const SET_KEYS = ['id', 'type', 'completed', ...SET_NUMBERS];
+const BLOCK_KEYS = ['id', 'exerciseId', 'sets', 'notes', 'supersetId', 'restSeconds'];
+const WORKOUT_KEYS = ['id', 'title', 'description', 'startTime', 'endTime', 'exercises', 'exerciseIds', 'routineId'];
+const ROUTINE_KEYS = ['id', 'title', 'notes', 'folder', 'exercises', 'order', 'createdAt', 'updatedAt'];
+const EXERCISE_KEYS = ['id', 'name', 'type', 'equipment', 'primaryMuscle', 'secondaryMuscles', 'instructions', 'images', 'source', 'replaces'];
+const BODYWEIGHT_KEYS = ['id', 'date', 'weight', 'updatedAt'];
+
+/** Unknown fields of `original` plus the checked known ones; a known field that failed its check stays out. */
+function withUnknown<T extends object>(original: Obj, known: readonly string[], checked: T): T {
+  return { ...Object.fromEntries(Object.entries(original).filter(([k]) => !known.includes(k))), ...checked };
+}
 
 /** Missing or null is fine (undefined); anything else must be a finite number. */
 function optNum(v: unknown): number | undefined | false {
@@ -36,7 +49,7 @@ function cleanSet(v: unknown, completedByDefault: boolean): WorkoutSet | null {
     if (n === false) return null;
     if (n !== undefined) set[key] = n;
   }
-  return set;
+  return withUnknown<WorkoutSet>(v, SET_KEYS, set);
 }
 
 function cleanExercises(v: unknown, completedByDefault: boolean): WorkoutExercise[] | null {
@@ -49,14 +62,16 @@ function cleanExercises(v: unknown, completedByDefault: boolean): WorkoutExercis
     const superset = optNum(we.supersetId);
     const rest = optNum(we.restSeconds);
     if (superset === false || rest === false) return null;
-    out.push({
-      id: we.id,
-      exerciseId: we.exerciseId,
-      sets: sets as WorkoutSet[],
-      ...(isStr(we.notes) ? { notes: we.notes } : {}),
-      ...(superset !== undefined ? { supersetId: superset } : {}),
-      ...(rest !== undefined ? { restSeconds: rest } : {}),
-    });
+    out.push(
+      withUnknown<WorkoutExercise>(we, BLOCK_KEYS, {
+        id: we.id,
+        exerciseId: we.exerciseId,
+        sets: sets as WorkoutSet[],
+        ...(isStr(we.notes) ? { notes: we.notes } : {}),
+        ...(superset !== undefined ? { supersetId: superset } : {}),
+        ...(rest !== undefined ? { restSeconds: rest } : {}),
+      }),
+    );
   }
   return out;
 }
@@ -65,7 +80,7 @@ export function cleanWorkout(v: unknown): Workout | null {
   if (!isObj(v) || !isStr(v.id) || !isNum(v.startTime) || !isNum(v.endTime)) return null;
   const exercises = cleanExercises(v.exercises, true);
   if (!exercises) return null;
-  return {
+  return withUnknown<Workout>(v, WORKOUT_KEYS, {
     id: v.id,
     title: isStr(v.title) ? v.title : 'Workout',
     startTime: v.startTime,
@@ -75,7 +90,7 @@ export function cleanWorkout(v: unknown): Workout | null {
     exerciseIds: [...new Set(exercises.map((we) => we.exerciseId))],
     ...(isStr(v.description) ? { description: v.description } : {}),
     ...(isStr(v.routineId) ? { routineId: v.routineId } : {}),
-  };
+  });
 }
 
 export function cleanRoutine(v: unknown): Routine | null {
@@ -83,7 +98,7 @@ export function cleanRoutine(v: unknown): Routine | null {
   const exercises = cleanExercises(v.exercises, false);
   if (!exercises) return null;
   const now = Date.now();
-  return {
+  return withUnknown<Routine>(v, ROUTINE_KEYS, {
     id: v.id,
     title: v.title,
     exercises,
@@ -92,13 +107,13 @@ export function cleanRoutine(v: unknown): Routine | null {
     updatedAt: isNum(v.updatedAt) ? v.updatedAt : now,
     ...(isStr(v.notes) ? { notes: v.notes } : {}),
     ...(isStr(v.folder) && v.folder.trim() ? { folder: v.folder } : {}),
-  };
+  });
 }
 
 /** Only the user's own exercises travel in backups; the library ships with the app. */
 export function cleanExercise(v: unknown): Exercise | null {
   if (!isObj(v) || !isStr(v.id) || !isStr(v.name) || !v.name.trim() || v.source === 'library') return null;
-  return {
+  return withUnknown<Exercise>(v, EXERCISE_KEYS, {
     id: v.id,
     name: v.name,
     type: oneOf(EXERCISE_TYPES, v.type, 'weight_reps'),
@@ -109,12 +124,12 @@ export function cleanExercise(v: unknown): Exercise | null {
     images: isStrList(v.images) ? v.images : [],
     source: 'custom',
     ...(isStr(v.replaces) ? { replaces: v.replaces } : {}),
-  };
+  });
 }
 
 export function cleanBodyWeight(v: unknown): BodyWeight | null {
   if (!isObj(v) || !isStr(v.id) || !isNum(v.date) || !isNum(v.weight) || v.weight <= 0) return null;
-  return { id: v.id, date: v.date, weight: v.weight, updatedAt: isNum(v.updatedAt) ? v.updatedAt : v.date };
+  return withUnknown<BodyWeight>(v, BODYWEIGHT_KEYS, { id: v.id, date: v.date, weight: v.weight, updatedAt: isNum(v.updatedAt) ? v.updatedAt : v.date });
 }
 
 /** Keeps the settings whose type matches Chalk's own; the rest fall back to the defaults. */

@@ -1,10 +1,35 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import pkg from './package.json' with { type: 'json' };
 
 // BASE_PATH lets the GitHub Pages workflow serve the app from /<repo>/.
 const base = process.env.BASE_PATH ?? '/';
+
+// Content Security Policy for production builds (the dev server's hot reload
+// needs inline scripts). The GitHub sync token sits in IndexedDB, so scripts
+// only come from the app itself, and the network only reaches GitHub's API and
+// the exercise photos. Blob URLs carry the share image and the rest-alert audio.
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self'",
+  "img-src 'self' blob: data: https://raw.githubusercontent.com",
+  "font-src 'self'",
+  "media-src 'self' blob:",
+  "connect-src 'self' https://api.github.com",
+  "worker-src 'self'",
+  "manifest-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ');
+
+const contentSecurityPolicy: Plugin = {
+  name: 'chalk-csp',
+  apply: 'build',
+  transformIndexHtml: () => [{ tag: 'meta', attrs: { 'http-equiv': 'Content-Security-Policy', content: CSP }, injectTo: 'head-prepend' }],
+};
 
 export default defineConfig({
   base,
@@ -17,6 +42,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    contentSecurityPolicy,
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],

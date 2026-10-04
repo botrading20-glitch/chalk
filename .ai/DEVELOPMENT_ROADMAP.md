@@ -108,7 +108,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Affected:** `vite.config.ts` (build-only `transformIndexHtml` plugin).
 - **Acceptance:** with the preview build at `/chalk/`: no CSP violations in the console while using images, fonts, the share image (blob), the rest-alert audio (blob), install and the service worker. The policy allows `https://api.github.com`.
 - **Validation:** smoke S-08 on `vite preview` plus the console.
-- **Status:** TODO
+- **Status:** VERIFIED on the preview build at `/chalk/` (375 px): the meta tag is first in `<head>`; zero violations while restoring a backup, loading exercise photos from raw.githubusercontent.com, both fonts, the share image (blob, 1080 px), the rest timer, and a blob WAV (loads). A fetch to https://example.com was blocked and reported (connect-src), so the policy is enforced. `https://api.github.com` matches `API` in `github.ts` by inspection; the live sync wasn't run (needs the owner's token). Offline: with the preview server stopped, a reload was served by the service worker and the in-progress workout was intact.
 
 ### QA-001: Visual and responsive pass
 - **Objective:** check the main screens at 375 px, 768 px and desktop in both themes with sample data, and fix real defects.

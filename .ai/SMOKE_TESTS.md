@@ -30,7 +30,7 @@ The data in the dev browser belongs to `localhost:5173` only. Restore the sample
 | S-05 | Routine round trip | Create a routine with 2 exercises, save, start it: sets are pre-filled. |
 | S-06 | Finish and history | Finish the workout: the detail page shows "Workout N saved"; it appears in History; edit it and save. |
 | S-07 | Offline | On the preview build (S-08), load once, go offline in devtools, reload: the app works. |
-| S-08 | Sub-path build | `npm run build` with `BASE_PATH=/chalk/`, then `npx vite preview --base /chalk/ --port 4173` (launch config `chalk-preview`); open `/chalk/`: loads with no CSP violations in the console. |
+| S-08 | Sub-path build | `npm run build` with `BASE_PATH=/chalk/` (in Git Bash prefix `MSYS_NO_PATHCONV=1`, or it rewrites the path to `/Program Files/Git/chalk/` and the page loads blank), then `npx vite preview --base /chalk/ --port 4173` (launch config `chalk-preview`); open `/chalk/`: loads with no CSP violations in the console. |
 | S-09 | Backup round trip | Settings → Back up data; Erase all data; Restore the file: counts match. |
 | S-10 | Hevy import | Import a Hevy `workout_data.csv`; the preview shows workouts and exercises; import; records appear. |
 | S-11 | Crash screen | (dev only) throw inside a page render: the recovery screen shows, and *Download backup* works. |

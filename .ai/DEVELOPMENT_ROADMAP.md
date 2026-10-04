@@ -90,7 +90,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Approach:** see ADR-001. Drafts live in `kv` under `draft:<kind>:<id>`, matching how the live workout is stored, and are not synced. Opening an editor that has a draft restores it and shows a "Restored unsaved changes · Discard" bar. Save or Discard deletes the draft.
 - **Acceptance:** edit a routine, go back with the gesture, reopen: the edits are there with the bar. Discard restores the saved version. Save clears the draft. The Back button on a dirty editor asks to discard or keep editing.
 - **Validation:** browser test of each path; `drafts.test.ts` for the pure helpers.
-- **Status:** TODO
+- **Status:** VERIFIED (browser, scripted). Routine editor: back gesture → reopen restores the edits with the bar; Back button → Keep editing stays, Discard changes leaves, deletes the draft and leaves the routine unchanged; Back with no changes doesn't ask; adding a set, tapping the exercise link and coming back restores it; Save writes and clears the draft. New-routine draft survives the gesture; the bar's Discard empties it. Past-workout editor: gesture, reopen and Save all work; typing then clearing notes leaves no draft. No unit test for the hook (no React testing library; not worth adding for one hook).
 
 ### A11Y-001: Contrast and focus
 - **Objective:** `--text-3` meets 4.5:1 on `--bg` and `--surface` in both themes, and the search field shows focus.

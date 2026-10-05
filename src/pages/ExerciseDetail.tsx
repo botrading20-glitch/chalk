@@ -6,9 +6,9 @@ import { IconEdit, IconTrophy } from '../components/Icons';
 import { Empty, ExerciseAvatar, PageHeader, Segmented } from '../components/ui';
 import { db } from '../db';
 import { useData } from '../lib/data';
-import { reassignExercise } from '../lib/exercises';
+import { exerciseUses, reassignExercise } from '../lib/exercises';
 import { fmtClock, fmtDate, fmtNum, kgTo, kmTo, plural } from '../lib/format';
-import { EQUIPMENT_LABEL, MUSCLE_LABEL, TYPE_LABEL } from '../lib/meta';
+import { COUNTS_VOLUME, EQUIPMENT_LABEL, MUSCLE_LABEL, TYPE_LABEL } from '../lib/meta';
 import { Link, navigate } from '../lib/router';
 import { fmtSet, setLabels } from '../lib/sets';
 import { useSettings } from '../lib/settings';
@@ -85,7 +85,7 @@ export function ExerciseDetail({ id }: { id: string }) {
     .filter((p) => p.y > 0)
     .reverse();
   const best = records.best.get(id) ?? {};
-  const bestSession = Math.max(0, ...sessions.map((s) => sessionMetric('sessionVolume', s.sets)));
+  const bestSession = COUNTS_VOLUME[ex.type] ? Math.max(0, ...sessions.map((s) => sessionMetric('sessionVolume', s.sets))) : 0;
   const tabs: { value: Tab; label: string }[] = [
     { value: 'progress', label: 'Progress' },
     { value: 'history', label: `History${sessions.length ? ` (${sessions.length})` : ''}` },
@@ -274,8 +274,9 @@ export function ExerciseDetail({ id }: { id: string }) {
         <button
           className="btn btn-danger-ghost btn-block"
           onClick={async () => {
-            if (sessions.length) {
-              toast(`Used in ${plural(sessions.length, 'workout')} — remove it from those first`);
+            const uses = await exerciseUses(ex.id);
+            if (uses) {
+              toast(`Used in ${uses} — remove it there first`);
               return;
             }
             const ok = await confirmDialog({ title: `Delete "${ex.name}"?`, confirmLabel: 'Delete exercise', danger: true });

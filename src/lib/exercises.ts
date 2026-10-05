@@ -1,5 +1,22 @@
 import { db, getKV, setKV } from '../db';
 import type { ActiveWorkout, WorkoutExercise } from '../types';
+import { plural } from './format';
+
+/** Where exercise `id` is still used, such as "3 workouts and 1 routine", or null when nothing uses it. */
+export async function exerciseUses(id: string): Promise<string | null> {
+  const [workouts, routines, active] = await Promise.all([
+    db.workouts.where('exerciseIds').equals(id).count(),
+    db.routines.filter((r) => r.exercises.some((we) => we.exerciseId === id)).count(),
+    getKV<ActiveWorkout>('active'),
+  ]);
+  const uses = [
+    workouts ? plural(workouts, 'workout') : '',
+    routines ? plural(routines, 'routine') : '',
+    active?.exercises.some((we) => we.exerciseId === id) ? 'the workout in progress' : '',
+  ].filter(Boolean);
+  if (!uses.length) return null;
+  return uses.length === 1 ? uses[0] : `${uses.slice(0, -1).join(', ')} and ${uses[uses.length - 1]}`;
+}
 
 /** Points every workout, routine and the workout in progress at exercise `to` instead of `from`. */
 export async function reassignExercise(from: string, to: string) {

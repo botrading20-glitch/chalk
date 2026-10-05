@@ -1,5 +1,20 @@
 # Test status
 
+## Features - 2026-10-05, branch `features` @ 44c6840
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Types / tests / build | PASS | `tsc` exit 0; 67 passed, 2 skipped (new: `folders.test.ts` 4, `workouts.test.ts` +1); `/chalk/` build, main chunk 150.96 kB gzip (+1.9 kB), CSS 8.18 kB gzip |
+| FEAT-006 contrast | PASS | Badge text on its tint: dark 6.03 / 4.91 (done row), light 5.42 / 4.71 |
+| FEAT-006 rendering | PASS | Computed rgb(242,153,74) dark and rgb(150,68,0) light; `--warm` still #f4c430 |
+| FEAT-004 drag | PASS | A real mouse drag and a scripted touch drag reorder and save; other folders untouched |
+| FEAT-004 non-drag | PASS | Arrow keys on the handle and the arrow buttons; focus kept; live-region announcement |
+| FEAT-002 flow | PASS | Start ends the rest; a reload keeps it; one alert at the target (vibration spy); save fills the time, checks the set and starts the rest; check-while-timing, Cancel and a removed set behave |
+| Narrow / themes | PASS | 320 px light: stopwatch and reorder sheet fit, no page overflow |
+| S-01/S-02/S-08 | PASS | `/chalk/` preview: 4 routes, 0 CSP violations, no console messages; stopwatch on the production build |
+| Beep sound | NOT_RUN | No audio output here; same code path as the rest beep |
+| Phone | NOT_RUN | Needs a deploy (REL-102) |
+
 ## ENV-002 — 2026-10-05
 
 | Check | Result | Evidence |

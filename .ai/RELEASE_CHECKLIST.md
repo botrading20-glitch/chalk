@@ -2,6 +2,20 @@
 
 Pushing `main` deploys to the live app (NN-15); each new release needs the owner's authorization.
 
+## REL-102: branch `features` (stopwatch, reorder, warm-up colour), prepared 2026-10-05
+
+**Decision: READY WITH DOCUMENTED LIMITATIONS for GitHub Pages, not authorized.** No data migration or schema change: the stopwatch only adds an optional field to the workout in progress (never synced or saved), and reordering only rewrites `order` values. Rollback: `git revert -m 1 <merge>` and push.
+
+| Area | State |
+|------|-------|
+| Tests, typecheck, `/chalk/` build | ✅ |
+| Browser QA of each feature, 320 px, both themes | ✅ |
+| Preview S-01/S-02/S-08 (CSP) | ✅ |
+| Beep heard at the stopwatch target | ⚠ not checked here (phone) |
+| Owner's go-ahead (NN-15) | ⚠ pending |
+
+On the phone after deploy: time a plank and check the beep and buzz at the target; reorder a folder by dragging with a finger; check that W badges are orange.
+
 ## REL-101: branch `setward` (rebrand + backlog fixes), released 2026-10-05
 
 **Decision: READY WITH DOCUMENTED LIMITATIONS.** The owner approved ("merge and push it"); merged as 34d025d and deployed the same day (Pages run 37297499084). The live page serves the Setward build with no CSP violations or console errors. On-phone checks below are still open.

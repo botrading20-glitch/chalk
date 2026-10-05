@@ -23,6 +23,8 @@ Status: DONE (built and verified) · PARTIAL · TODO · DEFERRED.
 | REQ-013 | kg/lbs, km/mi, dark/light/auto theme. | R | P1 | DONE | Manual |
 | REQ-014 | Rest alert that works with the screen off without pausing other apps' music. | C, O | P1 | DONE | Owner's Android test (2026-09-24) |
 | REQ-015 | Everything stays free to build and host. | O | P0 | DONE | NN-01 |
+| REQ-016 | Stopwatch for timed sets in a live workout: time the next set, see the target, get an alert at it, save the time with one tap. Survives a reload. | O (2026-10-05) | P2 | DONE (branch `features`) | Browser QA, `workouts.test.ts` |
+| REQ-017 | Reorder routines within a folder by dragging, with a non-drag alternative. | O (2026-10-05) | P2 | DONE (branch `features`) | `folders.test.ts`, browser QA |
 
 ## Quality (added 2026-10-04)
 

@@ -177,16 +177,44 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 
 ---
 
+## Owner-requested features (session 2026-10-05, branch `features`)
+
+### FEAT-006: Orange warm-up badge (9567eca)
+- **Source:** owner, 2026-10-05 ("a different warm-up badge colour"). Changes NN-16; recorded in `DECISIONS.md`.
+- **Design:** new token `--warmup` #f2994a (dark) / #964400 (light). Chosen as "warm" and distinct from red F, blue D, green done rows and the purple accent. The yellow `--warm` stays for the 15 kg plate.
+- **Acceptance:** text on the badge's own 14% tint is at least 4.5:1 over `--surface` and in a done row, in both themes.
+- **Validation:** contrast script: dark 6.03 (surface) / 4.91 (done row); light 5.42 / 4.71 (the old light yellow was 3.85 on white). Computed colours in the browser: rgb(242,153,74) dark, rgb(150,68,0) light; `--warm` unchanged. Screenshot of the live editor.
+- **Task state:** DONE.
+
+### FEAT-004: Reorder routines by dragging (905ac95)
+- **Source:** owner, 2026-10-05 ("drag to reorder routines").
+- **Design:** a "Reorder routines" sheet from a routine's or folder's menu (hidden when the group has one routine), not drag on the home cards: the cards are tall, so dragging them would need auto-scroll and would compete with page scrolling. Compact rows with a grip handle (`touch-action: none`), plus up/down buttons and arrow keys as the non-drag alternative (WCAG 2.2 2.5.7). Moves save immediately; a polite live region announces the new position. Scope: within one folder, or within the routines in no folder; moving between folders stays in "Move to a folder"; folders stay A-Z. No dependency added.
+- **Data:** `reorderedRoutines` reuses the group's own `order` values, nudging equal values apart, and writes only the routines whose order changed (sync uploads only the routines file). No schema change.
+- **Validation:** `folders.test.ts` (4 tests). Browser: a real mouse drag moved Leg day to the top (orders 1-5 saved, the routine outside folders stayed 6); a scripted mid-drag showed the lifted row and the others making room, and the drop saved; arrow keys on the handle and real clicks on the arrows moved rows, with focus kept and the announcement correct; no option for a group of one; 320 px light theme fits, 44 px handles.
+- **Limitation:** no auto-scroll while dragging; a very long folder can still be ordered with the arrows.
+- **Task state:** DONE.
+
+### FEAT-002: Stopwatch for timed sets (44c6840)
+- **Source:** owner, 2026-10-05 ("a stopwatch for timed sets like planks").
+- **Design:** live mode only, for exercise types with a duration field (duration, weight + duration, distance + duration). "Time set N" next to "Add set" times the next set that isn't done; one stopwatch at a time. The panel shows a 64 px clock, the target (the set's own time = "Target", else last session's = "Last time", else the set before = "Previous set") with a progress bar, Cancel and Stop and save. It rings once (beep if sound is on, vibration if on) when the target passes and keeps counting. Stop, or the set's check button, saves the rounded seconds, fills empty fields like a normal check and starts the rest. Starting it ends a running rest, so the rest beep can't go off mid-set.
+- **Data:** `ActiveWorkout.stopwatch = { setId, startedAt }` (kv, not synced); `workoutFromDraft` never copies it (test). A stopwatch whose set was removed is ignored.
+- **Validation:** browser on dev with the sample data: the rest cleared on start; panel and highlighted row; survives a reload; the target alert fired once (vibration spy) and the label changed to "reached"; Stop and save stored 94 s, checked the set and started the 90 s rest; checking the set while timing saved it; Cancel left the set untouched; removing the timed set freed the stopwatch; 320 px light theme fits. Production preview: picker, Plank, time, save works. The beep itself wasn't heard (no audio here; same path as the rest beep).
+- **Limitation:** with the screen locked the alert may be late (no lock-screen keep-alive for the stopwatch; "Keep screen on" covers normal use).
+- **Task state:** DONE.
+
+### REL-102: Publish the `features` branch
+- **Task state:** BLOCKED on the owner's go-ahead (NN-15). Ready: 67 tests, `/chalk/` build, preview S-01/S-02/S-08 pass.
+
 ## Deferred and product decisions (owner's call)
 
 | ID | Item | Why deferred |
 |----|------|--------------|
 | FEAT-001 | Google sign-in / Drive sync (local branch `google-sync`, ac225bb) | Needs the owner's Google Cloud OAuth client and a Cloudflare Worker. When merged, carry `bodyweight` into its sync kinds. |
-| FEAT-002 | Stopwatch for timed sets | Product idea, not requested yet. |
+| FEAT-002 | ~~Stopwatch for timed sets~~ | DONE 2026-10-05 (see "Owner-requested features" above). |
 | FEAT-003 | Sync the in-progress workout | Product idea; would change NN-05. |
-| FEAT-004 | Drag to reorder routines and folders | Product idea. |
+| FEAT-004 | ~~Drag to reorder routines~~ (folders stay A-Z) | DONE 2026-10-05 (see above). Reordering the folders themselves isn't built: they'd need a stored order. |
 | FEAT-005 | In-app "delete cloud copy" | Product idea. |
-| FEAT-006 | Warm-up badge colour other than yellow | Offered to the owner, no answer yet. |
+| FEAT-006 | ~~Warm-up badge colour other than yellow~~ | DONE 2026-10-05 (see above). |
 | QA-002 | iPhone testing | No device. Expected caveats: no vibration, separate Safari and home-screen storage, locked-screen beep uncertain. |
 | QA-003 | Lock-screen ±15 s / pause buttons on Android | Needs the owner's phone; never reported on. |
 | PERF-001 | Route-level code splitting | Main chunk is 149 kB gzip and everything is precached for offline. No measured problem; revisit if startup is slow on the phone. |

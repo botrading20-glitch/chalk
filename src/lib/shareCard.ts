@@ -20,7 +20,7 @@ const C = {
   line: '#2b2a33',
   text: '#ecebf2',
   text2: '#a7a5b3',
-  text3: '#76747f',
+  text3: '#888692',
   accent: '#7a55e6',
   accentInk: '#b39dff',
   onAccent: '#ffffff',

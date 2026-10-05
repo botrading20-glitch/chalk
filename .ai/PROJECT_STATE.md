@@ -3,12 +3,12 @@
 ## Project
 - **Name:** Setward (formerly Chalk), live since 2026-10-05.
 - **Purpose:** a free, offline-first workout logger that replaces Hevy for its owner, possibly published to app stores later
-- **Version:** 0.1.0 (`package.json`). The live app at https://botrading20-glitch.github.io/chalk/ runs `main` @ 34d025d, the Setward merge, deployed 2026-10-05 (Pages run 37297499084).
+- **Version:** 0.1.0 (`package.json`). The live app at https://botrading20-glitch.github.io/chalk/ runs `main` @ c232c2d (stopwatch, routine reordering, orange warm-up badge), deployed 2026-10-05 (Pages run 37302757241).
 - **Stack:** React 19, TypeScript 7, Vite 8, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB), Vitest 5 (+ fake-indexeddb in tests). No backend.
 
 ## Current status
 - **Phase:** released. The quality pass (REL-100, 2026-10-04) and Setward with UX-002, UX-003, A11Y-002 and DOC-002 (REL-101, 2026-10-05) are live. Waiting on the owner's phone checks.
-- **Branches:** `main` = live. `features` = main + FEAT-002/004/006 (local, REL-102 pending). `quality-pass` and `setward` are merged (kept locally). `google-sync` is parked (FEAT-001).
+- **Branches:** `main` = live. `quality-pass`, `setward` and `features` are merged (kept locally). `google-sync` is parked (FEAT-001).
 - **Completion:** all product requirements work. Quality requirements REQ-Q01–Q05 are done, apart from screen-reader and real-device checks.
 - **Release decision:** READY WITH DOCUMENTED LIMITATIONS, released 2026-10-05 (`RELEASE_CHECKLIST.md`, REL-101).
 
@@ -36,8 +36,7 @@ None known at medium or high severity. Low-severity items left in the roadmap "D
 - Sync is shipped but unused by the owner. A Google Drive replacement is parked on the local-only branch `google-sync`; merging it needs its origins added to the CSP `connect-src`.
 
 ## Immediate next steps
-1. Ask the owner to publish `features` (REL-102): stopwatch, routine reordering, orange warm-up badge.
-2. The owner runs the phone checks in `RELEASE_CHECKLIST.md`, including the installed name/icon refresh.
+1. The owner runs the phone checks in `RELEASE_CHECKLIST.md` for REL-101 and REL-102.
 
 ## Last verified
 2026-10-04: typecheck, 59 tests, build, and smoke S-01 to S-11 on dev and the `/chalk/` preview; the live deploy loads cleanly.

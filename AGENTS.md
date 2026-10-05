@@ -6,7 +6,7 @@ Free, offline-first workout logger (Hevy alternative). React 19 + TypeScript + V
 
 **Branding and continuity:** the visible app is now **Setward**. Its split-S geometry is in `src/lib/brand.ts`, rendered by `src/components/Brand.tsx` and `src/lib/shareCard.ts`; install icons are in `public/`, and reusable artwork/usage notes are in `branding/`. Keep the legacy `chalk` database name, backup `app: 'chalk'`, `chalk-sync/1` format, existing sync repository and `/chalk/` hosting/PWA scope unchanged for compatibility. Remaining internal `chalk` names are intentional; do not globally replace them.
 
-**Handoff:** check the working tree as well as `.ai/` before making changes. Completed work may be saved locally but uncommitted. Preserve it, read the recorded validation and outstanding steps, and do not treat a completed local change as deployed. As of 2026-10-05, Setward and the UX-002/UX-003/A11Y-002/DOC-002 fixes are live; the stopwatch (FEAT-002), routine reordering (FEAT-004) and orange warm-up badge (FEAT-006) are committed on the local branch `features`, not merged or pushed (REL-102).
+**Handoff:** check the working tree as well as `.ai/` before making changes. Completed work may be saved locally but uncommitted. Preserve it, read the recorded validation and outstanding steps, and do not treat a completed local change as deployed. As of 2026-10-05, Setward and the UX-002/UX-003/A11Y-002/DOC-002 fixes are live; so are the stopwatch (FEAT-002), routine reordering (FEAT-004) and orange warm-up badge (FEAT-006) (`main` @ c232c2d); the owner's phone checks are still open.
 
 ## Commands
 - `npm run dev`: dev server on :5173 (also `.claude/launch.json` → `chalk-dev`)

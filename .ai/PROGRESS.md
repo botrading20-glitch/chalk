@@ -2,7 +2,7 @@
 
 Completed roadmap work, newest first. Evidence is in `TEST_STATUS.md` and on each task in `DEVELOPMENT_ROADMAP.md`.
 
-## 2026-10-05: owner-requested features on branch `features` (local, not deployed)
+## 2026-10-05: owner-requested features (merged as c232c2d and deployed)
 
 | Task | Result | Commit |
 |------|--------|--------|

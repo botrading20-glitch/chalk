@@ -203,7 +203,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Task state:** DONE.
 
 ### REL-102: Publish the `features` branch
-- **Task state:** BLOCKED on the owner's go-ahead (NN-15). Ready: 67 tests, `/chalk/` build, preview S-01/S-02/S-08 pass.
+- **Task state:** DONE (2026-10-05, owner: "merge and push it"). Merged as c232c2d (`--no-ff`); on `main`: 67 tests, `/chalk/` build (same bundle `index-D7zhvP27.js` as the branch), `npm ci --dry-run` and a secret scan passed. Pushed 9c06bea..c232c2d; Pages run 37302757241 succeeded with 0 annotations. Live: the new bundle, `--warmup` #f2994a, the stopwatch and reorder styles present, 5 routes without overflow, 0 CSP violations, no console messages; the cached older version updated itself with one reload. Still to do: the owner's phone checks.
 
 ## Deferred and product decisions (owner's call)
 

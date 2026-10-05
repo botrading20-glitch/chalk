@@ -1,5 +1,9 @@
 # Session log
 
+## Session: 2026-10-05 (release of REL-102)
+
+The owner said "merge and push it". Merged as c232c2d (`--no-ff`); on `main`: 67 tests, `/chalk/` build (same bundle `index-D7zhvP27.js` as the branch), `npm ci --dry-run` and a secret scan passed. Pushed 9c06bea..c232c2d; Pages run 37302757241 succeeded with 0 annotations. Live: the new bundle, `--warmup` #f2994a, the stopwatch and reorder styles present, 5 routes without overflow, 0 CSP violations, no console messages; the cached older version updated itself with one reload. Stopping point: released; waiting for the owner's phone checks.
+
 ## Session: 2026-10-05 (FEAT-002, FEAT-004, FEAT-006)
 
 The owner asked for the stopwatch, drag-to-reorder routines and a different warm-up colour. Built on the local branch `features` from `main` @ 9c06bea: 9567eca (orange warm-up, NN-16 changed), 905ac95 (reorder sheet), 44c6840 (stopwatch). Verification in `TEST_STATUS.md` (features): all PASS except the beep sound and the phone (NOT_RUN). Notes, `CLAUDE.md` and `AGENTS.md` updated. Not merged or pushed (REL-102 waits for the owner). Dev database: the QA workout was discarded; routine order is back to the sample's.

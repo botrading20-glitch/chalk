@@ -1,5 +1,9 @@
 # Session log
 
+## Session: 2026-10-05 (FEAT-002, FEAT-004, FEAT-006)
+
+The owner asked for the stopwatch, drag-to-reorder routines and a different warm-up colour. Built on the local branch `features` from `main` @ 9c06bea: 9567eca (orange warm-up, NN-16 changed), 905ac95 (reorder sheet), 44c6840 (stopwatch). Verification in `TEST_STATUS.md` (features): all PASS except the beep sound and the phone (NOT_RUN). Notes, `CLAUDE.md` and `AGENTS.md` updated. Not merged or pushed (REL-102 waits for the owner). Dev database: the QA workout was discarded; routine order is back to the sample's.
+
 ## Session: 2026-10-05 (ENV-002)
 
 At the owner's request, pinned both deploy jobs to `ubuntu-24.04` in `.github/workflows/deploy.yml` (was `ubuntu-latest`, which moves to Ubuntu 26 from 2026-10-19). Pushed (owner: "push it"); Pages run 37298887657 succeeded on image ubuntu-24.04 with 0 annotations; live bundle unchanged.

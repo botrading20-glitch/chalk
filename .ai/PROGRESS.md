@@ -2,6 +2,14 @@
 
 Completed roadmap work, newest first. Evidence is in `TEST_STATUS.md` and on each task in `DEVELOPMENT_ROADMAP.md`.
 
+## 2026-10-05: owner-requested features on branch `features` (local, not deployed)
+
+| Task | Result | Commit |
+|------|--------|--------|
+| FEAT-002 | Stopwatch for timed sets | 44c6840 |
+| FEAT-004 | Reorder routines by dragging (sheet, within a folder) | 905ac95 |
+| FEAT-006 | Orange warm-up badge (NN-16 changed) | 9567eca |
+
 ## 2026-10-05: Setward and backlog fixes (merged as 34d025d and deployed)
 
 | Task | Result | Commit |

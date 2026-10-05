@@ -19,4 +19,4 @@ Protected invariants. Before changing anything listed here: name the invariant, 
 | NN-13 | The rest alert never takes audio focus. It uses a Web Audio beep plus a near-silent keep-alive track (`restAlert.ts`). | Tested on Android: an audible `<audio>` beep paused Spotify for good. | Manual phone test only. |
 | NN-14 | Don't copy Hevy's licensed assets (3D animations, images). | Copyright. | Review. |
 | NN-15 | Pushing to `main` deploys to the live app (GitHub Pages). Only merge or push with the owner's go-ahead. | Production for real use. | Process. |
-| NN-16 | Design language: violet-tinted charcoal greys with a purple accent. Set badges are W yellow, F red, D blue; a done row is green. | Owner's chosen look (2026-09-24). | Visual QA. |
+| NN-16 | Design language: violet-tinted charcoal greys with a purple accent. Set badges are W orange, F red, D blue; a done row is green. | Owner's chosen look (2026-09-24). W changed from yellow to orange at the owner's request (2026-10-05, FEAT-006; `DECISIONS.md`). | Visual QA; contrast checks in `TEST_STATUS.md`. |

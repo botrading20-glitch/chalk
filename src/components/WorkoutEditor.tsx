@@ -1,13 +1,13 @@
-import { useMemo, useState, type CSSProperties } from 'react';
-import { useData, usePreviousSets } from '../lib/data';
-import { fmtRest, kgTo, kmTo, toKg, toKm, uid } from '../lib/format';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useData, useNow, usePreviousSets } from '../lib/data';
+import { fmtClock, fmtRest, kgTo, kmTo, toKg, toKm, uid } from '../lib/format';
 import { SET_TYPE_LABEL, type Field } from '../lib/meta';
 import { Link } from '../lib/router';
 import { fieldHeader, fieldsFor, fmtSet, setLabels } from '../lib/sets';
 import { useSettings } from '../lib/settings';
-import { unlockAudio } from '../lib/timer';
+import { beep, buzz, unlockAudio } from '../lib/timer';
 import { emptySet } from '../lib/workouts';
-import type { SetType, WorkoutExercise, WorkoutSet } from '../types';
+import type { SetType, Stopwatch, WorkoutExercise, WorkoutSet } from '../types';
 import { toast } from './dialogs';
 import { ExercisePicker } from './ExercisePicker';
 import { BufferedTextarea, DurationField, NumberField } from './fields';
@@ -43,6 +43,8 @@ export function WorkoutEditor({
   previousBefore,
   excludeWorkoutId,
   onRest,
+  stopwatch,
+  onStopwatch,
 }: {
   exercises: WorkoutExercise[];
   onChange: Update;
@@ -52,6 +54,9 @@ export function WorkoutEditor({
   excludeWorkoutId?: string;
   /** Live mode: called with the rest length after a set is checked off. */
   onRest?: (seconds: number) => void;
+  /** Live mode: the timed set in progress, and how to start or clear it. */
+  stopwatch?: Stopwatch;
+  onStopwatch?: (sw: Stopwatch | undefined) => void;
 }) {
   const { workouts, exerciseMap } = useData();
   const settings = useSettings();
@@ -122,6 +127,16 @@ export function WorkoutEditor({
     return undefined;
   }
 
+  /** What a timed set aims for: its own time, else last session's, else the set before it. */
+  function timerTarget(we: WorkoutExercise, index: number) {
+    const own = we.sets[index].duration;
+    if (own !== undefined) return { seconds: own, label: 'Target' };
+    const last = prevFor(we, index)?.duration;
+    if (last !== undefined) return { seconds: last, label: 'Last time' };
+    const earlier = placeholderFor(we, index)?.duration;
+    return earlier !== undefined ? { seconds: earlier, label: 'Previous set' } : undefined;
+  }
+
   function restAfter(we: WorkoutExercise) {
     if (we.supersetId !== undefined) {
       const group = exercises.filter((x) => x.supersetId === we.supersetId);
@@ -132,13 +147,20 @@ export function WorkoutEditor({
 
   function toggleDone(we: WorkoutExercise, index: number) {
     const s = we.sets[index];
+    if (stopwatch?.setId === s.id) return stopTiming(we, index, stopwatch);
     if (s.completed) {
       updateSet(we.id, s.id, { completed: false });
       return;
     }
+    complete(we, index);
+  }
+
+  /** Checks a set off, filling empty fields from the placeholder, and starts the rest. */
+  function complete(we: WorkoutExercise, index: number, patch: Partial<WorkoutSet> = {}) {
+    const s = { ...we.sets[index], ...patch };
     const fields = fieldsFor(exerciseMap.get(we.exerciseId)?.type ?? 'weight_reps');
     const ph = placeholderFor(we, index);
-    const filled: Partial<WorkoutSet> = {};
+    const filled: Partial<WorkoutSet> = { ...patch };
     for (const f of fields) if (s[f] === undefined && ph?.[f] !== undefined) filled[f] = ph[f];
     if (!fields.some((f) => (filled[f] ?? s[f]) !== undefined)) {
       toast(`Enter ${fields.includes('reps') ? 'reps' : fields.includes('duration') ? 'a time' : 'a value'} first`);
@@ -147,6 +169,17 @@ export function WorkoutEditor({
     unlockAudio();
     updateSet(we.id, s.id, { ...filled, completed: true });
     onRest?.(restAfter(we));
+  }
+
+  function startTiming(setId: string) {
+    unlockAudio();
+    onStopwatch?.({ setId, startedAt: Date.now() });
+  }
+
+  /** Saves the elapsed time into the set and checks it off. */
+  function stopTiming(we: WorkoutExercise, index: number, sw: Stopwatch) {
+    onStopwatch?.(undefined);
+    complete(we, index, { duration: Math.max(1, Math.round((Date.now() - sw.startedAt) / 1000)) });
   }
 
   function move(id: string, dir: -1 | 1) {
@@ -180,6 +213,8 @@ export function WorkoutEditor({
     });
   }
 
+  // A stopwatch whose set was removed no longer counts, so another set can be timed.
+  const timing = !!stopwatch && exercises.some((we) => we.sets.some((s) => s.id === stopwatch.setId));
   const menuEx = exercises.find((we) => we.id === menuFor);
   const menuIndex = menuEx ? exercises.indexOf(menuEx) : -1;
   const setMenuEx = exercises.find((we) => we.id === setMenu?.ex);
@@ -212,6 +247,9 @@ export function WorkoutEditor({
         const labels = setLabels(we.sets);
         const letter = we.supersetId !== undefined ? supersetLetters.get(we.supersetId) : undefined;
         const cols = `2.5rem minmax(0,1fr) ${fields.map(() => 'var(--field-w)').join(' ')}${mode === 'live' ? ' 2.75rem' : ''}`;
+        const timedIndex = stopwatch ? we.sets.findIndex((s) => s.id === stopwatch.setId) : -1;
+        const nextIndex = we.sets.findIndex((s) => !s.completed);
+        const canTime = mode === 'live' && !!onStopwatch && fields.includes('duration') && !timing && nextIndex >= 0;
 
         return (
           <section key={we.id} className={`ex-block ${letter ? 'in-superset' : ''}`}>
@@ -264,7 +302,7 @@ export function WorkoutEditor({
                 const prev = prevFor(we, i);
                 const ph = placeholderFor(we, i);
                 return (
-                  <div key={s.id} className={`set-row ${s.completed && mode === 'live' ? 'done' : ''}`}>
+                  <div key={s.id} className={`set-row ${s.completed && mode === 'live' ? 'done' : ''} ${i === timedIndex ? 'timing' : ''}`}>
                     <button
                       className="set-badge"
                       data-type={s.type}
@@ -311,15 +349,32 @@ export function WorkoutEditor({
                 );
               })}
             </div>
-            <button
-              className="add-set"
-              onClick={() => {
-                const last = we.sets.at(-1);
-                updateEx(we.id, (x) => ({ ...x, sets: [...x.sets, emptySet(last?.type === 'warmup' ? 'normal' : last?.type)] }));
-              }}
-            >
-              <IconPlus size={16} /> Add set
-            </button>
+            {stopwatch && timedIndex >= 0 && (
+              <StopwatchPanel
+                key={stopwatch.startedAt}
+                startedAt={stopwatch.startedAt}
+                label={labels[timedIndex]}
+                target={timerTarget(we, timedIndex)}
+                onCancel={() => onStopwatch?.(undefined)}
+                onStop={() => stopTiming(we, timedIndex, stopwatch)}
+              />
+            )}
+            <div className="set-actions">
+              <button
+                className="add-set"
+                onClick={() => {
+                  const last = we.sets.at(-1);
+                  updateEx(we.id, (x) => ({ ...x, sets: [...x.sets, emptySet(last?.type === 'warmup' ? 'normal' : last?.type)] }));
+                }}
+              >
+                <IconPlus size={16} /> Add set
+              </button>
+              {canTime && (
+                <button className="add-set time-set" onClick={() => startTiming(we.sets[nextIndex].id)}>
+                  <IconTimer size={16} /> Time set {labels[nextIndex]}
+                </button>
+              )}
+            </div>
           </section>
         );
       })}
@@ -477,6 +532,61 @@ export function WorkoutEditor({
           </div>
         )}
       </Sheet>
+    </div>
+  );
+}
+
+/** Big, glanceable clock for a timed set, readable with the phone on the floor. */
+function StopwatchPanel({
+  startedAt,
+  label,
+  target,
+  onCancel,
+  onStop,
+}: {
+  startedAt: number;
+  label: string;
+  target?: { seconds: number; label: string };
+  onCancel: () => void;
+  onStop: () => void;
+}) {
+  const settings = useSettings();
+  const now = useNow(250);
+  const elapsed = (now - startedAt) / 1000;
+  const goal = target?.seconds;
+  const reached = !!goal && elapsed >= goal;
+  const rang = useRef(false);
+
+  useEffect(() => {
+    if (!reached || rang.current) return;
+    rang.current = true;
+    // Ring as the target passes, not when the workout is reopened long after.
+    if (elapsed - goal! < 5) {
+      if (settings.timerSound) beep();
+      if (settings.timerVibrate) buzz();
+    }
+  }, [reached, elapsed, goal, settings.timerSound, settings.timerVibrate]);
+
+  return (
+    <div className={`stopwatch ${reached ? 'reached' : ''}`} role="timer" aria-label={`Stopwatch for set ${label}`}>
+      <div className="stopwatch-head">
+        <span>Set {label}</span>
+        {!!goal && <span>{`${target!.label} ${fmtClock(goal)}${reached ? ' reached' : ''}`}</span>}
+      </div>
+      <div className="stopwatch-time">{fmtClock(elapsed)}</div>
+      {!!goal && (
+        <div className="stopwatch-progress" aria-hidden="true">
+          <span style={{ transform: `scaleX(${Math.min(1, elapsed / goal)})` }} />
+        </div>
+      )}
+      <div className="stopwatch-actions">
+        <button className="btn btn-ghost" onClick={onCancel}>
+          Cancel
+        </button>
+        <button className="btn btn-primary" onClick={onStop}>
+          <IconCheck size={18} /> Stop and save
+        </button>
+      </div>
     </div>
   );
 }

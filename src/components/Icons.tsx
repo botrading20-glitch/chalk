@@ -80,6 +80,13 @@ export const IconTimer = (p: P) =>
 export const IconTrash = (p: P) => base(p, <path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v5M14 11v5" />);
 export const IconEdit = (p: P) => base(p, <path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4" />);
 export const IconSwap = (p: P) => base(p, <path d="M7 4 3.5 7.5 7 11M3.5 7.5H17M17 13l3.5 3.5L17 20M20.5 16.5H7" />);
+export const IconGrip = (p: P) =>
+  base(
+    p,
+    <g fill="currentColor" stroke="none">
+      {[6, 12, 18].map((y) => [9, 15].map((x) => <circle key={`${x}-${y}`} cx={x} cy={y} r={1.6} />))}
+    </g>,
+  );
 export const IconUp = (p: P) => base(p, <path d="M12 19V5M6 11l6-6 6 6" />);
 export const IconArrowDown = (p: P) => base(p, <path d="M12 5v14M6 13l6 6 6-6" />);
 export const IconLink = (p: P) =>

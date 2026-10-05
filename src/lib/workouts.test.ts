@@ -47,6 +47,12 @@ describe('workoutFromDraft', () => {
   it('saves over the original when editing a past workout', () => {
     expect(workoutFromDraft({ ...draft(), editingId: 'w-old' }, false).id).toBe('w-old');
   });
+
+  it('never carries the live timers into the saved workout', () => {
+    const w = workoutFromDraft({ ...draft(), stopwatch: { setId: 's2', startedAt: T0 }, restEndsAt: T0, restTotal: 90 }, false);
+    expect(w).not.toHaveProperty('stopwatch');
+    expect(w).not.toHaveProperty('restEndsAt');
+  });
 });
 
 describe('templateFrom', () => {

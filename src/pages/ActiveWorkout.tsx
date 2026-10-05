@@ -110,6 +110,11 @@ export function ActiveWorkoutPage() {
         onRest={(seconds) => {
           if (seconds > 0) void updateActive((a) => ({ ...a, restEndsAt: Date.now() + seconds * 1000, restTotal: seconds }));
         }}
+        stopwatch={active.stopwatch}
+        // Starting a timed set ends the rest, so its beep can't go off mid-set.
+        onStopwatch={(stopwatch) =>
+          void updateActive((a) => ({ ...a, stopwatch, ...(stopwatch ? { restEndsAt: undefined, restTotal: undefined } : {}) }))
+        }
       />
 
       <button

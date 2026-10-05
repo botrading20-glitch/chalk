@@ -2,9 +2,9 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useState, type ReactNode } from 'react';
 import { Brand } from '../components/Brand';
 import { confirmDialog, toast } from '../components/dialogs';
-import { IconChevron, IconCopy, IconEdit, IconFolder, IconFolderPlus, IconMore, IconPlay, IconPlus, IconTrash } from '../components/Icons';
+import { IconChevron, IconCopy, IconEdit, IconFolder, IconFolderPlus, IconGrip, IconMore, IconPlay, IconPlus, IconTrash } from '../components/Icons';
 import { InstallBanner } from '../components/InstallPrompt';
-import { FolderSheet, MoveToFolderSheet } from '../components/RoutineFolders';
+import { FolderSheet, MoveToFolderSheet, ReorderSheet } from '../components/RoutineFolders';
 import { ActionSheet } from '../components/Sheet';
 import { Empty, PageHeader } from '../components/ui';
 import { db } from '../db';
@@ -47,8 +47,11 @@ export function WorkoutHome() {
   const [folderMenu, setFolderMenu] = useState<Folder | null>(null);
   const [folderSheet, setFolderSheet] = useState<{ folder?: string } | null>(null);
   const [moving, setMoving] = useState<Routine | null>(null);
+  /** The folder being reordered; `folder` is absent for the routines in no folder. */
+  const [reorder, setReorder] = useState<{ folder?: string } | null>(null);
   const collapsed = useCollapsedFolders();
   const { folders, loose } = groupRoutines(routines ?? []);
+  const groupOf = (folder?: string) => (folder ? (folders.find((f) => f.name === folder)?.routines ?? []) : loose);
   const card = (r: Routine) => <RoutineCard key={r.id} routine={r} onMenu={() => setMenu(r)} />;
 
   return (
@@ -118,6 +121,12 @@ export function WorkoutHome() {
                 { label: 'Edit routine', icon: <IconEdit />, onSelect: () => navigate(`/routines/${menu.id}`) },
                 { label: menu.folder ? 'Move to another folder' : 'Move to a folder', icon: <IconFolder />, onSelect: () => setMoving(menu) },
                 {
+                  label: 'Reorder routines',
+                  icon: <IconGrip />,
+                  hidden: groupOf(menu.folder?.trim() || undefined).length < 2,
+                  onSelect: () => setReorder({ folder: menu.folder?.trim() || undefined }),
+                },
+                {
                   label: 'Duplicate',
                   icon: <IconCopy />,
                   onSelect: async () => {
@@ -162,6 +171,12 @@ export function WorkoutHome() {
                   icon: <IconPlus />,
                   onSelect: () => navigate(`/routines/new?folder=${encodeURIComponent(folderMenu.name)}`),
                 },
+                {
+                  label: 'Reorder routines',
+                  icon: <IconGrip />,
+                  hidden: folderMenu.routines.length < 2,
+                  onSelect: () => setReorder({ folder: folderMenu.name }),
+                },
                 { label: 'Rename or change routines', icon: <IconEdit />, onSelect: () => setFolderSheet({ folder: folderMenu.name }) },
                 {
                   label: 'Remove folder',
@@ -186,6 +201,12 @@ export function WorkoutHome() {
 
       <FolderSheet open={!!folderSheet} onClose={() => setFolderSheet(null)} folder={folderSheet?.folder} routines={routines ?? []} />
       <MoveToFolderSheet routine={moving} routines={routines ?? []} onClose={() => setMoving(null)} />
+      <ReorderSheet
+        open={!!reorder}
+        title={reorder?.folder ? `Reorder “${reorder.folder}”` : 'Reorder routines'}
+        routines={groupOf(reorder?.folder)}
+        onClose={() => setReorder(null)}
+      />
     </div>
   );
 }

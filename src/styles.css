@@ -1150,6 +1150,70 @@ dialog.sheet-full {
   min-width: 0;
 }
 
+.reorder {
+  display: grid;
+  gap: 14px;
+}
+
+.reorder-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reorder-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 52px;
+  padding: 0 4px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+/* Rows only slide while a drag is on; after the drop they settle instantly. */
+.reorder-list.is-dragging .reorder-row {
+  transition: transform 0.15s ease;
+}
+
+.reorder-list.is-dragging .reorder-row.dragging {
+  z-index: 1;
+  transition: none;
+  background: var(--surface-3);
+  box-shadow: var(--shadow);
+}
+
+.drag-handle {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-2);
+  cursor: grab;
+  /* The handle takes the finger; the rest of the sheet still scrolls. */
+  touch-action: none;
+}
+
+.reorder-row.dragging .drag-handle {
+  cursor: grabbing;
+}
+
+.reorder-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .new-folder-row {
   display: grid;
   grid-template-columns: 1fr auto;

@@ -60,6 +60,37 @@ export async function saveFolder(name: string, members: string[], previous?: str
   });
 }
 
+/** `ids` with the item at `from` moved to `to`. */
+export function moveItem<T>(ids: T[], from: number, to: number) {
+  const next = [...ids];
+  next.splice(to, 0, ...next.splice(from, 1));
+  return next;
+}
+
+/**
+ * The routines whose `order` changes when one folder (or the routines in no
+ * folder) is put in the sequence `ids`. The group's own order values are
+ * reused, so routines elsewhere keep their places; equal values are nudged
+ * apart, or the new order wouldn't stick.
+ */
+export function reorderedRoutines(group: Routine[], ids: string[], now = Date.now()) {
+  const byId = new Map(group.map((r) => [r.id, r]));
+  const present = ids.filter((id) => byId.has(id));
+  const slots = present.map((id) => byId.get(id)!.order).sort((a, b) => a - b);
+  for (let i = 1; i < slots.length; i++) if (slots[i] <= slots[i - 1]) slots[i] = slots[i - 1] + 1;
+  return present.flatMap((id, i) => {
+    const r = byId.get(id)!;
+    return r.order === slots[i] ? [] : [{ ...r, order: slots[i], updatedAt: now }];
+  });
+}
+
+export async function reorderRoutines(ids: string[]) {
+  await db.transaction('rw', db.routines, async () => {
+    const group = (await db.routines.bulkGet(ids)).filter((r): r is Routine => !!r);
+    await db.routines.bulkPut(reorderedRoutines(group, ids));
+  });
+}
+
 /** Removes the folder; its routines stay, just not in a folder. */
 export async function removeFolder(name: string) {
   const inside = await db.routines.filter((r) => r.folder === name).toArray();

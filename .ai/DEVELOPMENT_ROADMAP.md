@@ -148,7 +148,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Task state:** DONE.
 
 ### UX-002: Deleting a custom exercise checks routines and the live workout
-- **Decision (PROPOSED default, easy to reverse):** block the delete, as the app already did for workouts, instead of silently removing the exercise from routines. Nothing changes the user's data without them doing it.
+- **Decision (CONFIRMED by the owner, 2026-10-05):** block the delete, as the app already did for workouts, instead of silently removing the exercise from routines. Nothing changes the user's data without them doing it.
 - **Affected:** `src/lib/exercises.ts` (`exerciseUses`), `src/pages/ExerciseDetail.tsx`, `src/lib/exercises.test.ts` (new).
 - **Acceptance:** an exercise used by a workout, routine or the workout in progress can't be deleted, and the toast says where it's used; an unused one still asks and then deletes.
 - **Validation:** 3 unit tests; browser: a routine-only exercise → "Used in 1 routine — remove it there first"; the sample's custom exercise → "Used in 13 workouts and 1 routine…"; after removing the routine, the delete confirm appeared and deleted it.
@@ -200,7 +200,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 | UX-003 | ~~"Best session volume" shows for assisted-bodyweight exercises.~~ | Low | DONE 2026-10-05 (see above). |
 | UX-004 | The new and edit exercise form has no draft or discard prompt. | Low | Short form; ADR-001 leaves it out on purpose. |
 | A11Y-002 | ~~`Segmented` radios have no arrow-key movement.~~ | Low | DONE 2026-10-05 (see above). |
-| DX-002 | No linter is configured (only strict `tsc`). | Low | Adding ESLint means new dev dependencies and a style decision for the owner. |
+| DX-002 | ~~No linter is configured (only strict `tsc`).~~ | Low | CANCELLED 2026-10-05: the owner chose to skip ESLint; strict `tsc` stays the only static check. |
 | ENV-002 | GitHub moves the `ubuntu-latest` runner to Ubuntu 26 from 2026-10-19 (deploy annotation). | Low | Nothing to change now; if a deploy fails after that date, pin `runs-on: ubuntu-24.04` in `.github/workflows/deploy.yml`. |
 
 ## Traceability

@@ -28,7 +28,7 @@ Setward identity: an angular split-S mark and “Forward, one set at a time.” 
 See `NON_NEGOTIABLES.md` (NN-01 to NN-16). None were changed this session.
 
 ## Current problems
-None known at medium or high severity. Low-severity items left in the roadmap "Discovered" table: DATA-002, UX-004, DX-002, ENV-002.
+None known at medium or high severity. Low-severity items left in the roadmap "Discovered" table: DATA-002, UX-004, ENV-002. No linter by the owner's choice (DX-002 cancelled).
 
 ## Current risks
 - Neither release has been checked on the owner's Android phone yet (`RELEASE_CHECKLIST.md`).
@@ -37,7 +37,6 @@ None known at medium or high severity. Low-severity items left in the roadmap "D
 
 ## Immediate next steps
 1. The owner runs the phone checks in `RELEASE_CHECKLIST.md`, including the installed name/icon refresh.
-2. Open owner decisions: keep the UX-002 default (block the delete)? ESLint (DX-002)?
 
 ## Last verified
 2026-10-04: typecheck, 59 tests, build, and smoke S-01 to S-11 on dev and the `/chalk/` preview; the live deploy loads cleanly.

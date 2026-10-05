@@ -1,7 +1,7 @@
 # Current task
 
 ## Task
-No task is active. REL-101 is released; waiting on the owner's phone checks and two small decisions.
+No task is active. REL-101 is released; waiting on the owner's phone checks.
 
 ## Last release (2026-10-05)
 - `setward` merged into `main` as 34d025d and pushed (owner: "merge and push it"). Pages run 37297499084 succeeded.
@@ -10,8 +10,7 @@ No task is active. REL-101 is released; waiting on the owner's phone checks and 
 
 ## Open for the owner
 - Phone checks in `RELEASE_CHECKLIST.md` → After deploy (both releases), including the installed name/icon refresh to Setward.
-- **UX-002 default:** deleting a used custom exercise is refused. Keep, or drop it from routines automatically?
-- **DX-002:** add ESLint (free, dev-only), or keep strict `tsc` only.
+- Decided 2026-10-05: keep blocking the delete of a used custom exercise (UX-002); no ESLint (DX-002 cancelled). See `DECISIONS.md`.
 
 ## Environment notes
 - The dev server on :5173 (`vite --host 127.0.0.1`) was already running and was left running. Its browser storage on 127.0.0.1:5173 holds the QA sample (65 workouts).
@@ -19,7 +18,7 @@ No task is active. REL-101 is released; waiting on the owner's phone checks and 
 - ENV-002: deploys warn that `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19. If a deploy fails after that, pin `runs-on: ubuntu-24.04` in `.github/workflows/deploy.yml`.
 
 ## Next exact action
-Ask the owner how the release behaves on the phone (checks 1–6 in `RELEASE_CHECKLIST.md` → After deploy) and for the two decisions above; then pick the next work with them.
+Ask the owner how the release behaves on the phone (checks 1–6 in `RELEASE_CHECKLIST.md` → After deploy), then pick the next work with them. The commit recording these decisions is local only (`main` is one notes commit ahead of `origin/main`); push it with the next owner-approved push, since every push to `main` deploys (NN-15).
 
 ## Last updated
 2026-10-05

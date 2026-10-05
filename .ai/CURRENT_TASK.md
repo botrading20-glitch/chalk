@@ -1,36 +1,35 @@
 # Current task
 
 ## Task
-Post-release: on-phone checks of the deployed quality pass
-
-## Objective
-Confirm on the owner's Android phone that the live app (main @ 6d15c2e) behaves as tested in the browser.
+Create and apply a new name and logo for the workout logger.
 
 ## Status
-BLOCKED: needs the owner and their phone
+COMPLETE locally. No commit, merge, push or deployment performed.
 
 ## Work completed
-- REL-100: merged `quality-pass` into `main` (6d15c2e), pushed, deployed and verified on the live URL (see `DEVELOPMENT_ROADMAP.md` → REL-100).
-
-## Work in progress
-None. The working tree is clean.
-
-## Files modified
-None since the merge, apart from these docs.
-
-## Important details
-- Installed copies update themselves on the next open (`registerType: 'autoUpdate'`). Expect one automatic reload.
-- `quality-pass` still exists locally, fully merged; delete it with `git branch -d quality-pass` whenever.
-- After `git switch`, files come back with CRLF endings (autocrlf). Scripted edits that match on `\n` miss; use the edit tool or normalise first.
-
-## Known issues
-Low-severity items are in the roadmap "Discovered" table, plus ENV-002 (Ubuntu 26 runner from 2026-10-19).
+- Created **Setward**, a split-S logo and “Forward, one set at a time.” tagline.
+- Added the Workout header identity; regenerated SVG/PNG/install/Apple icons; updated the workout share card.
+- Updated browser/install metadata, visible copy, export filenames and README.
+- Added reusable SVG marks, PNG identity preview and usage notes under `branding/`.
+- Preserved the `chalk` database/backup identifiers, `chalk-sync/1`, manifest start URL/scope and `/chalk/` address. No dependencies added.
 
 ## Verification
-Live page: new bundle, CSP present, renders, no console errors. Real-device behaviour: NOT RUN.
+- 59 tests pass; 2 opt-in live-sync tests skipped.
+- Production `/chalk/` build passes, including typecheck and service worker.
+- Dark/light Workout header at 360 px: no horizontal overflow.
+- Settings copy, icon geometry and sample workout share card checked; no console errors/warnings.
+- Visible brand text stays accessible; only its decorative SVG is hidden.
+- Installed-phone name/icon refresh not run. Prior real-device checks remain outstanding.
+
+## Important details
+- Live site still runs the prior Chalk release, main @ 6d15c2e.
+- NN-15 requires the owner's authorization to merge/push/deploy.
+- `AGENTS.md` remains untracked; its header and handoff/branding notes, plus `CLAUDE.md`, were updated at the owner's follow-up to keep other AI models informed. Existing architecture instructions were preserved.
+- Ignored `tmp-import/` contains local brand rendering/QA aids, not user workout data.
+- Handoff is recorded in `AGENTS.md`, `CLAUDE.md`, this file, `PROJECT_STATE.md`, `DECISIONS.md`, `TEST_STATUS.md`, `SESSION_LOG.md`, progress/roadmap/release notes and `branding/README.md`. Start with project state and this task, then inspect the working tree before editing.
 
 ## Next exact action
-Ask the owner for the results of the four checks under "After deploy" in `RELEASE_CHECKLIST.md`. Fix anything they report, then pick the next item with them.
+Incorporate any requested branding changes. If publishing is authorized, use the existing deployment workflow without renaming the repository or changing the app address. Then check installed name/icon refresh and the remaining phone checks in `RELEASE_CHECKLIST.md`.
 
 ## Last updated
-2026-10-04 21:35
+2026-10-05

@@ -128,6 +128,15 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Before merging:** smoke tests S-01 to S-11 pass (see `TEST_STATUS.md`). After deploy, open the live URL on the phone and run S-03, S-04 and S-06 in a real workout.
 - **Status:** DONE (2026-10-04, owner approved). Merged as 6d15c2e (`--no-ff`); on `main` before the push, 59 tests passed, the build passed and the lockfile passed `npm ci --dry-run`. Pushed 0698dc1..6d15c2e; the Pages run 37229036212 succeeded. The live page serves `index-Cd64usJi.js` (474 kB) with the CSP meta, and `sw.js` returns 200. Loaded in the built-in browser: renders, exercise photos load, no CSP violations, no console errors. Still to do: the owner's on-phone checks (`RELEASE_CHECKLIST.md`).
 
+## Setward identity (session 2026-10-05)
+
+### BRAND-001: New app name and logo
+- **Objective:** create and apply the Setward name, angular split-S logo and “Forward, one set at a time.” tagline, with reusable assets saved locally.
+- **Affected:** Workout header, browser/install metadata, public icons, share card, visible copy, export filenames, README, `branding/` and `src/lib/brand.ts`.
+- **Compatibility:** retain the `chalk` database/backup identifiers, `chalk-sync/1`, manifest start URL/scope and `/chalk/` address. No dependencies added.
+- **Validation:** 59 tests passed; 2 opt-in live-sync tests skipped; `/chalk/` production build passed. Dark/light 360 px header, settings, icons and sample share card checked locally (`TEST_STATUS.md`).
+- **Status:** DONE locally, uncommitted and not deployed. Live remains Chalk at `main` @ 6d15c2e. Publishing needs the owner's authorization (NN-15); then check installed name/icon refresh and the remaining phone checks in `RELEASE_CHECKLIST.md`.
+
 ---
 
 ## Deferred and product decisions (owner's call)

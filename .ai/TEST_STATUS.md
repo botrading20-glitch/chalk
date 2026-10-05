@@ -1,5 +1,16 @@
 # Test status
 
+## Setward branding verification — 2026-10-05
+
+- `npm test`: 59 passed, 2 opt-in live GitHub checks skipped.
+- `BASE_PATH=/chalk/ npm run build`: passed (typecheck, production assets, service worker).
+- `/chalk/` preview: new browser title; Workout header at 360 px with no overflow in dark/light themes; Settings shows Setward. No console warnings/errors in the inspected page.
+- Sample 1080×1350 share card: matching split-S logo and Setward name/footer; date remains clear of the longer name.
+- SVG/PNG geometry checked, including opaque Apple/maskable backgrounds and the maskable safe circle. Palette and fonts unchanged.
+- Brand text stays in the accessibility tree; only the decorative SVG is hidden.
+- Database, backup discriminator, sync format and deployment/PWA scope unchanged; existing backup/sync tests pass.
+- Not run: installed phone name/icon refresh (requires deployment and the owner's phone). Earlier real-device checks remain outstanding.
+
 States: PASS · FAIL · PARTIAL · NOT RUN · BLOCKED · UNKNOWN.
 
 ## Baseline (2026-10-04 20:29, `main` @ 0698dc1, before any change)

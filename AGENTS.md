@@ -9,7 +9,7 @@ Free, offline-first workout logger (Hevy alternative). React 19 + TypeScript + V
 **Handoff:** check the working tree as well as `.ai/` before making changes. Completed work may be saved locally but uncommitted. Preserve it, read the recorded validation and outstanding steps, and do not treat a completed local change as deployed. As of 2026-10-05, the Setward rebrand is complete locally; publishing still needs the owner's go-ahead.
 
 ## Commands
-- `npm run dev`: dev server on :5173 (also `.claude/launch.json` → `chalk-dev`)
+- `npm run dev`: dev server on :5173 (also `.Codex/launch.json` → `chalk-dev`)
 - `npm run build`: `tsc --noEmit` + production build with service worker. In Git Bash, a sub-path build needs `MSYS_NO_PATHCONV=1 BASE_PATH=/chalk/ npm run build`; otherwise MSYS rewrites the path and the page loads blank.
 - `npm test`: vitest. It covers the sync engine, records and weekly stats, Hevy CSV, parsing, backups, the live workout and the plate solver. Dexie code runs on `fake-indexeddb` (dev only). The live GitHub check is opt-in: `CHALK_SMOKE_REPO=owner/name CHALK_SMOKE_TOKEN=… npx vitest run github.smoke`. It writes to `data/` in that repo and then deletes it.
 - `node scripts/sample-backup.mjs`: writes `tmp-import/chalk-sample-backup.json`, about four months of the owner's style of training, for QA. Restore it in a dev browser only.

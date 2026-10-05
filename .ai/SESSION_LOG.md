@@ -2,7 +2,7 @@
 
 ## Session: 2026-10-05 (owner decisions)
 
-The owner confirmed UX-002 (keep blocking the delete) and declined ESLint (DX-002 cancelled). Recorded in `DECISIONS.md`, the roadmap, project state and current task. Notes only; committed locally, not pushed.
+The owner confirmed UX-002 (keep blocking the delete) and declined ESLint (DX-002 cancelled). Recorded in `DECISIONS.md`, the roadmap, project state and current task. Notes only; pushed at the owner's request ("push it").
 
 ## Session: 2026-10-05 (release of REL-101)
 

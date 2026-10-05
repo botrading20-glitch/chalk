@@ -18,7 +18,7 @@ No task is active. REL-101 is released; waiting on the owner's phone checks.
 - ENV-002: deploys warn that `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19. If a deploy fails after that, pin `runs-on: ubuntu-24.04` in `.github/workflows/deploy.yml`.
 
 ## Next exact action
-Ask the owner how the release behaves on the phone (checks 1–6 in `RELEASE_CHECKLIST.md` → After deploy), then pick the next work with them. The commit recording these decisions is local only (`main` is one notes commit ahead of `origin/main`); push it with the next owner-approved push, since every push to `main` deploys (NN-15).
+Ask the owner how the release behaves on the phone (checks 1–6 in `RELEASE_CHECKLIST.md` → After deploy), then pick the next work with them. Every push to `main` deploys (NN-15), so push only with the owner's go-ahead.
 
 ## Last updated
 2026-10-05

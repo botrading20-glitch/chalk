@@ -1,6 +1,6 @@
 // Rest alert that works with the screen off (setting `timerLockScreen`, on by default).
 //
-// While resting, Chalk plays a generated, near-silent track. It makes no sound
+// While resting, Setward plays a generated, near-silent track. It makes no sound
 // on time: it keeps the app running while the phone is locked (Android keeps
 // apps that play media alive) and shows the rest as a player on the lock
 // screen. The beep itself is the in-app Web Audio beep, fired by a timer. Web
@@ -86,7 +86,7 @@ function showPlayer(endsAt: number, rest: number, controls: RestControls) {
   const ms = navigator.mediaSession;
   if (!ms) return;
   const icon = (size: number) => ({ src: `${import.meta.env.BASE_URL}icon-${size}.png`, sizes: `${size}x${size}`, type: 'image/png' });
-  ms.metadata = new MediaMetadata({ title: `Resting until ${clock.format(endsAt)}`, artist: 'Chalk', artwork: [icon(192), icon(512)] });
+  ms.metadata = new MediaMetadata({ title: `Resting until ${clock.format(endsAt)}`, artist: 'Setward', artwork: [icon(192), icon(512)] });
   const handlers: Record<string, MediaSessionActionHandler> = {
     // Nothing to pause in a rest, and pausing would drop the backup beep: end the rest instead.
     pause: controls.skip,

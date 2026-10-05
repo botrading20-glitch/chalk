@@ -1,4 +1,4 @@
-# Chalk
+# Setward
 
 A free workout logger inspired by Hevy. It runs in the browser, installs to your phone's home screen, and works offline. Your data stays on your device, plus an optional synced copy in your own private GitHub repository.
 
@@ -40,20 +40,22 @@ Cloudflare Pages, Netlify and Vercel are free alternatives that also allow priva
 
 Workouts are stored in the browser's IndexedDB on the device you log them on. The app works fully offline and needs no account.
 
+Setward was previously called Chalk. Existing workouts, sync repositories and Chalk backups remain compatible. The deployed app stays at the same `/chalk/` address so installed copies and local data keep working.
+
 To keep a copy off the device, turn on **cloud sync**, or use **Settings → Back up data** now and then. **Restore backup** brings a backup file back on any device.
 
 ### Cloud sync (free)
 
-Chalk syncs to a **private GitHub repository** that you own. There's no Chalk server in between.
+Setward syncs to a **private GitHub repository** that you own. There's no Setward server in between.
 
-1. Create a private repository, for example `chalk-data`: [github.com/new](https://github.com/new?name=chalk-data&visibility=private).
+1. Create a private repository, for example `setward-data`: [github.com/new](https://github.com/new?name=setward-data&visibility=private).
 2. Create a fine-grained access token at [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new):
    - **Repository access:** Only select repositories → your data repository
    - **Permissions → Contents:** Read and write
-   - **Expiration:** as long as you like. When it expires, Chalk asks for a new one.
-3. In Chalk, open **Progress → ⚙ Settings → Cloud sync → Set up sync** and paste the repository (`yourname/chalk-data`) and the token. Do this on each device.
+   - **Expiration:** as long as you like. When it expires, Setward asks for a new one.
+3. In Setward, open **Progress → ⚙ Settings → Cloud sync → Set up sync** and paste the repository (`yourname/setward-data`) and the token. Do this on each device.
 
-When a second device already has data, Chalk asks whether to replace it with the cloud copy or merge the two. Merging recognises workouts imported from Hevy on both devices and keeps them once.
+When a second device already has data, Setward asks whether to replace it with the cloud copy or merge the two. Merging recognises workouts imported from Hevy on both devices and keeps them once.
 
 After that, sync runs by itself:
 - when the app opens or comes back to the foreground
@@ -64,10 +66,10 @@ After that, sync runs by itself:
 
 - **How it syncs:** changes are merged record by record. If the same workout was edited on two devices before they synced, the newest edit wins. If it was edited on one and deleted on the other, the edit is kept.
 - **History:** every sync is a commit, so the repository's history holds every earlier version of your data.
-- **The token:** it's stored in the app's storage on each device and only sent to `api.github.com`. Keep the repository private; Chalk refuses to connect to a public one.
+- **The token:** it's stored in the app's storage on each device and only sent to `api.github.com`. Keep the repository private; Setward refuses to connect to a public one.
 - **Different addresses:** data belongs to the address you opened the app from, so `localhost` and your GitHub Pages address are separate. Sync or a backup moves data between them.
 
-To import from Hevy: in Hevy go to **Profile → Settings → Export & import data → Export workouts**, then in Chalk go to **Progress → ⚙ Settings → Import from Hevy**.
+To import from Hevy: in Hevy go to **Profile → Settings → Export & import data → Export workouts**, then in Setward go to **Progress → ⚙ Settings → Import from Hevy**.
 
 ## Project layout
 

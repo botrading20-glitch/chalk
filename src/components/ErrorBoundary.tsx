@@ -15,7 +15,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('Chalk crashed while rendering', error, info.componentStack);
+    console.error('Setward crashed while rendering', error, info.componentStack);
   }
 
   render() {
@@ -40,7 +40,7 @@ export function RecoveryScreen({ error, onHome }: { error: unknown; onHome?: () 
   async function download() {
     setBackup('saving');
     try {
-      await saveFile(`chalk-backup-${new Date().toISOString().slice(0, 10)}.json`, await exportBackup(), 'application/json');
+      await saveFile(`setward-backup-${new Date().toISOString().slice(0, 10)}.json`, await exportBackup(), 'application/json');
       setBackup('saved');
     } catch (e) {
       setBackup(`Couldn't read your data: ${(e as Error).message}`);
@@ -51,7 +51,7 @@ export function RecoveryScreen({ error, onHome }: { error: unknown; onHome?: () 
     <div className="page recovery" role="alert">
       <div className="empty">
         <h3>Something went wrong</h3>
-        <p className="muted">Chalk hit an error and couldn't show this screen. Your workouts are still saved on this device.</p>
+        <p className="muted">Setward hit an error and couldn't show this screen. Your workouts are still saved on this device.</p>
         <div className="empty-actions">
           <button className="btn btn-primary" onClick={() => window.location.reload()}>
             Reload

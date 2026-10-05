@@ -1,5 +1,6 @@
 // Draws a workout summary as a 1080×1350 PNG (the 4:5 portrait size most
 // apps show uncropped), in the app's own colours and fonts.
+import { BRAND_MARK_PATHS, BRAND_NAME } from './brand';
 
 export interface CardData {
   title: string;
@@ -22,7 +23,6 @@ const C = {
   text3: '#76747f',
   accent: '#7a55e6',
   accentInk: '#b39dff',
-  ring: '#5f3fc4',
   onAccent: '#ffffff',
 };
 const DISPLAY = '"Big Shoulders Display Variable", "Archivo Variable", sans-serif';
@@ -76,25 +76,14 @@ function trophy(ctx: CanvasRenderingContext2D, x: number, y: number, size: numbe
   ctx.restore();
 }
 
-/** The app icon: a bumper plate. */
-function plate(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {
-  ctx.fillStyle = C.accent;
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = C.ring;
-  ctx.lineWidth = r * 0.08;
-  ctx.beginPath();
-  ctx.arc(x, y, r * 0.68, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.fillStyle = C.text;
-  ctx.beginPath();
-  ctx.arc(x, y, r * 0.3, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = C.bg;
-  ctx.beginPath();
-  ctx.arc(x, y, r * 0.22, 0, Math.PI * 2);
-  ctx.fill();
+/** The same Setward mark used in the header and install icons. */
+function brandMark(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(size / 100, size / 100);
+  ctx.fillStyle = C.accentInk;
+  BRAND_MARK_PATHS.forEach((d) => ctx.fill(new Path2D(d)));
+  ctx.restore();
 }
 
 export async function renderWorkoutCard(data: CardData): Promise<Blob> {
@@ -113,12 +102,12 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
   ctx.fillStyle = C.bg;
   ctx.fillRect(0, 0, W, H);
 
-  // Header: plate + wordmark, date on the right.
-  plate(ctx, M + 22, M + 22, 22);
+  // Header: mark + wordmark, date on the right.
+  brandMark(ctx, M, M - 4, 56);
   ctx.fillStyle = C.accentInk;
   ctx.font = `800 48px ${DISPLAY}`;
   ctx.letterSpacing = '3px';
-  ctx.fillText('CHALK', M + 58, M + 39);
+  ctx.fillText(BRAND_NAME.toUpperCase(), M + 66, M + 39);
   ctx.letterSpacing = '0px';
   ctx.fillStyle = C.text2;
   ctx.font = `500 30px ${BODY}`;
@@ -208,7 +197,7 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
 
   ctx.fillStyle = C.text3;
   ctx.font = `500 26px ${BODY}`;
-  ctx.fillText('Logged with Chalk', M, footerY);
+  ctx.fillText(`Logged with ${BRAND_NAME}`, M, footerY);
 
   return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Could not create the image.'))), 'image/png'));
 }

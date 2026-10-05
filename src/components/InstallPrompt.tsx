@@ -18,17 +18,17 @@ function useInstallOffer() {
   return !installed && (installPlatform !== 'other' || canPrompt);
 }
 
-/** Smart-app-style banner for the Workout screen when Chalk is open in a browser tab. */
+/** Smart-app-style banner for the Workout screen when Setward is open in a browser tab. */
 export function InstallBanner() {
   const offer = useInstallOffer();
   const dismissed = useLiveQuery(async () => (await getKV<boolean>(DISMISSED)) ?? false, []);
   if (!offer || dismissed !== false) return null;
 
   return (
-    <section className="card install-card" aria-label="Install Chalk">
+    <section className="card install-card" aria-label="Install Setward">
       <img className="install-icon" src={`${import.meta.env.BASE_URL}icon-192.png`} width={44} height={44} alt="" />
       <div className="install-text">
-        <strong>Install Chalk</strong>
+        <strong>Install Setward</strong>
         <span>Opens from your home screen, full-screen and offline.</span>
       </div>
       <InstallButton className="btn btn-accent-outline btn-small" />
@@ -37,7 +37,7 @@ export function InstallBanner() {
         aria-label="Dismiss"
         onClick={() => {
           void setKV(DISMISSED, true);
-          toast('You can install Chalk later from Settings');
+          toast('You can install Setward later from Settings');
         }}
       >
         <IconClose size={18} />
@@ -53,7 +53,7 @@ export function InstallSettings() {
   return (
     <section className="card settings-group">
       <h2 className="card-title">Install app</h2>
-      <p className="muted small">Add Chalk to your home screen. It gets its own icon, opens full-screen and works without a connection.</p>
+      <p className="muted small">Add Setward to your home screen. It gets its own icon, opens full-screen and works without a connection.</p>
       <InstallButton className="btn btn-secondary btn-block" />
     </section>
   );
@@ -70,7 +70,7 @@ function InstallButton({ className }: { className: string }) {
         className={className}
         onClick={async () => {
           if (!canPrompt) return setHowTo(true);
-          if (await promptInstall()) toast('Installing — open Chalk from your home screen');
+          if (await promptInstall()) toast('Installing — open Setward from your home screen');
         }}
       >
         Install
@@ -84,7 +84,7 @@ function InstallSheet({ open, onClose }: { open: boolean; onClose: () => void })
   const { workouts } = useData();
 
   return (
-    <Sheet open={open} onClose={onClose} title="Install Chalk">
+    <Sheet open={open} onClose={onClose} title="Install Setward">
       <div className="install-how">
         {installPlatform === 'ios' ? (
           <>
@@ -95,7 +95,7 @@ function InstallSheet({ open, onClose }: { open: boolean; onClose: () => void })
               <li>
                 Scroll down, tap <strong>Add to Home Screen</strong>, then <strong>Add</strong>.
               </li>
-              <li>Open Chalk from its new icon on your home screen.</li>
+              <li>Open Setward from its new icon on your home screen.</li>
             </ol>
             <p className="muted small">Not in the list? Open this page in Safari and try again.</p>
             {workouts.length > 0 && (
@@ -113,7 +113,7 @@ function InstallSheet({ open, onClose }: { open: boolean; onClose: () => void })
             <li>
               Tap <strong>Install app</strong> (some phones say <strong>Add to Home screen</strong>), then confirm.
             </li>
-            <li>Open Chalk from its new icon on your home screen. Everything you’ve logged here comes along.</li>
+            <li>Open Setward from its new icon on your home screen. Everything you’ve logged here comes along.</li>
           </ol>
         ) : (
           <p className="muted">

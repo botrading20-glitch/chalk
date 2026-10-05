@@ -44,6 +44,6 @@ async function boot() {
 }
 
 boot().catch((e) => {
-  console.error("Chalk couldn't start", e);
+  console.error("Setward couldn't start", e);
   root.render(<RecoveryScreen error={e} />);
 });

@@ -71,7 +71,7 @@ function SharePreview({ workout }: { workout: Workout }) {
     // Redraw only when the card's content changes.
   }, [key]);
 
-  const name = `chalk-${workout.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'workout'}.png`;
+  const name = `setward-${workout.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'workout'}.png`;
   const file = image && new File([image.blob], name, { type: 'image/png' });
   const canShare = !!file && !!navigator.canShare?.({ files: [file] });
 

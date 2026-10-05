@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useState, type ReactNode } from 'react';
+import { Brand } from '../components/Brand';
 import { confirmDialog, toast } from '../components/dialogs';
 import { IconChevron, IconCopy, IconEdit, IconFolder, IconFolderPlus, IconMore, IconPlay, IconPlus, IconTrash } from '../components/Icons';
 import { InstallBanner } from '../components/InstallPrompt';
@@ -52,7 +53,7 @@ export function WorkoutHome() {
 
   return (
     <div className="page">
-      <PageHeader large title="Workout" />
+      <PageHeader large title="Workout" actions={<Brand />} />
 
       <SyncWarning />
       {active ? <ResumeCard /> : null}

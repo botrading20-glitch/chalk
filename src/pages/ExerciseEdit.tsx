@@ -31,7 +31,7 @@ export function ExerciseEdit({ id }: { id?: string }) {
         ) : (
           <>
             <p className="muted small">
-              Chalk saves this as your own version. Your past workouts and routines switch to it, and the original leaves the exercise
+              Setward saves this as your own version. Your past workouts and routines switch to it, and the original leaves the exercise
               list. You can go back to the original at any time.
             </p>
             <ExerciseForm

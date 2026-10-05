@@ -224,7 +224,7 @@ export function SettingsPage() {
           <button
             className="btn btn-ghost"
             onClick={async () => {
-              await saveFile(`chalk-backup-${today()}.json`, await exportBackup(), 'application/json');
+              await saveFile(`setward-backup-${today()}.json`, await exportBackup(), 'application/json');
             }}
           >
             <IconDownload size={18} /> Back up data
@@ -247,7 +247,7 @@ export function SettingsPage() {
         <button
           className="btn btn-ghost btn-block"
           disabled={!workouts.length}
-          onClick={() => saveFile(`chalk-workouts-${today()}.csv`, toHevyCsv(workouts, exerciseMap), 'text/csv')}
+          onClick={() => saveFile(`setward-workouts-${today()}.csv`, toHevyCsv(workouts, exerciseMap), 'text/csv')}
         >
           <IconDownload size={18} /> Export workouts as CSV
         </button>
@@ -281,7 +281,7 @@ export function SettingsPage() {
       </section>
 
       <p className="muted small about">
-        Chalk v{__APP_VERSION__} · Free and open. Exercise library from{' '}
+        Setward v{__APP_VERSION__} · Free and open. Exercise library from{' '}
         <a href="https://github.com/yuhonas/free-exercise-db" target="_blank" rel="noreferrer">
           free-exercise-db
         </a>{' '}

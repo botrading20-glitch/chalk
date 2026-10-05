@@ -64,7 +64,7 @@ export function serializeShard(records: Rec[]) {
 export function parseShard(text: string): Rec[] {
   const data = JSON.parse(text);
   if (data?.format !== FORMAT || !Array.isArray(data.records)) {
-    throw new Error('The sync repository contains a file Chalk does not recognise.');
+    throw new Error('The sync repository contains a file Setward does not recognise.');
   }
   return data.records.filter((r: Rec) => r && typeof r.id === 'string');
 }

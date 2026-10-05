@@ -1,4 +1,4 @@
-/* Chalk — violet-tinted charcoal greys with a midnight-purple accent.
+/* Setward — violet-tinted charcoal greys with a midnight-purple accent.
    Set badges keep bumper-plate colours: yellow W (warm-up), red F (failure),
    blue D (drop), and a checked set turns the row plate-green. */
 
@@ -68,6 +68,24 @@
   --radius: 16px;
   --radius-sm: 10px;
   --gutter: 16px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--accent-ink);
+  white-space: nowrap;
+}
+
+.brand-mark {
+  flex: none;
+}
+
+.brand-name {
+  color: var(--text);
+  font: 800 28px/1 var(--font-display);
+  letter-spacing: -0.5px;
 }
 
 *,

@@ -46,10 +46,10 @@ export function parseBackup(text: string): ParsedBackup {
   try {
     data = JSON.parse(text);
   } catch {
-    throw new Error("This file isn't valid JSON. Pick a backup exported from Chalk.");
+    throw new Error("This file isn't valid JSON. Pick a backup exported from Setward.");
   }
   if (data?.app !== 'chalk' || !Array.isArray(data.workouts)) {
-    throw new Error("This file isn't a Chalk backup. Pick a file exported from Settings → Back up data.");
+    throw new Error("This file isn't a Setward backup. Pick a file exported from Settings → Back up data.");
   }
   const workouts = cleanAll(data.workouts, cleanWorkout);
   const routines = cleanAll(data.routines, cleanRoutine);

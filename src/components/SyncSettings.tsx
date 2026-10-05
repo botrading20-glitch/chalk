@@ -22,7 +22,7 @@ export function SyncSettings() {
       {!on ? (
         <>
           <p className="muted small">
-            Keep a copy of everything in a private GitHub repository and use Chalk on more than one device. Every sync is saved
+            Keep a copy of everything in a private GitHub repository and use Setward on more than one device. Every sync is saved
             in the repository’s history, so you can always go back to an earlier version.
           </p>
           <button className="btn btn-secondary btn-block" onClick={() => setSetup(true)}>
@@ -109,7 +109,7 @@ function SyncSetup({ initialRepo, onDone }: { initialRepo?: string; onDone: () =
 
   async function submit() {
     const parsed = parseRepo(repo);
-    if (!parsed) return setError('Enter the repository as owner/name, for example yourname/chalk-data.');
+    if (!parsed) return setError('Enter the repository as owner/name, for example yourname/setward-data.');
     if (!token.trim()) return setError('Paste the access token.');
     const config = { ...parsed, token: token.trim() };
     setBusy(true);
@@ -136,7 +136,7 @@ function SyncSetup({ initialRepo, onDone }: { initialRepo?: string; onDone: () =
     return (
       <div className="sync-choice">
         <p>
-          This device and <strong>{choice.owner}/{choice.repo}</strong> both have Chalk data already. What should happen?
+          This device and <strong>{choice.owner}/{choice.repo}</strong> both have Setward data already. What should happen?
         </p>
         <button className="choice-card" disabled={busy} onClick={() => finish(choice, 'replace')}>
           <strong>Use the cloud data on this device</strong>
@@ -161,7 +161,7 @@ function SyncSetup({ initialRepo, onDone }: { initialRepo?: string; onDone: () =
       <ol className="setup-steps">
         <li>
           <strong>Create a private repository</strong> to hold your data.{' '}
-          <a href="https://github.com/new?name=chalk-data&visibility=private" target="_blank" rel="noreferrer">
+          <a href="https://github.com/new?name=setward-data&visibility=private" target="_blank" rel="noreferrer">
             Create it on GitHub
           </a>
         </li>
@@ -182,7 +182,7 @@ function SyncSetup({ initialRepo, onDone }: { initialRepo?: string; onDone: () =
         <input
           value={repo}
           onChange={(e) => setRepo(e.target.value)}
-          placeholder="yourname/chalk-data"
+          placeholder="yourname/setward-data"
           autoCapitalize="off"
           autoCorrect="off"
           spellCheck={false}

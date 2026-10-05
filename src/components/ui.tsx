@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState, type KeyboardEvent, type ReactNode } from 'react';
 import { IMAGE_BASE } from '../lib/meta';
 import { goBack } from '../lib/router';
 import type { Exercise } from '../types';
@@ -32,6 +32,13 @@ export function PageHeader({
   );
 }
 
+const ARROW_STEP = new Map([
+  ['ArrowRight', 1],
+  ['ArrowDown', 1],
+  ['ArrowLeft', -1],
+  ['ArrowUp', -1],
+]);
+
 export function Segmented<T extends string>({
   options,
   value,
@@ -43,13 +50,27 @@ export function Segmented<T extends string>({
   onChange: (v: T) => void;
   label: string;
 }) {
+  const current = Math.max(0, options.findIndex((o) => o.value === value));
+
+  // Radio group keyboard pattern: one tab stop, and the arrow keys move and select.
+  function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    const n = options.length;
+    const step = ARROW_STEP.get(e.key);
+    const next = e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : step ? (current + step + n) % n : -1;
+    if (next < 0) return;
+    e.preventDefault();
+    onChange(options[next].value);
+    (e.currentTarget.children[next] as HTMLElement | undefined)?.focus();
+  }
+
   return (
-    <div className="segmented" role="radiogroup" aria-label={label}>
-      {options.map((o) => (
+    <div className="segmented" role="radiogroup" aria-label={label} onKeyDown={onKeyDown}>
+      {options.map((o, i) => (
         <button
           key={o.value}
           role="radio"
           aria-checked={o.value === value}
+          tabIndex={i === current ? 0 : -1}
           className={o.value === value ? 'on' : ''}
           onClick={() => onChange(o.value)}
         >

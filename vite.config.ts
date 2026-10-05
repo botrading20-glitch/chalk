@@ -47,8 +47,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Chalk — workout log',
-        short_name: 'Chalk',
+        name: 'Setward — workout log',
+        short_name: 'Setward',
         description: 'Log sets, track records and follow your progress. Works offline.',
         theme_color: '#131217',
         background_color: '#131217',

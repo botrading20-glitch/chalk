@@ -70,9 +70,9 @@ describe('backup', () => {
     expect(await db.workouts.count()).toBe(1);
   });
 
-  it('rejects files that aren’t Chalk backups without writing anything', async () => {
+  it('rejects files that aren’t Setward backups without writing anything', async () => {
     await expect(importBackup('{oops')).rejects.toThrow(/valid JSON/);
-    await expect(importBackup(JSON.stringify({ app: 'hevy', workouts: [] }))).rejects.toThrow(/isn't a Chalk backup/);
+    await expect(importBackup(JSON.stringify({ app: 'hevy', workouts: [] }))).rejects.toThrow(/isn't a Setward backup/);
     expect(await db.workouts.count()).toBe(0);
   });
 
@@ -111,7 +111,7 @@ describe('backup', () => {
     expect(b.settings).toEqual({ defaultRest: 120, timerSound: false });
   });
 
-  it('keeps fields from a newer Chalk it doesn’t know, but drops known fields that fail their check', () => {
+  it('keeps fields from a newer Setward it doesn’t know, but drops known fields that fail their check', () => {
     const newer = {
       ...workout,
       heartRate: 142,

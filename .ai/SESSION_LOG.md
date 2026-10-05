@@ -1,5 +1,36 @@
 # Session log
 
+## Session: 2026-10-05 (afternoon, master prompt v2)
+
+**Objective:** none beyond the master prompt, so: resume from the handoff, protect the uncommitted rebrand, reconcile memory with reality, and do the backlog items that needed no owner decision.
+
+**Completed:** ENV-003 (baseline; branch `setward`; rebrand committed unchanged as 6ce6fb4 + e40a906; `AGENTS.md` launch path fixed; v2 status mapping in the roadmap). UX-002 + UX-003 (83fd874), A11Y-002 (436c05f), DOC-002 (4ae76c3).
+
+**Files:** `src/lib/exercises.ts`, `src/lib/exercises.test.ts` (new), `src/pages/ExerciseDetail.tsx`, `src/components/ui.tsx`, `src/lib/shareCard.ts`, `AGENTS.md`, `CLAUDE.md`, `.ai/*`.
+
+**Verification:** `TEST_STATUS.md` (session 2026-10-05 afternoon): all PASS; screen reader and phone NOT_RUN.
+
+**Decisions:** commit the rebrand on a local branch rather than leave it uncommitted; UX-002 blocks the delete (PROPOSED default). See `DECISIONS.md`.
+
+**Stopping point:** everything committed on `setward`; `main` untouched; nothing pushed. The pre-existing dev server on :5173 left running.
+
+**Next:** ask the owner about REL-101 and the phone checks (`CURRENT_TASK.md`).
+
+## Session: 2026-10-05 (AI handoff follow-up)
+
+The owner asked to ensure other AI models can resume without losing progress. Verified the saved rebrand and existing `.ai/` handoff; refreshed `AGENTS.md` and `CLAUDE.md` with the Setward name, asset locations, legacy identifier constraints and instructions to inspect uncommitted work before editing. Aligned progress/roadmap/release notes. Updated `CURRENT_TASK.md` to record this follow-up. Documentation only; prior code/test evidence unchanged. All changes remain local and uncommitted; publishing still requires authorization.
+
+## Session: 2026-10-05 (Setward identity)
+
+### Completed
+Created Setward, a split-S mark and “Forward, one set at a time.” tagline. Applied the identity to the Workout header, install icons/metadata, visible copy, export filenames and workout share card. Added reusable artwork/preview/notes in `branding/`. Database/backup/sync identifiers, deployment URL, fonts and palette stay stable; no dependencies added.
+
+### Verification
+59 tests pass; 2 opt-in live-sync tests skipped. Production `/chalk/` build passes. Dark/light 360 px preview, settings, icons and sample share-card checks pass. Phone branding refresh not run.
+
+### Exact stopping point
+Local, uncommitted changes; no deployment requested/performed. The existing untracked `AGENTS.md` was not changed. Next action: branding review and publishing only if authorized.
+
 ## Session: 2026-10-04 20:28–21:25
 
 ### Objective

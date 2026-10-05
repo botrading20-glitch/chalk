@@ -1,6 +1,7 @@
 # Development roadmap
 
-The single master plan. Status values: TODO · IN_PROGRESS · BLOCKED · PARTIALLY_VERIFIED · VERIFIED · DONE · DEFERRED.
+The single master plan. Task states: TODO · IN_PROGRESS · IMPLEMENTED · BLOCKED · DONE · DEFERRED · CANCELLED. Checks are recorded separately as PASS · FAIL · PARTIAL · NOT_RUN · BLOCKED · NOT_APPLICABLE (`TEST_STATUS.md`).
+Legacy labels from 2026-10-04 are kept as written: **VERIFIED** means DONE with its checks PASS; **PARTIALLY_VERIFIED** means IMPLEMENTED with some checks still pending.
 Task IDs are stable; never renumber. Architecture lives in `CLAUDE.md`; this file only holds the work.
 
 **Mode:** EXISTING_PROJECT. **Depth:** level 1–2 (repair and refactor). No rebuild or migration is justified: the stack is current (React 19, Vite 8, TS 7, Dexie 4), the build is clean and there are 0 audit findings.
@@ -135,7 +136,44 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Affected:** Workout header, browser/install metadata, public icons, share card, visible copy, export filenames, README, `branding/` and `src/lib/brand.ts`.
 - **Compatibility:** retain the `chalk` database/backup identifiers, `chalk-sync/1`, manifest start URL/scope and `/chalk/` address. No dependencies added.
 - **Validation:** 59 tests passed; 2 opt-in live-sync tests skipped; `/chalk/` production build passed. Dark/light 360 px header, settings, icons and sample share card checked locally (`TEST_STATUS.md`).
-- **Status:** DONE locally, uncommitted and not deployed. Live remains Chalk at `main` @ 6d15c2e. Publishing needs the owner's authorization (NN-15); then check installed name/icon refresh and the remaining phone checks in `RELEASE_CHECKLIST.md`.
+- **Status:** DONE. Committed unchanged on the local branch `setward` as 6ce6fb4 (code and assets) and e40a906 (notes) on 2026-10-05; not merged or deployed. Live remains Chalk at `main` @ 6d15c2e. Publishing is REL-101.
+
+## Handoff reconciliation and backlog (session 2026-10-05, afternoon)
+
+### ENV-003: Resume, reconcile and protect the uncommitted rebrand
+- **Objective:** apply the master prompt (v2) at session start: read instructions and memory, compare them with the working tree, record a baseline, and keep the rebrand separate from new work.
+- **Findings:** the handoff matched the tree. Two mismatches: `AGENTS.md` pointed to a non-existent `.Codex/launch.json`, and the share card still drew dim text in the pre-A11Y-001 grey (#76747f). The roadmap used status labels the v2 prompt doesn't (mapped in the header).
+- **Baseline (uncommitted tree):** typecheck and `/chalk/` build pass (main chunk 148.77 kB gzip); 59 tests pass, 2 opt-in skipped; Node 24.19.0, npm 11.17.0.
+- **Action:** branch `setward` from `main` @ 047c53f; rebrand committed unchanged in two commits; `AGENTS.md` path fixed.
+- **Task state:** DONE.
+
+### UX-002: Deleting a custom exercise checks routines and the live workout
+- **Decision (PROPOSED default, easy to reverse):** block the delete, as the app already did for workouts, instead of silently removing the exercise from routines. Nothing changes the user's data without them doing it.
+- **Affected:** `src/lib/exercises.ts` (`exerciseUses`), `src/pages/ExerciseDetail.tsx`, `src/lib/exercises.test.ts` (new).
+- **Acceptance:** an exercise used by a workout, routine or the workout in progress can't be deleted, and the toast says where it's used; an unused one still asks and then deletes.
+- **Validation:** 3 unit tests; browser: a routine-only exercise → "Used in 1 routine — remove it there first"; the sample's custom exercise → "Used in 13 workouts and 1 routine…"; after removing the routine, the delete confirm appeared and deleted it.
+- **Task state:** DONE (83fd874).
+
+### UX-003: No session volume for assisted bodyweight
+- **Affected:** `src/pages/ExerciseDetail.tsx` (gated on `COUNTS_VOLUME`, as the charts already are via `metricsFor`).
+- **Validation:** browser: an assisted pull-up with two sessions shows only Most reps and Logged (before: a 490 kg "Best session volume"); Chest Press (Machine) still shows it.
+- **Task state:** DONE (83fd874).
+
+### A11Y-002: Arrow keys in segmented controls
+- **Affected:** `src/components/ui.tsx` (`Segmented`): roving tab index; arrows (wrapping), Home and End move focus and select.
+- **Validation:** browser with real key presses: exercise tabs (2 options) and Settings → Theme (3): right/left/up/down wrap, Home/End, Enter still activates, one Tab leaves the group, and the focus ring shows (`:focus-visible`, 2 px accent). No unit test (no React testing library; see UX-001).
+- **Task state:** DONE (436c05f).
+
+### DOC-002: Share card grey matches the token
+- **Affected:** `src/lib/shareCard.ts` (`text3` → #888692).
+- **Validation:** rendered card: 2,898 pixels in #888692 across labels and footer, 1 stray old-grey pixel (antialiasing); visual check.
+- **Task state:** DONE (4ae76c3).
+
+### REL-101: Publish the `setward` branch
+- **Objective:** merge `setward` into `main` and push, which deploys the rebrand and the fixes above.
+- **Risk:** MEDIUM. It changes the installed app's name and icon on the owner's phone. App identity is unchanged (`start_url`/`scope` stay `/chalk/`, checked in `dist/manifest.webmanifest`), so Android treats it as an update of the same app and the data stays. Rollback: `git revert -m 1 <merge>` and push.
+- **Before merging:** done 2026-10-05: 62 tests, `/chalk/` build, preview smoke S-01/S-02/S-08.
+- **Task state:** BLOCKED on the owner's go-ahead (NN-15).
 
 ---
 
@@ -158,10 +196,10 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 | ID | Item | Severity | Why it remains |
 |----|------|----------|----------------|
 | DATA-002 | Records arriving through sync aren't shape-checked. A damaged one would show the crash screen (with a backup button) rather than be skipped. | Low | Filtering sync input would turn into a cloud deletion (see `DECISIONS.md`). A safe fix is a "data check" in Settings that lists damaged records for the user to delete. |
-| UX-002 | Deleting a custom exercise checks workouts but not routines, so routines then show "Deleted exercise". | Low | Small; needs a decision: block, or remove it from routines. |
-| UX-003 | "Best session volume" also shows for assisted-bodyweight exercises, where it multiplies assistance by reps. | Low | Cosmetic. Use `COUNTS_VOLUME` in `ExerciseDetail`. |
+| UX-002 | ~~Deleting a custom exercise checks workouts but not routines.~~ | Low | DONE 2026-10-05 (see above). |
+| UX-003 | ~~"Best session volume" shows for assisted-bodyweight exercises.~~ | Low | DONE 2026-10-05 (see above). |
 | UX-004 | The new and edit exercise form has no draft or discard prompt. | Low | Short form; ADR-001 leaves it out on purpose. |
-| A11Y-002 | `Segmented` uses `role="radio"` buttons without arrow-key movement (each option is a tab stop). | Low | Works with Tab and Enter; arrow keys would match the radio pattern. |
+| A11Y-002 | ~~`Segmented` radios have no arrow-key movement.~~ | Low | DONE 2026-10-05 (see above). |
 | DX-002 | No linter is configured (only strict `tsc`). | Low | Adding ESLint means new dev dependencies and a style decision for the owner. |
 | ENV-002 | GitHub moves the `ubuntu-latest` runner to Ubuntu 26 from 2026-10-19 (deploy annotation). | Low | Nothing to change now; if a deploy fails after that date, pin `runs-on: ubuntu-24.04` in `.github/workflows/deploy.yml`. |
 

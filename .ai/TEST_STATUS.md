@@ -1,5 +1,23 @@
 # Test status
 
+## Session 2026-10-05 afternoon: branch `setward` @ 4ae76c3
+
+Environment: Windows 11, Node 24.19.0, npm 11.17.0; the desktop app's built-in Chromium (dev server on 127.0.0.1:5173, preview on localhost:4173/chalk/), 375 and 320 px emulation.
+
+| Check | Claim | Result | Evidence |
+|-------|-------|--------|----------|
+| Baseline | The uncommitted rebrand builds and passes tests before any change | PASS | 59 passed, 2 skipped; `/chalk/` build, main chunk 148.77 kB gzip |
+| A-01/A-02/A-03 | Types, tests and build after the fixes | PASS | `tsc` exit 0; 62 passed, 2 skipped (new `exercises.test.ts`: 3); main chunk 149.04 kB gzip, precache 22 entries |
+| UX-002 | A used custom exercise can't be deleted; an unused one can | PASS | Browser: routine-only exercise → "Used in 1 routine — remove it there first", still stored; sample custom → "Used in 13 workouts and 1 routine…"; routine removed → confirm dialog → deleted, back on Exercises |
+| UX-003 | No session volume for assisted bodyweight; weight × reps keeps it | PASS | Assisted pull-up fixture: Most reps, Logged only; Chest Press (Machine): Heaviest, e1RM, set volume, session volume, Logged |
+| A11Y-002 | Radio-group keyboard pattern | PASS | Real key presses: wrap both ways (2 and 3 options), Up/Down, Home/End, Enter, one Tab exits; focused option matches `:focus-visible` with a 2 px accent outline |
+| DOC-002 | Share card dim text uses #888692 | PASS | Pixel scan of the 1080×1350 card: 2,898 px #888692, 1 px old grey; screenshot |
+| Header 320 px | Setward header fits the narrowest phone | PASS | Title 16–178 px, brand 184–304 px, no page overflow |
+| S-01/S-02/S-08 | Preview at `/chalk/` loads, routes work, CSP holds | PASS | 6 routes, no overflow, service worker in control, 0 CSP violations, no console messages |
+| Manifest | Installed-app identity unchanged | PASS | `dist/manifest.webmanifest`: name/short name Setward, `start_url` and `scope` `/chalk/` |
+| Screen reader | — | NOT_RUN | No screen reader here |
+| Phone | Name/icon refresh, fixes on device | NOT_RUN | Needs a deploy (REL-101) and the owner's phone |
+
 ## Setward branding verification — 2026-10-05
 
 - `npm test`: 59 passed, 2 opt-in live GitHub checks skipped.

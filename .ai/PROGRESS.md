@@ -2,6 +2,15 @@
 
 Completed roadmap work, newest first. Evidence is in `TEST_STATUS.md` and on each task in `DEVELOPMENT_ROADMAP.md`.
 
+## 2026-10-05 (afternoon): backlog fixes on branch `setward` (local, not deployed)
+
+| Task | Result | Commit |
+|------|--------|--------|
+| DOC-002 | Share card dim text uses the current `--text-3` grey | 4ae76c3 |
+| A11Y-002 | Arrow keys, Home and End in segmented controls | 436c05f |
+| UX-002, UX-003 | Deleting a custom exercise checks routines and the live workout; no session volume for assisted bodyweight | 83fd874 |
+| ENV-003 | Handoff reconciled; rebrand committed unchanged on `setward`; `AGENTS.md` path fixed | 6ce6fb4, e40a906 |
+
 ## 2026-10-05: Setward identity (complete locally, uncommitted)
 
 - Renamed the visible app to **Setward** with an angular split-S logo and “Forward, one set at a time.” tagline. Updated the Workout header, install/browser metadata, icons, share card, visible copy, export filenames and README.

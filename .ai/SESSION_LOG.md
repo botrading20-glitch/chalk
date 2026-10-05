@@ -2,7 +2,7 @@
 
 ## Session: 2026-10-05 (ENV-002)
 
-At the owner's request, pinned both deploy jobs to `ubuntu-24.04` in `.github/workflows/deploy.yml` (was `ubuntu-latest`, which moves to Ubuntu 26 from 2026-10-19). YAML parses; the pin is proven only by the next deploy run.
+At the owner's request, pinned both deploy jobs to `ubuntu-24.04` in `.github/workflows/deploy.yml` (was `ubuntu-latest`, which moves to Ubuntu 26 from 2026-10-19). Pushed (owner: "push it"); Pages run 37298887657 succeeded on image ubuntu-24.04 with 0 annotations; live bundle unchanged.
 
 ## Session: 2026-10-05 (owner decisions)
 

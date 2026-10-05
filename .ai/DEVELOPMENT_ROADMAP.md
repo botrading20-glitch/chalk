@@ -201,7 +201,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 | UX-004 | The new and edit exercise form has no draft or discard prompt. | Low | Short form; ADR-001 leaves it out on purpose. |
 | A11Y-002 | ~~`Segmented` radios have no arrow-key movement.~~ | Low | DONE 2026-10-05 (see above). |
 | DX-002 | ~~No linter is configured (only strict `tsc`).~~ | Low | CANCELLED 2026-10-05: the owner chose to skip ESLint; strict `tsc` stays the only static check. |
-| ENV-002 | GitHub moves the `ubuntu-latest` runner to Ubuntu 26 from 2026-10-19 (deploy annotation). | Low | IMPLEMENTED 2026-10-05 at the owner's request: both jobs in `.github/workflows/deploy.yml` pinned to `ubuntu-24.04`; YAML parses. Verified only once a deploy runs on it. Revisit when GitHub retires the 24.04 image. |
+| ENV-002 | GitHub moves the `ubuntu-latest` runner to Ubuntu 26 from 2026-10-19 (deploy annotation). | Low | DONE 2026-10-05 at the owner's request (1585231): both jobs in `.github/workflows/deploy.yml` pinned to `ubuntu-24.04`. Pages run 37298887657: build and deploy succeeded on image ubuntu-24.04 (20260927.320), 0 annotations (the migration warning is gone); live bundle unchanged. Revisit when GitHub retires the 24.04 image. |
 
 ## Traceability
 

@@ -1,5 +1,12 @@
 # Test status
 
+## ENV-002 — 2026-10-05
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Deploy runs on the pinned runner | PASS | Run 37298887657 (`main` @ 1585231): build and deploy logs show `Image: ubuntu-24.04` (20260927.320); both jobs success; 0 annotations |
+| Live app unchanged | PASS | Live page still serves `index-z9IrtRPz.js` |
+
 ## Session 2026-10-05 afternoon: branch `setward` @ 4ae76c3
 
 Environment: Windows 11, Node 24.19.0, npm 11.17.0; the desktop app's built-in Chromium (dev server on 127.0.0.1:5173, preview on localhost:4173/chalk/), 375 and 320 px emulation.

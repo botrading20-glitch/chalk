@@ -28,7 +28,7 @@ Setward identity: an angular split-S mark and “Forward, one set at a time.” 
 See `NON_NEGOTIABLES.md` (NN-01 to NN-16). None were changed this session.
 
 ## Current problems
-None known at medium or high severity. Low-severity items left in the roadmap "Discovered" table: DATA-002, UX-004, ENV-002. No linter by the owner's choice (DX-002 cancelled).
+None known at medium or high severity. Low-severity items left in the roadmap "Discovered" table: DATA-002, UX-004. Deploy runners pinned to Ubuntu 24.04 (ENV-002). No linter by the owner's choice (DX-002 cancelled).
 
 ## Current risks
 - Neither release has been checked on the owner's Android phone yet (`RELEASE_CHECKLIST.md`).

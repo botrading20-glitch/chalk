@@ -1,5 +1,9 @@
 # Session log
 
+## Session: 2026-10-05 (ENV-002)
+
+At the owner's request, pinned both deploy jobs to `ubuntu-24.04` in `.github/workflows/deploy.yml` (was `ubuntu-latest`, which moves to Ubuntu 26 from 2026-10-19). YAML parses; the pin is proven only by the next deploy run.
+
 ## Session: 2026-10-05 (owner decisions)
 
 The owner confirmed UX-002 (keep blocking the delete) and declined ESLint (DX-002 cancelled). Recorded in `DECISIONS.md`, the roadmap, project state and current task. Notes only; pushed at the owner's request ("push it").

@@ -1,5 +1,9 @@
 # Session log
 
+## Session: 2026-10-05 (release of REL-101)
+
+The owner said "merge and push it". Merged `setward` into `main` as 34d025d (`--no-ff`, message file); on `main`: 62 tests, `/chalk/` build, `npm ci --dry-run`, secret scan, all PASS. Pushed 047c53f..34d025d with `GH_TOKEN` for botrading20-glitch. Pages run 37297499084 succeeded; the live page serves `index-z9IrtRPz.js` with the CSP, Setward title and manifest, and loads with no violations or console errors. The deploy repeats the ENV-002 annotation (Ubuntu 26 from 2026-10-19). Stopping point: released; waiting for the owner's phone checks.
+
 ## Session: 2026-10-05 (afternoon, master prompt v2)
 
 **Objective:** none beyond the master prompt, so: resume from the handoff, protect the uncommitted rebrand, reconcile memory with reality, and do the backlog items that needed no owner decision.

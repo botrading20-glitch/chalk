@@ -2,7 +2,7 @@
 
 Completed roadmap work, newest first. Evidence is in `TEST_STATUS.md` and on each task in `DEVELOPMENT_ROADMAP.md`.
 
-## 2026-10-05 (afternoon): backlog fixes on branch `setward` (local, not deployed)
+## 2026-10-05: Setward and backlog fixes (merged as 34d025d and deployed)
 
 | Task | Result | Commit |
 |------|--------|--------|

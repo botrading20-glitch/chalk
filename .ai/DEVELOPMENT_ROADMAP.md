@@ -173,7 +173,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Objective:** merge `setward` into `main` and push, which deploys the rebrand and the fixes above.
 - **Risk:** MEDIUM. It changes the installed app's name and icon on the owner's phone. App identity is unchanged (`start_url`/`scope` stay `/chalk/`, checked in `dist/manifest.webmanifest`), so Android treats it as an update of the same app and the data stays. Rollback: `git revert -m 1 <merge>` and push.
 - **Before merging:** done 2026-10-05: 62 tests, `/chalk/` build, preview smoke S-01/S-02/S-08.
-- **Task state:** BLOCKED on the owner's go-ahead (NN-15).
+- **Task state:** DONE (2026-10-05, owner said "merge and push it"). Merged as 34d025d (`--no-ff`); on `main` before the push: 62 tests, `/chalk/` build (same bundle `index-z9IrtRPz.js` as the branch), `npm ci --dry-run`, and a secret scan of the merged diff. Pushed 047c53f..34d025d; Pages run 37297499084 succeeded (build and deploy). Live: title, apple title and manifest say Setward; `start_url`/`scope` `/chalk/`; CSP meta present; service worker in control; 6 routes render without overflow; exercise photos load; 0 CSP violations; no console messages. Still to do: the owner's phone checks (`RELEASE_CHECKLIST.md`).
 
 ---
 

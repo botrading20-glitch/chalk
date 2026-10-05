@@ -1,34 +1,25 @@
 # Current task
 
 ## Task
-No task is active. Waiting on the owner for REL-101 (publish the `setward` branch) and the on-phone checks.
+No task is active. REL-101 is released; waiting on the owner's phone checks and two small decisions.
 
-## Last session (2026-10-05, afternoon)
-Applied the master prompt (v2) at session start: reconciled `.ai/` with the working tree, kept the uncommitted rebrand safe, and did the low-severity backlog items that didn't need an owner decision.
+## Last release (2026-10-05)
+- `setward` merged into `main` as 34d025d and pushed (owner: "merge and push it"). Pages run 37297499084 succeeded.
+- Live at https://botrading20-glitch.github.io/chalk/: Setward title, manifest and header; bundle `index-z9IrtRPz.js`; CSP present with 0 violations; service worker in control; exercise photos load; no console messages.
+- Contents: the Setward rebrand (6ce6fb4), UX-002 + UX-003 (83fd874), A11Y-002 (436c05f), DOC-002 (4ae76c3), notes. Evidence: `TEST_STATUS.md`; readiness: `RELEASE_CHECKLIST.md`.
 
-- **Branch `setward`** (local only, from `main` @ 047c53f), 5 commits plus the notes commit:
-  - 6ce6fb4 Rename the app to Setward (the earlier rebrand session's work, committed unchanged)
-  - e40a906 Rebrand notes and `AGENTS.md`
-  - 83fd874 UX-002 (delete checks routines and the live workout) and UX-003 (no session volume for assisted bodyweight)
-  - 436c05f A11Y-002 (arrow keys in segmented controls)
-  - 4ae76c3 DOC-002 (share card grey matches `--text-3`)
-- `AGENTS.md` now points to `.claude/launch.json` and matches `CLAUDE.md`.
-- `main` is untouched; nothing pushed. The live app is still Chalk @ 6d15c2e.
-
-## Verification
-62 tests pass (2 opt-in skipped); `/chalk/` build passes; each fix checked in the dev browser with the sample data; preview S-01/S-02/S-08 pass with no CSP violations. Details: `TEST_STATUS.md`.
-
-## Open decisions for the owner
-- **REL-101:** publish? It renames the installed app and changes its icon; data and app identity stay.
-- **UX-002 default:** blocking the delete was chosen. Say if routines should drop the exercise automatically instead.
+## Open for the owner
+- Phone checks in `RELEASE_CHECKLIST.md` → After deploy (both releases), including the installed name/icon refresh to Setward.
+- **UX-002 default:** deleting a used custom exercise is refused. Keep, or drop it from routines automatically?
 - **DX-002:** add ESLint (free, dev-only), or keep strict `tsc` only.
 
 ## Environment notes
-- The dev server on :5173 (`vite --host 127.0.0.1`, PID 13440) was already running and was left running. Its browser storage on 127.0.0.1:5173 now holds the QA sample (65 workouts); QA fixtures were removed.
-- `tmp-import/` (ignored) holds the sample backup and the rebrand session's render aids.
+- The dev server on :5173 (`vite --host 127.0.0.1`) was already running and was left running. Its browser storage on 127.0.0.1:5173 holds the QA sample (65 workouts).
+- Local branches `quality-pass` and `setward` are merged and kept; `google-sync` is parked.
+- ENV-002: deploys warn that `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19. If a deploy fails after that, pin `runs-on: ubuntu-24.04` in `.github/workflows/deploy.yml`.
 
 ## Next exact action
-Ask the owner whether to publish. If yes: on `main`, `git merge --no-ff setward` with a message file, run `npm test` and `MSYS_NO_PATHCONV=1 BASE_PATH=/chalk/ npm run build`, push with `GH_TOKEN` from `gh auth token --user botrading20-glitch`, confirm the Pages run, load the live URL, then hand the owner the phone checks in `RELEASE_CHECKLIST.md`.
+Ask the owner how the release behaves on the phone (checks 1–6 in `RELEASE_CHECKLIST.md` → After deploy) and for the two decisions above; then pick the next work with them.
 
 ## Last updated
 2026-10-05

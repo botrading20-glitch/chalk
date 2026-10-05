@@ -2,9 +2,9 @@
 
 Pushing `main` deploys to the live app (NN-15); each new release needs the owner's authorization.
 
-## REL-101: branch `setward` (rebrand + backlog fixes), prepared 2026-10-05
+## REL-101: branch `setward` (rebrand + backlog fixes), released 2026-10-05
 
-**Decision: READY WITH DOCUMENTED LIMITATIONS for GitHub Pages, not authorized.** Implementation is complete and verified locally; release preparation is complete; deployment isn't authorized or done. The live app still serves Chalk at `main` @ 6d15c2e. The quality-pass approval doesn't cover this.
+**Decision: READY WITH DOCUMENTED LIMITATIONS.** The owner approved ("merge and push it"); merged as 34d025d and deployed the same day (Pages run 37297499084). The live page serves the Setward build with no CSP violations or console errors. On-phone checks below are still open.
 
 | Area | Item | State |
 |------|------|-------|
@@ -16,8 +16,9 @@ Pushing `main` deploys to the live app (NN-15); each new release needs the owner
 | Compatibility | `chalk` database/backup ids, `chalk-sync/1`, `start_url`/`scope` `/chalk/` unchanged; no new dependencies; Dexie schema unchanged | ✅ |
 | Data | No data migration. UX-002 only blocks a delete; nothing is rewritten | ✅ |
 | Rollback | `git revert -m 1 <merge>` and push; installed apps pick it up on the next open | ✅ |
-| Authorization | Owner's go-ahead to merge and push (NN-15) | ⚠ pending |
-| Phone | Installed name/icon refresh and the checks below | ⚠ pending (after deploy) |
+| Authorization | Owner's go-ahead to merge and push (NN-15) | ✅ 2026-10-05 |
+| Deployment | Pages run 37297499084; live bundle `index-z9IrtRPz.js`; manifest Setward with `/chalk/` scope | ✅ |
+| Phone | Installed name/icon refresh and the checks below | ⚠ pending (owner) |
 
 Known limitations: no screen-reader pass; iPhone untested; Android lock-screen controls (QA-003) never reported on. Chrome on Android updates an installed app's name and icon on its own schedule (it checks when the app is opened, roughly once a day at most) and may ask to confirm the change.
 
@@ -47,5 +48,5 @@ Known limitations: no screen-reader pass; iPhone untested; Android lock-screen c
 2. Run a real set: check it off, let the rest timer run with the screen locked (NN-13 unchanged, but confirm).
 3. Edit a routine, use the back gesture, reopen it: the changes are there with the bar.
 4. Settings → Back up data still downloads a file.
-5. After REL-101 is deployed: the installed app's name and home-screen icon become Setward (accept Chrome's update prompt if it shows one), and all workouts are still there.
-6. After REL-101: deleting a custom exercise that a routine uses is refused with a message saying where it's used.
+5. REL-101 (deployed 2026-10-05): the installed app's name and home-screen icon become Setward (accept Chrome's update prompt if it shows one), and all workouts are still there.
+6. REL-101: deleting a custom exercise that a routine uses is refused with a message saying where it's used.

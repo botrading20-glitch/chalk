@@ -112,6 +112,12 @@ export interface Routine {
   updatedAt: number;
 }
 
+export interface Stopwatch {
+  setId: string;
+  /** Epoch ms, so the stopwatch survives a reload. */
+  startedAt: number;
+}
+
 export interface ActiveWorkout {
   id: string;
   title: string;
@@ -122,6 +128,8 @@ export interface ActiveWorkout {
   /** When set, the rest timer is running and ends at this epoch ms. */
   restEndsAt?: number;
   restTotal?: number;
+  /** A timed set in progress (live mode only); never copied into the saved workout. */
+  stopwatch?: Stopwatch;
   /** Present when editing a workout that was already saved. */
   editingId?: string;
   endTime?: number;

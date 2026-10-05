@@ -1610,6 +1610,79 @@ dialog.sheet-full {
   font-size: 14px;
 }
 
+.set-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.set-actions > .add-set {
+  flex: 1;
+  min-width: 0;
+}
+
+.add-set.time-set {
+  color: var(--accent-ink);
+}
+
+/* Timed sets: the row being timed, and the big clock under the table. */
+.set-row.timing {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.stopwatch {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.stopwatch-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Green fails contrast as text here (3.7:1 in light), so only the bar turns green. */
+.stopwatch.reached .stopwatch-head span:last-child {
+  color: var(--text);
+}
+
+.stopwatch-time {
+  text-align: center;
+  font: 700 64px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.stopwatch-progress {
+  overflow: hidden;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-3);
+}
+
+.stopwatch-progress span {
+  display: block;
+  height: 100%;
+  transform-origin: left;
+  background: var(--accent);
+  transition: transform 0.25s linear;
+}
+
+.stopwatch.reached .stopwatch-progress span {
+  background: var(--done);
+}
+
+.stopwatch-actions {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 8px;
+}
+
 .set-menu {
   display: grid;
   gap: 12px;

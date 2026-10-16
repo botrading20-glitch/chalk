@@ -254,3 +254,23 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 | REQ-Q03 | A11Y-001, QA-001 | contrast script, screenshots |
 | REQ-Q04 | SEC-001 | preview build console |
 | REQ-Q05 | DOC-001 | this folder |
+
+## Setward 1.0 launch (session 2026-10-16, branch `launch`)
+
+Plan: `C:\Users\ousse\.claude\plans\c-users-ousse-downloads-ultimate-projec-steady-bird.md` (owner-approved). Owner decisions: public web launch now with Play Store later; refine and boldly refresh the look together; all four settings groups plus language, accessibility and comfort; French, Arabic (right-to-left), Spanish, German and more; remove Hevy completely; welcome with starter programs, log a past workout, recent records, import from Strong. Merging to `main` deploys (NN-15): ask the owner first.
+
+| ID | Milestone | Status |
+|----|-----------|--------|
+| LAUNCH-M1 | Retire Hevy; Strong import; Setward's own CSV | DONE (see below) |
+| LAUNCH-M2 | i18n core, settings model, design tokens | TODO |
+| LAUNCH-M3 | Visual refresh | TODO |
+| LAUNCH-M4 | Settings home and sub-pages | TODO |
+| LAUNCH-M5 | Welcome, starter programs, log a past workout, recent records | TODO |
+| LAUNCH-M6 | Ten translations and Arabic right-to-left | TODO |
+| LAUNCH-M7 | Link previews, privacy page, licence, README, store groundwork | TODO |
+| LAUNCH-M8 | Verify, record, ask to release (REL-104) | TODO |
+
+### LAUNCH-M1: Retire Hevy, add Strong import and Setward's own CSV
+- **Done:** `hevy.ts` became the format-neutral `importer.ts` (`planImport`, `applyImport`, `readWorkoutCsv`; duplicates matched by start second and title). New `strong.ts` (Strong's CSV: W/D/F set orders, rest-timer rows skipped, units from a column, the header or the user's choice, semicolons and decimal commas, durations like "1h 3m", distance in meters) and `exportCsv.ts` (Setward's own CSV, units in column names, local dates; reads itself back). Settings: "Import workouts (CSV)" with a kg/lbs question when the file has no unit, and "Export workouts as CSV" in the new format. Hevy wording removed from the UI, source, README, CLAUDE.md/AGENTS.md and the notes (history entries kept as written). NN-06 retired, NN-14 generalised, REQ-009 and S-10 rewritten.
+- **Evidence:** typecheck clean; 93 tests pass (2 skipped), including Strong fixtures (units, W/D/F, rest rows, semicolons), duplicate skipping and a Setward CSV round trip.
+- **Limit:** Strong does not publish its export format; the parser follows user reports. Test against a real export before release.

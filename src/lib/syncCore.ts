@@ -122,7 +122,7 @@ const normName = (s: unknown) => String(s ?? '').trim().toLowerCase().replace(/\
 
 /**
  * First sync on a device that already has data while the cloud has data too,
- * typically because the same Hevy export was imported on both. Workouts that
+ * typically because the same CSV export was imported on both. Workouts that
  * match by start time and title keep the cloud copy, and custom exercises
  * with the same name are merged onto the cloud id.
  */

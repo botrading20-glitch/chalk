@@ -2,7 +2,7 @@
 
 ## Project
 - **Name:** Setward (formerly Chalk), live since 2026-10-05.
-- **Purpose:** a free, offline-first workout logger that replaces Hevy for its owner, possibly published to app stores later
+- **Purpose:** a free, offline-first workout logger with its own identity, being prepared for a public web launch (Play Store later)
 - **Version:** 0.1.0 (`package.json`). The live app at https://botrading20-glitch.github.io/chalk/ runs `main` @ e7ad7fe (adds the data check), deployed 2026-10-16 (Pages run 38953196792); the stopwatch, routine reordering and orange warm-up badge went live 2026-10-05 (c232c2d).
 - **Stack:** React 19, TypeScript 7, Vite 8, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB), Vitest 5 (+ fake-indexeddb in tests). No backend.
 

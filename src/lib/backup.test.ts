@@ -72,7 +72,7 @@ describe('backup', () => {
 
   it('rejects files that aren’t Setward backups without writing anything', async () => {
     await expect(importBackup('{oops')).rejects.toThrow(/valid JSON/);
-    await expect(importBackup(JSON.stringify({ app: 'hevy', workouts: [] }))).rejects.toThrow(/isn't a Setward backup/);
+    await expect(importBackup(JSON.stringify({ app: 'other-app', workouts: [] }))).rejects.toThrow(/isn't a Setward backup/);
     expect(await db.workouts.count()).toBe(0);
   });
 

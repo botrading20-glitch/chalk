@@ -1,7 +1,7 @@
 # Current task
 
 ## Task
-No task is active. REL-103 (the data check, DATA-002) is live as `main` @ e7ad7fe, deployed 2026-10-16 (Pages run 38953196792); REL-102 (stopwatch, routine reordering, orange warm-up badge) is live as `main` @ c232c2d. Waiting on the owner's phone checks for REL-101, REL-102 and REL-103.
+Setward 1.0 launch work on branch `launch` (not merged, not deployed). The owner approved the plan in `C:\Users\ousse\.claude\plans\c-users-ousse-downloads-ultimate-projec-steady-bird.md`; milestones and status are in the roadmap ("Setward 1.0 launch"). M1 (Hevy retired, Strong import, own CSV) is done and committed; next is M2. REL-101 to REL-103 are live and still wait on the owner's phone checks.
 
 ## This session (2026-10-16)
 - The owner gave the master prompt (v2) and "implement the first complete, usable workflow". The core logging workflow already exists and is live, so the owner chose DATA-002 from the backlog.
@@ -30,6 +30,9 @@ No task is active. REL-103 (the data check, DATA-002) is live as `main` @ e7ad7f
 - ENV-002: deploy jobs are pinned to `ubuntu-24.04` (2026-10-05) because `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19. Revisit when GitHub retires that image.
 
 ## Next exact action
+Continue the `launch` branch at the first TODO milestone in the roadmap (M2). Merge and push only with the owner's go-ahead.
+
+Older next action:
 Ask the owner how REL-101, REL-102 and REL-103 behave on the phone (`RELEASE_CHECKLIST.md`), fix what fails, then pick the next work with them. Every push to `main` deploys (NN-15), so push only with the owner's go-ahead.
 
 ## Last updated

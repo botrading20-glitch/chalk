@@ -39,7 +39,7 @@ export function History() {
                 Start a workout
               </button>
               <Link to="/settings" className="btn btn-ghost">
-                Import from Hevy
+                Import workouts
               </Link>
             </div>
           }

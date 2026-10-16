@@ -32,6 +32,6 @@ The data in the dev browser belongs to `localhost:5173` only. Restore the sample
 | S-07 | Offline | On the preview build (S-08), load once, go offline in devtools, reload: the app works. |
 | S-08 | Sub-path build | `npm run build` with `BASE_PATH=/chalk/` (in Git Bash prefix `MSYS_NO_PATHCONV=1`, or it rewrites the path to `/Program Files/Git/chalk/` and the page loads blank), then `npx vite preview --base /chalk/ --port 4173` (launch config `chalk-preview`); open `/chalk/`: loads with no CSP violations in the console. |
 | S-09 | Backup round trip | Settings → Back up data; Erase all data; Restore the file: counts match. |
-| S-10 | Hevy import | Import a Hevy `workout_data.csv`; the preview shows workouts and exercises; import; records appear. |
+| S-10 | CSV import | Import a Strong CSV (or an export from Setward itself); the preview shows workouts and exercises, and asks for kg or lbs when the file has no unit; import; records appear. |
 | S-11 | Crash screen | (dev only) throw inside a page render: the recovery screen shows, and *Download backup* works. |
 | S-12 | Data check | Settings → Your data → *Check data for problems* reads "No problems found" on healthy data. (dev only) Put a workout with `exercises: null` into IndexedDB and reload: the crash screen shows; *Check for damaged data* lists it; *Download a backup* works; Delete then Keep leaves it; Delete then Delete removes it; *Reload Setward* opens the app. |

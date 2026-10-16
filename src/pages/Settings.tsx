@@ -12,21 +12,31 @@ import { exportBackup, parseBackup, restoreBackup, wipeAllData, type ParsedBacku
 import { saveFile } from '../lib/csv';
 import { useData } from '../lib/data';
 import { fmtDate, fmtRest, listJoin, plural } from '../lib/format';
-import { applyImport, parseHevyCsv, planHevyImport, toHevyCsv, type ImportPlan } from '../lib/hevy';
+import { toSetwardCsv } from '../lib/exportCsv';
+import { applyImport, planImport, readWorkoutCsv, type ImportPlan } from '../lib/importer';
 import { navigate } from '../lib/router';
 import { updateSettings, useSettings } from '../lib/settings';
 import { createRoutinesFromHistory } from '../lib/workouts';
+import type { WeightUnit } from '../types';
 
 const REST_OPTIONS = [0, 30, 45, 60, 75, 90, 120, 150, 180, 240, 300];
+
+/** A CSV the user picked: kept as text so the plan can be redone when they correct the weight unit. */
+interface PickedFile {
+  text: string;
+  needsWeightUnit: boolean;
+  unit: WeightUnit;
+}
 const today = () => new Date().toISOString().slice(0, 10);
 
 export function SettingsPage() {
   const settings = useSettings();
   const { workouts, exerciseMap } = useData();
   const routineCount = useLiveQuery(() => db.routines.count(), []);
-  const hevyInput = useRef<HTMLInputElement>(null);
+  const csvInput = useRef<HTMLInputElement>(null);
   const backupInput = useRef<HTMLInputElement>(null);
   const [plan, setPlan] = useState<ImportPlan | null>(null);
+  const [picked, setPicked] = useState<PickedFile | null>(null);
   const [importing, setImporting] = useState(false);
   const [checkingData, setCheckingData] = useState(false);
   const [storage, setStorage] = useState<{ persisted: boolean; usedMb?: number }>();
@@ -39,11 +49,16 @@ export function SettingsPage() {
     })();
   }, []);
 
-  async function onHevyFile(file: File) {
+  async function readPicked(text: string, unit: WeightUnit) {
+    const reading = readWorkoutCsv(text, { weightUnit: unit });
+    if (!reading.workouts.length) throw new Error('No workouts found in this file.');
+    setPicked({ text, needsWeightUnit: reading.needsWeightUnit, unit });
+    setPlan(await planImport(reading.workouts));
+  }
+
+  async function onCsvFile(file: File) {
     try {
-      const parsed = parseHevyCsv(await file.text());
-      if (!parsed.length) throw new Error('No workouts found in this file.');
-      setPlan(await planHevyImport(parsed));
+      await readPicked(await file.text(), settings.weightUnit);
     } catch (e) {
       toast((e as Error).message);
     }
@@ -92,6 +107,7 @@ export function SettingsPage() {
       await applyImport(plan);
       const count = plan.workouts.length;
       setPlan(null);
+      setPicked(null);
       toast(`Imported ${plural(count, 'workout')}`);
       if (count && !routineCount) {
         const make = await confirmDialog({
@@ -205,19 +221,19 @@ export function SettingsPage() {
         <p className="muted small">
           Your data lives on this device. Without cloud sync, back it up now and then — clearing the browser’s site data erases it.
         </p>
-        <button className="btn btn-secondary btn-block" onClick={() => hevyInput.current?.click()}>
-          <IconUpload size={18} /> Import from Hevy (CSV)
+        <button className="btn btn-secondary btn-block" onClick={() => csvInput.current?.click()}>
+          <IconUpload size={18} /> Import workouts (CSV)
         </button>
-        <p className="muted small">In Hevy: Profile → Settings → Export &amp; import data → Export workouts.</p>
+        <p className="muted small">Works with a CSV exported from Strong (Settings → Export Strong Data) or from Setward.</p>
         <input
-          ref={hevyInput}
+          ref={csvInput}
           type="file"
           accept=".csv,text/csv"
           hidden
           onChange={(e) => {
             const f = e.target.files?.[0];
             e.target.value = '';
-            if (f) void onHevyFile(f);
+            if (f) void onCsvFile(f);
           }}
         />
         <div className="button-pair">
@@ -247,7 +263,7 @@ export function SettingsPage() {
         <button
           className="btn btn-ghost btn-block"
           disabled={!workouts.length}
-          onClick={() => saveFile(`setward-workouts-${today()}.csv`, toHevyCsv(workouts, exerciseMap), 'text/csv')}
+          onClick={() => saveFile(`setward-workouts-${today()}.csv`, toSetwardCsv(workouts, exerciseMap), 'text/csv')}
         >
           <IconDownload size={18} /> Export workouts as CSV
         </button>
@@ -295,9 +311,30 @@ export function SettingsPage() {
         <DataCheck />
       </Sheet>
 
-      <Sheet open={!!plan} onClose={() => setPlan(null)} title="Import from Hevy">
+      <Sheet
+        open={!!plan}
+        onClose={() => {
+          setPlan(null);
+          setPicked(null);
+        }}
+        title="Import workouts"
+      >
         {plan && (
           <div className="import-preview">
+            {picked?.needsWeightUnit && (
+              <div className="setting">
+                <span>Weights in this file are in</span>
+                <Segmented
+                  label="Weight unit of the file"
+                  value={picked.unit}
+                  onChange={(unit) => void readPicked(picked.text, unit).catch((e) => toast((e as Error).message))}
+                  options={[
+                    { value: 'kg', label: 'kg' },
+                    { value: 'lbs', label: 'lbs' },
+                  ]}
+                />
+              </div>
+            )}
             <div className="stat-row">
               <Stat label="New workouts" value={plan.workouts.length} />
               <Stat label="New exercises" value={plan.newExercises.length} />
@@ -320,7 +357,13 @@ export function SettingsPage() {
               </details>
             )}
             <div className="form-actions">
-              <button className="btn btn-ghost" onClick={() => setPlan(null)}>
+              <button
+                className="btn btn-ghost"
+                onClick={() => {
+                  setPlan(null);
+                  setPicked(null);
+                }}
+              >
                 Cancel
               </button>
               <button className="btn btn-primary" disabled={!plan.workouts.length || importing} onClick={runImport}>

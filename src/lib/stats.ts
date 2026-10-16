@@ -228,7 +228,7 @@ export function sessionMetric(metric: SessionMetric, sets: WorkoutSet[]) {
   }
 }
 
-/** The set Hevy-style lists call "best set": highest e1RM, else most reps/time/distance. */
+/** The set that workout lists show as the "best set": highest e1RM, else most reps/time/distance. */
 export function bestSet(sets: WorkoutSet[], type: ExerciseType) {
   const kinds = RECORD_KINDS[type];
   const key = kinds.includes('e1rm') ? 'e1rm' : kinds[0];

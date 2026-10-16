@@ -1,6 +1,6 @@
 # Setward (formerly Chalk): notes for working on this repo
 
-Free, offline-first workout logger (Hevy alternative). React 19 + TypeScript + Vite 8 PWA, Dexie (IndexedDB), no backend. The owner wants development and hosting to stay free, so don't add paid services or dependencies that need them.
+Free, offline-first workout logger. React 19 + TypeScript + Vite 8 PWA, Dexie (IndexedDB), no backend. The owner wants development and hosting to stay free, so don't add paid services or dependencies that need them.
 
 **Project memory** is in `.ai/`: start with `PROJECT_STATE.md` and `CURRENT_TASK.md`. The roadmap, requirements, protected invariants (`NON_NEGOTIABLES.md`), test evidence and smoke tests live there too. Update it as you work.
 
@@ -11,7 +11,7 @@ Free, offline-first workout logger (Hevy alternative). React 19 + TypeScript + V
 ## Commands
 - `npm run dev`: dev server on :5173 (also `.claude/launch.json` → `chalk-dev`)
 - `npm run build`: `tsc --noEmit` + production build with service worker. In Git Bash, a sub-path build needs `MSYS_NO_PATHCONV=1 BASE_PATH=/chalk/ npm run build`; otherwise MSYS rewrites the path and the page loads blank.
-- `npm test`: vitest. It covers the sync engine, records and weekly stats, Hevy CSV, parsing, backups, the live workout and the plate solver. Dexie code runs on `fake-indexeddb` (dev only). The live GitHub check is opt-in: `CHALK_SMOKE_REPO=owner/name CHALK_SMOKE_TOKEN=… npx vitest run github.smoke`. It writes to `data/` in that repo and then deletes it.
+- `npm test`: vitest. It covers the sync engine, records and weekly stats, CSV import and export, parsing, backups, the live workout and the plate solver. Dexie code runs on `fake-indexeddb` (dev only). The live GitHub check is opt-in: `CHALK_SMOKE_REPO=owner/name CHALK_SMOKE_TOKEN=… npx vitest run github.smoke`. It writes to `data/` in that repo and then deletes it.
 - `node scripts/sample-backup.mjs`: writes `tmp-import/chalk-sample-backup.json`, about four months of the owner's style of training, for QA. Restore it in a dev browser only.
 - `npm run exercises`: re-downloads free-exercise-db and rewrites `src/data/exercises.json`. Bump `LIBRARY_VERSION` in `src/db.ts` afterwards so installed apps re-seed.
 
@@ -34,8 +34,9 @@ Free, offline-first workout logger (Hevy alternative). React 19 + TypeScript + V
 - **Routine folders** are only a `folder` name on each routine (`src/lib/folders.ts`), so they sync with routines and vanish when empty. Which folders are collapsed is per device, kept in `kv` under `collapsedFolders`. `saveRoutine` merges over the stored routine so editors that don't know about `folder` keep it.
 - **Plate calculator** (exercise ⋯ menu in the workout editor): `src/lib/plates.ts` finds the fewest plates per side with a small DP, not greedy, so a gym without some plate sizes still gets exact loads. It works in the user's unit (kg or lb plates). Plate sizes owned and the bar per exercise (`plateBars`, in kg, snapped to 20 kg ↔ 45 lb) live in settings.
 - **`useSettings()`** caches the last read, so sheets and forms that mount later start with the real settings instead of the defaults. Initial `useState` values computed from settings rely on this.
-- **Exercise demo** (`ExerciseDemo`, top of the exercise page): free-exercise-db has a start and an end photo for most exercises (873 of 1,003), which a CSS keyframe flips between like a short clip. Hevy's 3D animations are a licensed commercial library, so don't copy them. Real animations would mean a paid licence, which conflicts with keeping Chalk free.
+- **Exercise demo** (`ExerciseDemo`, top of the exercise page): free-exercise-db has a start and an end photo for most exercises (873 of 1,003), which a CSS keyframe flips between like a short clip. Commercial apps' 3D exercise animations are licensed libraries, so don't copy them. Real animations would mean a paid licence, which conflicts with keeping Chalk free.
 - **Share card:** `src/lib/shareCard.ts` draws the workout summary PNG (1080×1350) on a canvas. Change its colours if the tokens change.
+- **Import and export:** `importer.ts` is format-neutral (`ParsedWorkout` → `planImport` → `applyImport`, duplicates matched by start second and title). `strong.ts` reads Strong's CSV (units from a column, the header or the user's choice; W/D/F set orders; rest-timer rows skipped). `exportCsv.ts` writes and reads Setward's own CSV (units in the column names, local dates). `readWorkoutCsv()` tells them apart by header.
 - **Records:** `computeRecords()` walks workouts oldest to newest. The first session of an exercise sets the baseline and doesn't count as a record.
 - **Crash recovery:** `ErrorBoundary` wraps the app in `main.tsx`. Its `RecoveryScreen`, also shown when boot fails, offers Reload and a backup download that reads IndexedDB directly, so it works however broken the React state is. Unhandled promise rejections show a toast.
 - **Backup restore** is check, then confirm, then write: `parseBackup()` (pure) → confirm sheet with counts → `restoreBackup()`. `src/lib/validate.ts` drops damaged records and counts them, and repairs only what Chalk can derive (`exerciseIds`, unknown labels, JSON `null` numbers). Don't validate sync input the same way: a filtered record would look deleted locally and the deletion would sync to the cloud.

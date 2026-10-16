@@ -62,7 +62,7 @@ export function Profile() {
           title="Your progress shows up here"
           action={
             <Link to="/settings" className="btn btn-secondary">
-              Import workouts from Hevy
+              Import workouts
             </Link>
           }
         >

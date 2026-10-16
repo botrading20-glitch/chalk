@@ -256,7 +256,7 @@ describe('syncOnce', () => {
     const remote = new MemoryRemote();
     const phone = new Device();
     const pc = new Device();
-    // Same Hevy export imported on each device: identical workouts, different ids.
+    // Same CSV export imported on each device: identical workouts, different ids.
     const fly = (id: string): Rec => ({ id, name: 'Cable Fly Crossovers', source: 'custom' });
     const w = (id: string, ex: string, startTime: number): Rec => ({
       ...workout(id),

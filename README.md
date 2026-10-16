@@ -1,6 +1,6 @@
 # Setward
 
-A free workout logger inspired by Hevy. It runs in the browser, installs to your phone's home screen, and works offline. Your data stays on your device, plus an optional synced copy in your own private GitHub repository.
+A free, original workout logger. It runs in the browser, installs to your phone's home screen, and works offline. Your data stays on your device, plus an optional synced copy in your own private GitHub repository.
 
 - **Log workouts.** Sets with weight/reps/time/distance, warm-up, failure and drop sets, RPE, notes and supersets. Your previous numbers show next to every set, and a rest timer starts when you check a set off.
 - **Routines.** Build them yourself, save one from any past workout, or create them from your history in one tap. Group them in folders, like a split or a program.
@@ -8,7 +8,7 @@ A free workout logger inspired by Hevy. It runs in the browser, installs to your
 - **Progress.** Personal records, a chart for each exercise (heaviest weight, est. 1RM, volume…), weekly time/volume/sets, sets per muscle, a consistency calendar and body-weight tracking.
 - **Share.** Turn any workout into a summary image with your records, ready for the share sheet.
 - **Plate calculator.** What goes on each side of the bar (or a plate-loaded machine) for any weight, using the plates your gym has.
-- **Hevy import.** Brings in your whole Hevy history from its CSV export. You can also export to the same CSV format, and back up or restore everything as JSON.
+- **Import and export.** Bring in your history from a Strong CSV export, export everything as Setward's own CSV (units are named in the column headers), and back up or restore everything as JSON.
 - **Cloud sync (optional).** Keeps your data in a private GitHub repository and syncs it between your phone and computer, with the full history of every change.
 - kg/lbs, km/mi, dark/light theme.
 
@@ -55,7 +55,7 @@ Setward syncs to a **private GitHub repository** that you own. There's no Setwar
    - **Expiration:** as long as you like. When it expires, Setward asks for a new one.
 3. In Setward, open **Progress → ⚙ Settings → Cloud sync → Set up sync** and paste the repository (`yourname/setward-data`) and the token. Do this on each device.
 
-When a second device already has data, Setward asks whether to replace it with the cloud copy or merge the two. Merging recognises workouts imported from Hevy on both devices and keeps them once.
+When a second device already has data, Setward asks whether to replace it with the cloud copy or merge the two. Merging recognises workouts imported from a CSV on both devices and keeps them once.
 
 After that, sync runs by itself:
 - when the app opens or comes back to the foreground
@@ -69,7 +69,7 @@ After that, sync runs by itself:
 - **The token:** it's stored in the app's storage on each device and only sent to `api.github.com`. Keep the repository private; Setward refuses to connect to a public one.
 - **Different addresses:** data belongs to the address you opened the app from, so `localhost` and your GitHub Pages address are separate. Sync or a backup moves data between them.
 
-To import from Hevy: in Hevy go to **Profile → Settings → Export & import data → Export workouts**, then in Setward go to **Progress → ⚙ Settings → Import from Hevy**.
+To import from Strong: export your data as CSV in Strong, then in Setward go to **Progress → ⚙ Settings → Import workouts (CSV)**. If the file doesn't say whether its weights are kg or lbs, Setward asks.
 
 ## Project layout
 
@@ -77,7 +77,7 @@ To import from Hevy: in Hevy go to **Profile → Settings → Export & import da
 scripts/build-exercises.mjs   regenerates src/data/exercises.json (npm run exercises)
 scripts/sample-backup.mjs     writes a sample backup to restore in a dev browser for testing
 src/db.ts                     IndexedDB schema (Dexie) and exercise library seeding
-src/lib/                      stats & records, Hevy CSV import/export, backups, cloud sync, routing, formatting
+src/lib/                      stats & records, CSV import/export, backups, cloud sync, routing, formatting
 src/components/               workout editor, exercise picker, charts, sheets
 src/pages/                    one file per screen
 ```

@@ -1,5 +1,5 @@
 /** RFC 4180 parser: quoted fields, escaped quotes and newlines inside quotes. */
-export function parseCsv(text: string): string[][] {
+export function parseCsv(text: string, delimiter = ','): string[][] {
   const rows: string[][] = [];
   let row: string[] = [];
   let field = '';
@@ -16,7 +16,7 @@ export function parseCsv(text: string): string[][] {
         } else quoted = false;
       } else field += c;
     } else if (c === '"') quoted = true;
-    else if (c === ',') {
+    else if (c === delimiter) {
       row.push(field);
       field = '';
     } else if (c === '\n' || c === '\r') {
@@ -32,6 +32,19 @@ export function parseCsv(text: string): string[][] {
     rows.push(row);
   }
   return rows.filter((r) => r.some((f) => f !== ''));
+}
+
+/** Semicolons instead of commas, as spreadsheets in many regions save them: decided by the header line. */
+export function detectDelimiter(text: string) {
+  const header = text.replace(/^﻿/, '').split(/\r?\n/, 1)[0] ?? '';
+  return header.split(';').length > header.split(',').length ? ';' : ',';
+}
+
+/** A number cell: empty or unreadable is undefined, and a decimal comma is accepted. */
+export function cellNumber(s: string | undefined) {
+  if (s === undefined || s.trim() === '') return undefined;
+  const v = Number(s.trim().replace(',', '.'));
+  return Number.isFinite(v) ? v : undefined;
 }
 
 export function toCsv(rows: (string | number | undefined | null)[][]) {

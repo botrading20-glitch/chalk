@@ -16,7 +16,7 @@ Status: DONE (built and verified) · PARTIAL · TODO · DEFERRED.
 | REQ-006 | Body-weight log: one weigh-in per day, trend chart. | R, C | P2 | DONE | Manual |
 | REQ-007 | Workout share image (1080×1350 PNG). | R, C | P2 | DONE | Manual |
 | REQ-008 | Plate calculator using the plates the gym owns (kg or lb). | R, C | P2 | DONE | `plates.test.ts` |
-| REQ-009 | Hevy CSV import (metric and imperial) and export in the same format. | R, O | P0 | DONE | `hevy.test.ts` |
+| REQ-009 | Import workout history from a Strong CSV (units from the file or the user's choice) or Setward's own CSV; export everything as Setward's CSV. No Hevy support. | R, O (2026-10-16) | P0 | DONE (branch `launch`) | `importer.test.ts` |
 | REQ-010 | JSON backup and restore of everything the user created. | R | P0 | DONE | `backup.test.ts` |
 | REQ-011 | Optional cloud sync to a private GitHub repo with a fine-grained token. | R, C | P1 | DONE | `syncCore.test.ts`, opt-in `github.smoke` |
 | REQ-012 | Installable PWA that works offline. | R | P0 | DONE | Smoke S-07 |
@@ -32,7 +32,7 @@ Status: DONE (built and verified) · PARTIAL · TODO · DEFERRED.
 | ID | Requirement | Pri | Status | Tasks |
 |----|-------------|-----|--------|-------|
 | REQ-Q01 | Never lose or hide user data silently. A crash shows a recovery screen that can still export a backup. A restore validates its input. Edits in the routine and workout editors survive leaving the screen by accident. | P0 | DONE | REL-001, REL-002, DATA-001, UX-001 |
-| REQ-Q02 | Critical calculations and formats are covered by automated tests: records, weekly stats, Hevy CSV, backup, parsing. | P1 | DONE | TEST-001 |
+| REQ-Q02 | Critical calculations and formats are covered by automated tests: records, weekly stats, CSV import/export, backup, parsing. | P1 | DONE | TEST-001 |
 | REQ-Q03 | Text meets WCAG AA contrast (4.5:1) in both themes, and every control shows keyboard focus. | P1 | PARTIAL (no screen-reader pass) | A11Y-001 |
 | REQ-Q04 | Defence in depth for the stored GitHub token: a Content Security Policy in production builds. | P2 | DONE | SEC-001 |
 | REQ-Q05 | A new session can rebuild the project's state from the repo (`CLAUDE.md` + `.ai/`). | P1 | DONE | DOC-001 |

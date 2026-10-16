@@ -1,13 +1,16 @@
 import { db } from '../db';
 import type { Equipment, Exercise, ExerciseType, Muscle, SetType, Workout, WorkoutSet } from '../types';
-import { parseCsv, toCsv } from './csv';
+import { detectDelimiter, parseCsv } from './csv';
+import { isSetwardHeader, parseSetwardCsv } from './exportCsv';
 import { uid } from './format';
 import { normalize } from './search';
+import { isStrongHeader, parseStrongCsv, type ReadOptions } from './strong';
 
-// Hevy's "Export workouts" CSV. Weight and distance columns follow the account's
-// unit setting, so both metric and imperial variants are accepted.
+// Format-neutral import pipeline. Each file format (Strong, Setward's own CSV)
+// parses into ParsedWorkout; planImport matches the exercises against the
+// library and the user's own, and applyImport writes the result.
 
-interface ParsedSet {
+export interface ParsedSet {
   type: SetType;
   weight?: number;
   reps?: number;
@@ -16,7 +19,7 @@ interface ParsedSet {
   rpe?: number;
 }
 
-interface ParsedExercise {
+export interface ParsedExercise {
   name: string;
   notes?: string;
   supersetId?: number;
@@ -31,105 +34,8 @@ export interface ParsedWorkout {
   exercises: ParsedExercise[];
 }
 
-const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-const LB = 2.20462262;
-const MI = 1.609344;
-
-export function parseHevyDate(s: string): number | undefined {
-  const m = s.trim().match(/^(\d{1,2})\s+([a-z]+)\.?\s+(\d{4}),?\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm)?$/i);
-  if (m) {
-    const month = MONTHS.indexOf(m[2].slice(0, 3).toLowerCase());
-    if (month >= 0) {
-      let hours = Number(m[4]);
-      if (m[7]) hours = (hours % 12) + (m[7].toLowerCase() === 'pm' ? 12 : 0);
-      return new Date(Number(m[3]), month, Number(m[1]), hours, Number(m[5]), Number(m[6] ?? 0)).getTime();
-    }
-  }
-  const t = Date.parse(s);
-  return Number.isNaN(t) ? undefined : t;
-}
-
-function fmtHevyDate(ts: number) {
-  const d = new Date(ts);
-  const month = MONTHS[d.getMonth()];
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getDate()} ${month[0].toUpperCase()}${month.slice(1)} ${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-const num = (s: string | undefined) => {
-  if (s === undefined || s.trim() === '') return undefined;
-  const v = Number(s.replace(',', '.'));
-  return Number.isFinite(v) ? v : undefined;
-};
-
-const SET_TYPES: SetType[] = ['normal', 'warmup', 'failure', 'dropset'];
-
-export function parseHevyCsv(text: string): ParsedWorkout[] {
-  const [header, ...rows] = parseCsv(text);
-  const col = new Map(header?.map((h, i) => [h.trim().toLowerCase(), i]));
-  for (const required of ['title', 'start_time', 'exercise_title']) {
-    if (!col.has(required)) {
-      throw new Error(`This file isn't a Hevy workout export: the "${required}" column is missing.`);
-    }
-  }
-  const get = (row: string[], name: string) => {
-    const i = col.get(name);
-    return i === undefined ? undefined : row[i];
-  };
-
-  const workouts = new Map<string, ParsedWorkout>();
-  let lastSetIndex = -1;
-  for (const row of rows) {
-    const title = get(row, 'title')?.trim() || 'Workout';
-    const startRaw = get(row, 'start_time') ?? '';
-    const startTime = parseHevyDate(startRaw);
-    if (startTime === undefined) continue;
-    const key = `${title}|${startRaw}`;
-    let w = workouts.get(key);
-    if (!w) {
-      w = {
-        title,
-        description: get(row, 'description') || undefined,
-        startTime,
-        endTime: parseHevyDate(get(row, 'end_time') ?? '') ?? startTime,
-        exercises: [],
-      };
-      workouts.set(key, w);
-      lastSetIndex = -1;
-    }
-
-    const name = get(row, 'exercise_title')?.trim() || 'Unknown exercise';
-    const setIndex = num(get(row, 'set_index')) ?? 0;
-    let block = w.exercises.at(-1);
-    // A repeated exercise shows up as a new run whose set_index restarts at 0.
-    if (!block || block.name !== name || setIndex <= lastSetIndex) {
-      block = {
-        name,
-        notes: get(row, 'exercise_notes') || undefined,
-        supersetId: num(get(row, 'superset_id')),
-        sets: [],
-      };
-      w.exercises.push(block);
-    }
-    lastSetIndex = setIndex;
-
-    const lbs = num(get(row, 'weight_lbs'));
-    const miles = num(get(row, 'distance_miles'));
-    const rawType = (get(row, 'set_type') ?? 'normal').trim().toLowerCase() as SetType;
-    block.sets.push({
-      type: SET_TYPES.includes(rawType) ? rawType : 'normal',
-      weight: num(get(row, 'weight_kg')) ?? (lbs !== undefined ? lbs / LB : undefined),
-      reps: num(get(row, 'reps')),
-      distance: num(get(row, 'distance_km')) ?? (miles !== undefined ? miles * MI : undefined),
-      duration: num(get(row, 'duration_seconds')),
-      rpe: num(get(row, 'rpe')),
-    });
-  }
-  return [...workouts.values()].sort((a, b) => a.startTime - b.startTime);
-}
-
 // ---------------------------------------------------------------------------
-// Guessing metadata for exercises that only exist in the user's Hevy account
+// Guessing metadata for exercises the file has but Setward does not
 
 const MUSCLE_RULES: [RegExp, Muscle][] = [
   [/cycl|bike|running|\brun\b|treadmill|elliptical|stair|rowing machine|jump rope|cardio|walk/, 'cardio'],
@@ -183,6 +89,9 @@ function guessType(sets: ParsedSet[]): ExerciseType {
   return 'bodyweight_reps';
 }
 
+/** Same start (to the second, which is all most files carry) and title: the workout is already here. */
+const duplicateKey = (w: { startTime: number; title: string }) => `${Math.floor(w.startTime / 1000)}|${w.title}`;
+
 export interface ImportPlan {
   workouts: Workout[];
   newExercises: Exercise[];
@@ -190,7 +99,7 @@ export interface ImportPlan {
   duplicates: number;
 }
 
-export async function planHevyImport(parsed: ParsedWorkout[]): Promise<ImportPlan> {
+export async function planImport(parsed: ParsedWorkout[]): Promise<ImportPlan> {
   const existing = await db.exercises.toArray();
   // Custom exercises win over library ones with the same name.
   const byName = new Map<string, Exercise>();
@@ -231,11 +140,11 @@ export async function planHevyImport(parsed: ParsedWorkout[]): Promise<ImportPla
     }
   }
 
-  const seen = new Set((await db.workouts.toArray()).map((w) => `${w.startTime}|${w.title}`));
+  const seen = new Set((await db.workouts.toArray()).map(duplicateKey));
   const workouts: Workout[] = [];
   let duplicates = 0;
   for (const w of parsed) {
-    if (seen.has(`${w.startTime}|${w.title}`)) {
+    if (seen.has(duplicateKey(w))) {
       duplicates++;
       continue;
     }
@@ -277,32 +186,21 @@ export async function applyImport(plan: ImportPlan) {
   });
 }
 
-export function toHevyCsv(workouts: Workout[], exercises: Map<string, Exercise>) {
-  const rows: (string | number | undefined)[][] = [
-    ['title', 'start_time', 'end_time', 'description', 'exercise_title', 'superset_id', 'exercise_notes', 'set_index', 'set_type', 'weight_kg', 'reps', 'distance_km', 'duration_seconds', 'rpe'],
-  ];
-  const round = (v: number | undefined, d = 2) => (v === undefined ? undefined : Number(v.toFixed(d)));
-  for (const w of [...workouts].sort((a, b) => b.startTime - a.startTime)) {
-    for (const we of w.exercises) {
-      we.sets.forEach((s, i) => {
-        rows.push([
-          w.title,
-          fmtHevyDate(w.startTime),
-          fmtHevyDate(w.endTime),
-          w.description ?? '',
-          exercises.get(we.exerciseId)?.name ?? 'Unknown exercise',
-          we.supersetId,
-          we.notes ?? '',
-          i,
-          s.type,
-          round(s.weight),
-          s.reps,
-          round(s.distance),
-          s.duration,
-          s.rpe,
-        ]);
-      });
-    }
-  }
-  return toCsv(rows);
+// ---------------------------------------------------------------------------
+// Reading a file: Strong's export or Setward's own CSV, told apart by the header
+
+export type ImportFormat = 'strong' | 'setward';
+
+export interface FileReading {
+  format: ImportFormat;
+  workouts: ParsedWorkout[];
+  /** The file has weights but no unit, so the caller's guess was used and the user should confirm it. */
+  needsWeightUnit: boolean;
+}
+
+export function readWorkoutCsv(text: string, options: ReadOptions): FileReading {
+  const [header = []] = parseCsv(text, detectDelimiter(text));
+  if (isSetwardHeader(header)) return { format: 'setward', workouts: parseSetwardCsv(text), needsWeightUnit: false };
+  if (isStrongHeader(header)) return { format: 'strong', ...parseStrongCsv(text, options) };
+  throw new Error('Setward can’t read this file. Use a CSV exported from Strong, or from Setward itself.');
 }

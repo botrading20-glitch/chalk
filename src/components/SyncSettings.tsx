@@ -144,7 +144,7 @@ function SyncSetup({ initialRepo, onDone }: { initialRepo?: string; onDone: () =
         </button>
         <button className="choice-card" disabled={busy} onClick={() => finish(choice, 'merge')}>
           <strong>Merge both</strong>
-          <span>Keeps everything from both sides. Workouts that exist on both, like a Hevy history imported twice, are kept once.</span>
+          <span>Keeps everything from both sides. Workouts that exist on both, like a history imported twice, are kept once.</span>
         </button>
       </div>
     );

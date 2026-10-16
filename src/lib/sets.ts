@@ -62,7 +62,7 @@ export function fieldsFor(type: ExerciseType) {
   return FIELDS[type];
 }
 
-/** Hevy-style labels: warm-ups are "W", working sets are numbered, failure/drop sets show "F"/"D". */
+/** Set labels: warm-ups are "W", working sets are numbered, failure/drop sets show "F"/"D". */
 export function setLabels(sets: WorkoutSet[]) {
   let n = 0;
   return sets.map((s) => {

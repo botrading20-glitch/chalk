@@ -2758,3 +2758,107 @@ details summary {
     transition: none !important;
   }
 }
+
+/* ---------- Data check ---------- */
+
+.data-check {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  max-width: 36rem;
+  min-width: 0;
+  text-align: left;
+}
+
+/* On the crash screen it sits inside .empty, which centres text and narrows paragraphs. */
+.data-check p {
+  max-width: none;
+}
+
+.data-check-summary {
+  display: grid;
+  gap: 4px;
+}
+
+.data-check-summary:focus {
+  outline: none;
+}
+
+.data-check-notice {
+  color: var(--accent-ink);
+}
+
+.data-check-backup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.data-check-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.data-check-item {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-left-width: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.data-check-item[data-status='repairable'] {
+  border-left-color: var(--accent);
+}
+
+.data-check-item[data-status='damaged'] {
+  border-left-color: var(--danger);
+}
+
+.data-check-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.data-check-kind {
+  color: var(--text-2);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.data-check-record {
+  max-height: 14rem;
+  margin: 8px 0 0;
+  padding: 10px;
+  overflow: auto;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.data-check-actions,
+.data-check-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.data-check-confirm span {
+  flex-basis: 100%;
+  font-size: 14px;
+}

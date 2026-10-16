@@ -42,7 +42,7 @@ Workouts are stored in the browser's IndexedDB on the device you log them on. Th
 
 Setward was previously called Chalk. Existing workouts, sync repositories and Chalk backups remain compatible. The deployed app stays at the same `/chalk/` address so installed copies and local data keep working.
 
-To keep a copy off the device, turn on **cloud sync**, or use **Settings → Back up data** now and then. **Restore backup** brings a backup file back on any device.
+To keep a copy off the device, turn on **cloud sync**, or use **Settings → Back up data** now and then. **Restore backup** brings a backup file back on any device. If a damaged record ever stops Setward from opening, the recovery screen has **Check for damaged data**, which lists what it cannot read and lets you repair or delete each item (**Settings → Check data for problems** does the same).
 
 ### Cloud sync (free)
 

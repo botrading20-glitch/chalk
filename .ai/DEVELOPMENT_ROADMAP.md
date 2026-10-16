@@ -205,6 +205,20 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 ### REL-102: Publish the `features` branch
 - **Task state:** DONE (2026-10-05, owner: "merge and push it"). Merged as c232c2d (`--no-ff`); on `main`: 67 tests, `/chalk/` build (same bundle `index-D7zhvP27.js` as the branch), `npm ci --dry-run` and a secret scan passed. Pushed 9c06bea..c232c2d; Pages run 37302757241 succeeded with 0 annotations. Live: the new bundle, `--warmup` #f2994a, the stopwatch and reorder styles present, 5 routes without overflow, 0 CSP violations, no console messages; the cached older version updated itself with one reload. Still to do: the owner's phone checks.
 
+## Data check (session 2026-10-16, branch `data-check`)
+
+### DATA-002: Check data for problems
+- **Source:** the backlog entry in "Discovered" below ("a safe fix is a data check in Settings"). The owner picked it as this session's workflow when the master prompt (v2) asked for "the first complete, usable workflow"; the core logging workflow already existed and is live.
+- **Problem:** records that arrive through sync, or that a bug wrote, are not shape-checked. One workout with `exercises: null` makes `computeRecords` throw inside `DataProvider`, so the whole app shows the crash screen, and Reload crashes again. The only way out was Erase all data. Filtering sync input automatically is ruled out: a filtered record looks deleted locally and the deletion would sync to the cloud.
+- **Design:** Settings → Your data → "Check data for problems" (a sheet) and, on the crash screen, "Check for damaged data". It runs the Restore-backup cleaners (`validate.ts`, unchanged) over workouts, routines, the user's own exercises, weigh-ins and the settings row. A cleaner returning `null` = damaged (delete only). A cleaned copy that differs from the stored record = repairable (Repair writes it, keeps unknown fields, bumps `updatedAt` where the record has one). The comparison is canonical JSON with `exerciseIds` compared as a set, so records the app writes itself never flag. A backup button comes first. Delete asks once, with focus on Keep. Every action re-reads the record inside a transaction and does nothing if it changed since the check (a sync may have landed). Nothing changes until the user taps. Fixes sync like any edit. No schema change, no new dependency.
+- **Affected:** `src/lib/dataCheck.ts` (no React and no DataProvider, so the crash screen can use it), `src/lib/dataCheck.test.ts`, `src/components/DataCheck.tsx` (all new); `src/components/ErrorBoundary.tsx`, `src/pages/Settings.tsx`, `src/lib/format.ts` (`listJoin` moved here from Settings), `src/styles.css`.
+- **Validation:** 21 new tests (88 pass, 2 opt-in skipped). Two deliberate mutations (stop normalising `exerciseIds`; let delete take a repairable record) each fail one test. Browser, dev server with the sample data: healthy data reads "No problems found" (65 workouts, 6 routines, 1 exercise, 16 weigh-ins); a workout with `exercises: null` crashed the app, the crash-screen check named it, the downloaded backup contained it, Keep left it alone, Delete removed only it, and Reload Setward opened the app with History intact; a workout without `exerciseIds`, a routine with a bad `order` and a bad setting were each repaired (unknown fields kept, valid settings kept). 320 px: no overflow, a long unbreakable title wraps; dark and light checked. Production preview at `/chalk/`: 0 CSP violations; the whole crash → check → backup → delete → reload flow works on the built bundle; S-02 on 5 routes; S-03 start-and-reload. Main chunk 153.77 kB gzip (+2.8 kB).
+- **Limitations:** the workout in progress is not checked (not synced, no validator). A custom exercise with a missing `source` is checked but is left out of backups (they read the `source` index). Two same-day weigh-ins from different devices are not flagged (consistency, not shape). The check repairs shape, never meaning. Not tried on a phone; no screen-reader pass.
+- **Task state:** DONE locally on branch `data-check` (off `main` @ 663cb56): code and tests committed as ce3daae, notes in the commit after it. Not merged, pushed or deployed.
+
+### REL-103: Publish the `data-check` branch
+- **Task state:** TODO. Waits for the owner's go-ahead (NN-15). Rollback would be `git revert -m 1 <merge>` and push; no data migration or schema change is involved.
+
 ## Deferred and product decisions (owner's call)
 
 | ID | Item | Why deferred |
@@ -223,7 +237,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 
 | ID | Item | Severity | Why it remains |
 |----|------|----------|----------------|
-| DATA-002 | Records arriving through sync aren't shape-checked. A damaged one would show the crash screen (with a backup button) rather than be skipped. | Low | Filtering sync input would turn into a cloud deletion (see `DECISIONS.md`). A safe fix is a "data check" in Settings that lists damaged records for the user to delete. |
+| DATA-002 | ~~Records arriving through sync are not shape-checked; a damaged one shows the crash screen.~~ | Low | DONE 2026-10-16 on the local branch `data-check` (see "Data check" above); not merged. |
 | UX-002 | ~~Deleting a custom exercise checks workouts but not routines.~~ | Low | DONE 2026-10-05 (see above). |
 | UX-003 | ~~"Best session volume" shows for assisted-bodyweight exercises.~~ | Low | DONE 2026-10-05 (see above). |
 | UX-004 | The new and edit exercise form has no draft or discard prompt. | Low | Short form; ADR-001 leaves it out on purpose. |

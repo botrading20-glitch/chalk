@@ -2,6 +2,12 @@
 
 Completed roadmap work, newest first. Evidence is in `TEST_STATUS.md` and on each task in `DEVELOPMENT_ROADMAP.md`.
 
+## 2026-10-16: data check (branch `data-check`, not merged)
+
+| Task | Result | Commit |
+|------|--------|--------|
+| DATA-002 | Check data for problems: a Settings sheet and a crash-screen entry point; repair or delete each damaged record after a backup | ce3daae |
+
 ## 2026-10-05: owner-requested features (merged as c232c2d and deployed)
 
 | Task | Result | Commit |

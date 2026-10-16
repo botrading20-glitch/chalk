@@ -25,6 +25,7 @@ Status: DONE (built and verified) · PARTIAL · TODO · DEFERRED.
 | REQ-015 | Everything stays free to build and host. | O | P0 | DONE | NN-01 |
 | REQ-016 | Stopwatch for timed sets in a live workout: time the next set, see the target, get an alert at it, save the time with one tap. Survives a reload. | O (2026-10-05) | P2 | DONE (branch `features`) | Browser QA, `workouts.test.ts` |
 | REQ-017 | Reorder routines within a folder by dragging, with a non-drag alternative. | O (2026-10-05) | P2 | DONE (branch `features`) | `folders.test.ts`, browser QA |
+| REQ-018 | Check data: find records the app cannot read (from a sync or a bug), from Settings or the crash screen, and repair or delete each one after a backup. Nothing changes until the user asks. | O (2026-10-16) | P1 | DONE (branch `data-check`) | `dataCheck.test.ts`, browser QA |
 
 ## Quality (added 2026-10-04)
 
@@ -41,3 +42,4 @@ Status: DONE (built and verified) · PARTIAL · TODO · DEFERRED.
 - **REQ-Q01, crash recovery:** any render error shows a screen with *Reload* and *Download backup*. The backup download works without React.
 - **REQ-Q01, restore:** a file that isn't a Chalk backup is rejected with a plain message and nothing is written. Damaged records inside a backup are left out and counted. Valid records are summarised and the user confirms first. Fields from newer versions are kept. A restore never leaves two weigh-ins on one day.
 - **REQ-Q01, drafts:** after leaving the routine or past-workout editor any way other than Save or an explicit Discard, reopening it shows the unsaved changes with a way to discard them.
+- **REQ-018, data check:** a healthy database reports no problems. A record the cleaners reject is listed with a label, can be downloaded in a backup first, and can only be deleted after a confirmation. A record whose shape Setward can derive is repaired in place, keeping unknown fields. A record that changed since the check is left alone. The crash screen offers the same check.

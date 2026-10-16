@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useRef, useState } from 'react';
+import { DataCheck } from '../components/DataCheck';
 import { confirmDialog, toast } from '../components/dialogs';
 import { IconDownload, IconUpload } from '../components/Icons';
 import { InstallSettings } from '../components/InstallPrompt';
@@ -10,7 +11,7 @@ import { db } from '../db';
 import { exportBackup, parseBackup, restoreBackup, wipeAllData, type ParsedBackup } from '../lib/backup';
 import { saveFile } from '../lib/csv';
 import { useData } from '../lib/data';
-import { fmtDate, fmtRest, plural } from '../lib/format';
+import { fmtDate, fmtRest, listJoin, plural } from '../lib/format';
 import { applyImport, parseHevyCsv, planHevyImport, toHevyCsv, type ImportPlan } from '../lib/hevy';
 import { navigate } from '../lib/router';
 import { updateSettings, useSettings } from '../lib/settings';
@@ -18,8 +19,6 @@ import { createRoutinesFromHistory } from '../lib/workouts';
 
 const REST_OPTIONS = [0, 30, 45, 60, 75, 90, 120, 150, 180, 240, 300];
 const today = () => new Date().toISOString().slice(0, 10);
-/** "a", "a and b", "a, b and c" */
-const listJoin = (items: string[]) => (items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`);
 
 export function SettingsPage() {
   const settings = useSettings();
@@ -29,6 +28,7 @@ export function SettingsPage() {
   const backupInput = useRef<HTMLInputElement>(null);
   const [plan, setPlan] = useState<ImportPlan | null>(null);
   const [importing, setImporting] = useState(false);
+  const [checkingData, setCheckingData] = useState(false);
   const [storage, setStorage] = useState<{ persisted: boolean; usedMb?: number }>();
 
   useEffect(() => {
@@ -251,6 +251,9 @@ export function SettingsPage() {
         >
           <IconDownload size={18} /> Export workouts as CSV
         </button>
+        <button className="btn btn-ghost btn-block" onClick={() => setCheckingData(true)}>
+          Check data for problems
+        </button>
         {storage && (
           <p className="muted small">
             {storage.persisted ? 'Storage is protected from automatic clean-up.' : 'The browser may clear storage when space runs low — keep a backup.'}
@@ -287,6 +290,10 @@ export function SettingsPage() {
         </a>{' '}
         (public domain).
       </p>
+
+      <Sheet open={checkingData} onClose={() => setCheckingData(false)} title="Check data">
+        <DataCheck />
+      </Sheet>
 
       <Sheet open={!!plan} onClose={() => setPlan(null)} title="Import from Hevy">
         {plan && (

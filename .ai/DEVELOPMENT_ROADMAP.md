@@ -263,7 +263,7 @@ Plan: `C:\Users\ousse\.claude\plans\c-users-ousse-downloads-ultimate-projec-stea
 |----|-----------|--------|
 | LAUNCH-M1 | Retire Hevy; Strong import; Setward's own CSV | DONE (see below) |
 | LAUNCH-M2 | i18n core, settings model, design tokens | DONE (see below) |
-| LAUNCH-M3 | Visual refresh | TODO |
+| LAUNCH-M3 | Visual refresh | IN_PROGRESS (design brief decided in `CURRENT_TASK.md`; no code yet) |
 | LAUNCH-M4 | Settings home and sub-pages | TODO |
 | LAUNCH-M5 | Welcome, starter programs, log a past workout, recent records | TODO |
 | LAUNCH-M6 | Ten translations and Arabic right-to-left | TODO |

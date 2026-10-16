@@ -3,14 +3,14 @@
 ## Project
 - **Name:** Setward (formerly Chalk), live since 2026-10-05.
 - **Purpose:** a free, offline-first workout logger that replaces Hevy for its owner, possibly published to app stores later
-- **Version:** 0.1.0 (`package.json`). The live app at https://botrading20-glitch.github.io/chalk/ runs `main` @ c232c2d (stopwatch, routine reordering, orange warm-up badge), deployed 2026-10-05 (Pages run 37302757241).
+- **Version:** 0.1.0 (`package.json`). The live app at https://botrading20-glitch.github.io/chalk/ runs `main` @ e7ad7fe (adds the data check), deployed 2026-10-16 (Pages run 38953196792); the stopwatch, routine reordering and orange warm-up badge went live 2026-10-05 (c232c2d).
 - **Stack:** React 19, TypeScript 7, Vite 8, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB), Vitest 5 (+ fake-indexeddb in tests). No backend.
 
 ## Current status
-- **Phase:** released. The quality pass (REL-100, 2026-10-04) and Setward with UX-002, UX-003, A11Y-002 and DOC-002 (REL-101, 2026-10-05) are live. Waiting on the owner's phone checks.
-- **Branches:** `main` = live. `quality-pass`, `setward` and `features` are merged (kept locally). `google-sync` is parked (FEAT-001). `data-check` (DATA-002, Check data) is built and verified, committed locally (ce3daae) and not pushed.
+- **Phase:** released. The quality pass (REL-100, 2026-10-04) and Setward with UX-002, UX-003, A11Y-002 and DOC-002 (REL-101, 2026-10-05) are live, as are REL-102 and the data check (REL-103, 2026-10-16). Waiting on the owner's phone checks.
+- **Branches:** `main` = live. `quality-pass`, `setward` and `features` are merged (kept locally). `google-sync` is parked (FEAT-001). `data-check` is merged too (REL-103).
 - **Completion:** all product requirements work. Quality requirements REQ-Q01–Q05 are done, apart from screen-reader and real-device checks.
-- **Release decision:** READY WITH DOCUMENTED LIMITATIONS, released 2026-10-05 (`RELEASE_CHECKLIST.md`, REL-101).
+- **Release decision:** READY WITH DOCUMENTED LIMITATIONS, released 2026-10-16 (`RELEASE_CHECKLIST.md`, REL-103).
 
 ## Architecture
 A static PWA. Pages read everything through `DataProvider` (`useData()`), which loads all exercises and workouts and computes records once. Writes go straight to Dexie, and live queries re-render. The in-progress workout, editor drafts and other per-device state live in the `kv` table. Optional sync merges three ways against a private GitHub repo. An error boundary wraps the app, and backups are checked before restore. Full notes are in `CLAUDE.md`.
@@ -28,7 +28,7 @@ Setward identity: an angular split-S mark and “Forward, one set at a time.” 
 See `NON_NEGOTIABLES.md` (NN-01 to NN-16). None were changed this session.
 
 ## Current problems
-None known at medium or high severity. Low-severity items left in the roadmap "Discovered" table: UX-004 (DATA-002 is done on the local branch `data-check`). Deploy runners pinned to Ubuntu 24.04 (ENV-002). No linter by the owner's choice (DX-002 cancelled).
+None known at medium or high severity. Low-severity items left in the roadmap "Discovered" table: UX-004 (DATA-002 is done and live). Deploy runners pinned to Ubuntu 24.04 (ENV-002). No linter by the owner's choice (DX-002 cancelled).
 
 ## Current risks
 - Neither release has been checked on the owner's Android phone yet (`RELEASE_CHECKLIST.md`).
@@ -36,11 +36,10 @@ None known at medium or high severity. Low-severity items left in the roadmap "D
 - Sync is shipped but unused by the owner. A Google Drive replacement is parked on the local-only branch `google-sync`; merging it needs its origins added to the CSP `connect-src`.
 
 ## Immediate next steps
-1. The owner runs the phone checks in `RELEASE_CHECKLIST.md` for REL-101 and REL-102.
-2. Decide whether to merge and publish `data-check` (REL-103; every push to `main` deploys, NN-15).
+1. The owner runs the phone checks in `RELEASE_CHECKLIST.md` for REL-101, REL-102 and REL-103.
 
 ## Last verified
-2026-10-16 (branch `data-check` @ ce3daae, off `main` @ 663cb56): typecheck clean, 88 tests passed (2 skipped), `/chalk/` build (main chunk 153.77 kB gzip). Browser: DATA-002 on dev with the sample data and on the `/chalk/` preview: crash screen → check → backup → delete → reload works, repairs verified, 320 px dark and light, 0 CSP violations. Phone and screen reader not run.
+2026-10-16 (`main` @ e7ad7fe, live): typecheck clean, 88 tests passed (2 skipped), `/chalk/` build (main chunk 153.77 kB gzip). Browser: DATA-002 on dev with the sample data and on the `/chalk/` preview: crash screen → check → backup → delete → reload works, repairs verified, 320 px dark and light, 0 CSP violations. Phone and screen reader not run. Live after the push (Pages run 38953196792): bundle `index-D2GzHZz1.js`, CSP, service worker, Check data opens, 0 CSP violations, no console errors.
 
 2026-10-04: typecheck, 59 tests, build, and smoke S-01 to S-11 on dev and the `/chalk/` preview; the live deploy loads cleanly.
 

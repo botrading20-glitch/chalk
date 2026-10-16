@@ -1,30 +1,36 @@
 # Current task
 
 ## Task
-DATA-002 (Check data for problems) is built and verified on the local branch `data-check`, cut from `main` @ 663cb56. It is committed locally (code in ce3daae, then the notes) and not merged, pushed or deployed (REL-103 waits for the owner). REL-102 (stopwatch, reordering, orange warm-up badge) is live as `main` @ c232c2d; the owner's phone checks for REL-101 and REL-102 are still open.
+No task is active. REL-103 (the data check, DATA-002) is live as `main` @ e7ad7fe, deployed 2026-10-16 (Pages run 38953196792); REL-102 (stopwatch, routine reordering, orange warm-up badge) is live as `main` @ c232c2d. Waiting on the owner's phone checks for REL-101, REL-102 and REL-103.
 
 ## This session (2026-10-16)
 - The owner gave the master prompt (v2) and "implement the first complete, usable workflow". The core logging workflow already exists and is live, so the owner chose DATA-002 from the backlog.
 - Built `src/lib/dataCheck.ts`, `src/components/DataCheck.tsx` and `src/lib/dataCheck.test.ts`, with entry points in Settings and on the crash screen. Design, limits and evidence: roadmap DATA-002 and `TEST_STATUS.md` (Data check).
-- Committed on `data-check` at the owner's request: code and tests in ce3daae, then the notes. Nothing was pushed.
+- Committed on `data-check` (code and tests ce3daae, notes e991ab7), then merged into `main` as e7ad7fe and pushed at the owner's request ("Merge data-check into main and push it"). The live page was verified.
+- The commit recording this release in these notes was pushed afterwards at the owner's request ("Push the notes commit"), which deployed the same bundle a second time.
 
-## Last release (2026-10-05)
+## Last release (2026-10-16)
+- `data-check` merged into `main` as e7ad7fe and pushed (owner: "Merge data-check into main and push it"). Pages run 38953196792 succeeded, 0 annotations.
+- Live at https://botrading20-glitch.github.io/chalk/: bundle `index-D2GzHZz1.js`, Check data opens, 0 CSP violations, no console errors. Evidence: `TEST_STATUS.md`; readiness: `RELEASE_CHECKLIST.md`.
+
+## Earlier release (2026-10-05)
 - `setward` merged into `main` as 34d025d and pushed (owner: "merge and push it"). Pages run 37297499084 succeeded.
 - Live at https://botrading20-glitch.github.io/chalk/: Setward title, manifest and header; bundle `index-z9IrtRPz.js`; CSP present with 0 violations; service worker in control; exercise photos load; no console messages.
 - Contents: the Setward rebrand (6ce6fb4), UX-002 + UX-003 (83fd874), A11Y-002 (436c05f), DOC-002 (4ae76c3), notes. Evidence: `TEST_STATUS.md`; readiness: `RELEASE_CHECKLIST.md`.
 
 ## Open for the owner
+- Phone check for REL-103 in `RELEASE_CHECKLIST.md`: Settings → Your data → Check data for problems.
 - Phone checks for REL-102 in `RELEASE_CHECKLIST.md`: the stopwatch beep and buzz at the target, finger-dragging in the reorder sheet, orange W badges.
 - Phone checks in `RELEASE_CHECKLIST.md` → After deploy (both releases), including the installed name/icon refresh to Setward.
 - Decided 2026-10-05: keep blocking the delete of a used custom exercise (UX-002); no ESLint (DX-002 cancelled). See `DECISIONS.md`.
 
 ## Environment notes
 - No dev server or preview is left running (the ones started on 2026-10-16 were stopped). A fresh browser origin starts empty: restore `tmp-import/chalk-sample-backup.json` from Settings → Restore backup.
-- Local branches `quality-pass` and `setward` are merged and kept; `google-sync` is parked.
+- Local branches `quality-pass`, `setward`, `features` and `data-check` are merged and kept; `google-sync` is parked.
 - ENV-002: deploy jobs are pinned to `ubuntu-24.04` (2026-10-05) because `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19. Revisit when GitHub retires that image.
 
 ## Next exact action
-Ask the owner whether to merge `data-check` and publish it (REL-103), and how REL-101 and REL-102 behave on the phone (`RELEASE_CHECKLIST.md`). Every push to `main` deploys (NN-15), so push only with the owner's go-ahead.
+Ask the owner how REL-101, REL-102 and REL-103 behave on the phone (`RELEASE_CHECKLIST.md`), fix what fails, then pick the next work with them. Every push to `main` deploys (NN-15), so push only with the owner's go-ahead.
 
 ## Last updated
 2026-10-16

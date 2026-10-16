@@ -2,6 +2,25 @@
 
 Pushing `main` deploys to the live app (NN-15); each new release needs the owner's authorization.
 
+## REL-103: branch `data-check` (Check data), released 2026-10-16
+
+**Decision: READY WITH DOCUMENTED LIMITATIONS.** The owner approved ("Merge data-check into main and push it"); merged as e7ad7fe and deployed (Pages run 38953196792). No data migration, schema change or sync-format change: the check only reads, and writes only when the user taps Repair or Delete. Rollback: `git revert -m 1 e7ad7fe` and push.
+
+| Area | State |
+|------|-------|
+| Typecheck, 88 tests, `/chalk/` build, `npm ci --dry-run`, secret scan (on `main`) | ✅ |
+| Browser QA: healthy data, crash → check → backup → Keep/Delete → reload, three repairs | ✅ dev and `/chalk/` preview |
+| 320 px, dark and light, no overflow | ✅ |
+| Preview CSP and service worker | ✅ 0 violations |
+| Owner's go-ahead (NN-15) | ✅ 2026-10-16 |
+| Deployed and live page checked | ✅ bundle `index-D2GzHZz1.js`, manifest scope `/chalk/`, 5 routes, Check data opens, 0 CSP violations, no console errors, 0 annotations |
+| Screen reader | ⚠ not run |
+| On the phone | ⚠ pending (owner) |
+
+Known limitations: the workout in progress is not checked; a custom exercise with a missing `source` is checked but left out of backups; two same-day weigh-ins from different devices are not flagged; repairs fix shape, not meaning. The live site was checked on empty storage (read-only); the damaged-record flow was exercised on the same bundle in the `/chalk/` preview.
+
+On the phone after deploy: Settings → Your data → Check data for problems should say "No problems found" and list your counts.
+
 ## REL-102: branch `features` (stopwatch, reorder, warm-up colour), released 2026-10-05
 
 **Decision: READY WITH DOCUMENTED LIMITATIONS.** The owner approved; merged as c232c2d and deployed (Pages run 37302757241); the live page checks out. No data migration or schema change: the stopwatch only adds an optional field to the workout in progress (never synced or saved), and reordering only rewrites `order` values. Rollback: `git revert -m 1 <merge>` and push.
@@ -65,3 +84,4 @@ Known limitations: no screen-reader pass; iPhone untested; Android lock-screen c
 4. Settings → Back up data still downloads a file.
 5. REL-101 (deployed 2026-10-05): the installed app's name and home-screen icon become Setward (accept Chrome's update prompt if it shows one), and all workouts are still there.
 6. REL-101: deleting a custom exercise that a routine uses is refused with a message saying where it's used.
+7. REL-103 (deployed 2026-10-16): Settings → Your data → *Check data for problems* reads "No problems found" with your counts of workouts, routines, exercises and weigh-ins.

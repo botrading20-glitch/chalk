@@ -18,7 +18,9 @@ Environment: Windows 11, Node 24.19.0, npm 11.17.0; the desktop app's built-in C
 | S-01 / S-02 / S-03 | PASS / PASS / PARTIAL | App opens after the repair; 5 routes render without overflow; a started workout survives a reload (no sets or exercises were typed) |
 | Console | PASS | Only the two deliberate crash errors; none after the repair |
 | Screen reader | NOT_RUN | None here. The buttons carry names ("Repair workout …"), a polite live region announces results, and focus moves to the summary after an action |
-| Phone | NOT_RUN | Needs a deploy (REL-103) |
+| Release on `main` (REL-103) | PASS | Merged as e7ad7fe; typecheck, 88 tests, `/chalk/` build (same bundle `index-D2GzHZz1.js`), `npm ci --dry-run`, secret scan; pushed 663cb56..e7ad7fe; Pages run 38953196792: build and deploy succeeded, 0 annotations |
+| Live site | PASS | New bundle, Setward manifest with `/chalk/` scope, CSP meta, service worker in control, 5 routes without overflow, Settings → Check data opens ("No problems found", no data yet), backup button present, 0 CSP violations, no console errors. Checked on empty storage; the damaged-record flow was not repeated on the live site |
+| Phone | NOT_RUN | Needs the owner's phone |
 
 Notes: a raw IndexedDB write does not notify Dexie, so on the production preview the page was reloaded to trigger the crash. The dev database was returned to the clean sample afterwards (65 workouts, 6 routines, 1 custom exercise, no settings row).
 

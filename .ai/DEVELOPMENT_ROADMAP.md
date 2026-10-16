@@ -214,10 +214,10 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 - **Affected:** `src/lib/dataCheck.ts` (no React and no DataProvider, so the crash screen can use it), `src/lib/dataCheck.test.ts`, `src/components/DataCheck.tsx` (all new); `src/components/ErrorBoundary.tsx`, `src/pages/Settings.tsx`, `src/lib/format.ts` (`listJoin` moved here from Settings), `src/styles.css`.
 - **Validation:** 21 new tests (88 pass, 2 opt-in skipped). Two deliberate mutations (stop normalising `exerciseIds`; let delete take a repairable record) each fail one test. Browser, dev server with the sample data: healthy data reads "No problems found" (65 workouts, 6 routines, 1 exercise, 16 weigh-ins); a workout with `exercises: null` crashed the app, the crash-screen check named it, the downloaded backup contained it, Keep left it alone, Delete removed only it, and Reload Setward opened the app with History intact; a workout without `exerciseIds`, a routine with a bad `order` and a bad setting were each repaired (unknown fields kept, valid settings kept). 320 px: no overflow, a long unbreakable title wraps; dark and light checked. Production preview at `/chalk/`: 0 CSP violations; the whole crash → check → backup → delete → reload flow works on the built bundle; S-02 on 5 routes; S-03 start-and-reload. Main chunk 153.77 kB gzip (+2.8 kB).
 - **Limitations:** the workout in progress is not checked (not synced, no validator). A custom exercise with a missing `source` is checked but is left out of backups (they read the `source` index). Two same-day weigh-ins from different devices are not flagged (consistency, not shape). The check repairs shape, never meaning. Not tried on a phone; no screen-reader pass.
-- **Task state:** DONE locally on branch `data-check` (off `main` @ 663cb56): code and tests committed as ce3daae, notes in the commit after it. Not merged, pushed or deployed.
+- **Task state:** DONE and released as REL-103 (code and tests ce3daae, notes e991ab7, merged as e7ad7fe).
 
 ### REL-103: Publish the `data-check` branch
-- **Task state:** TODO. Waits for the owner's go-ahead (NN-15). Rollback would be `git revert -m 1 <merge>` and push; no data migration or schema change is involved.
+- **Task state:** DONE (2026-10-16, owner: "Merge data-check into main and push it"). Merged as e7ad7fe (`--no-ff`); on `main`: typecheck, 88 tests, `/chalk/` build (same bundle `index-D2GzHZz1.js` as the branch), `npm ci --dry-run` and a secret scan of the merged diff passed. Pushed 663cb56..e7ad7fe; Pages run 38953196792 succeeded (build 21 s, deploy 11 s, 0 annotations on both jobs). Live: bundle `index-D2GzHZz1.js`, Setward manifest with the `/chalk/` scope, CSP meta, service worker in control, 5 routes without overflow, Settings → Check data opens and reads "No problems found" on empty storage, 0 CSP violations, no console errors. Still to do: the owner's phone checks. Rollback: `git revert -m 1 e7ad7fe` and push; no data migration or schema change is involved.
 
 ## Deferred and product decisions (owner's call)
 
@@ -237,7 +237,7 @@ Order follows the priority rule: data integrity → reliability → UX → acces
 
 | ID | Item | Severity | Why it remains |
 |----|------|----------|----------------|
-| DATA-002 | ~~Records arriving through sync are not shape-checked; a damaged one shows the crash screen.~~ | Low | DONE 2026-10-16 on the local branch `data-check` (see "Data check" above); not merged. |
+| DATA-002 | ~~Records arriving through sync are not shape-checked; a damaged one shows the crash screen.~~ | Low | DONE 2026-10-16, released as REL-103 (see "Data check" above). |
 | UX-002 | ~~Deleting a custom exercise checks workouts but not routines.~~ | Low | DONE 2026-10-05 (see above). |
 | UX-003 | ~~"Best session volume" shows for assisted-bodyweight exercises.~~ | Low | DONE 2026-10-05 (see above). |
 | UX-004 | The new and edit exercise form has no draft or discard prompt. | Low | Short form; ADR-001 leaves it out on purpose. |

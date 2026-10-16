@@ -25,7 +25,7 @@ Status: DONE (built and verified) · PARTIAL · TODO · DEFERRED.
 | REQ-015 | Everything stays free to build and host. | O | P0 | DONE | NN-01 |
 | REQ-016 | Stopwatch for timed sets in a live workout: time the next set, see the target, get an alert at it, save the time with one tap. Survives a reload. | O (2026-10-05) | P2 | DONE (branch `features`) | Browser QA, `workouts.test.ts` |
 | REQ-017 | Reorder routines within a folder by dragging, with a non-drag alternative. | O (2026-10-05) | P2 | DONE (branch `features`) | `folders.test.ts`, browser QA |
-| REQ-018 | Check data: find records the app cannot read (from a sync or a bug), from Settings or the crash screen, and repair or delete each one after a backup. Nothing changes until the user asks. | O (2026-10-16) | P1 | DONE (branch `data-check`) | `dataCheck.test.ts`, browser QA |
+| REQ-018 | Check data: find records the app cannot read (from a sync or a bug), from Settings or the crash screen, and repair or delete each one after a backup. Nothing changes until the user asks. | O (2026-10-16) | P1 | DONE (live, REL-103) | `dataCheck.test.ts`, browser QA |
 
 ## Quality (added 2026-10-04)
 

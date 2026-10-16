@@ -2,7 +2,7 @@
 
 Completed roadmap work, newest first. Evidence is in `TEST_STATUS.md` and on each task in `DEVELOPMENT_ROADMAP.md`.
 
-## 2026-10-16: data check (branch `data-check`, not merged)
+## 2026-10-16: data check (merged as e7ad7fe and deployed)
 
 | Task | Result | Commit |
 |------|--------|--------|

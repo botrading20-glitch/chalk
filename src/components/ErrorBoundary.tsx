@@ -1,6 +1,7 @@
 import { Component, useState, type ErrorInfo, type ReactNode } from 'react';
 import { exportBackup } from '../lib/backup';
 import { saveFile } from '../lib/csv';
+import { DataCheck } from './DataCheck';
 
 /**
  * Last line of defence: a render error anywhere shows this screen instead of a
@@ -35,6 +36,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
 /** Also used when the app can't start at all, so it relies on nothing but the database. */
 export function RecoveryScreen({ error, onHome }: { error: unknown; onHome?: () => void }) {
   const [backup, setBackup] = useState<'idle' | 'saving' | 'saved' | string>('idle');
+  const [checking, setChecking] = useState(false);
   const message = error instanceof Error ? error.message : String(error);
 
   async function download() {
@@ -62,11 +64,27 @@ export function RecoveryScreen({ error, onHome }: { error: unknown; onHome?: () 
             </button>
           )}
         </div>
-        <button className="btn btn-ghost" onClick={download} disabled={backup === 'saving'}>
-          Download a backup
-        </button>
-        {backup === 'saved' && <p className="muted small">Backup saved. Restore it any time from Settings.</p>}
-        {backup !== 'idle' && backup !== 'saving' && backup !== 'saved' && <p className="form-error">{backup}</p>}
+        {checking ? (
+          // The check has its own backup button, so this one steps aside.
+          <DataCheck
+            afterClean={
+              <button className="btn btn-primary" onClick={() => window.location.reload()}>
+                Reload Setward
+              </button>
+            }
+          />
+        ) : (
+          <>
+            <button className="btn btn-ghost" onClick={download} disabled={backup === 'saving'}>
+              Download a backup
+            </button>
+            {backup === 'saved' && <p className="muted small">Backup saved. Restore it any time from Settings.</p>}
+            {backup !== 'idle' && backup !== 'saving' && backup !== 'saved' && <p className="form-error">{backup}</p>}
+            <button className="btn btn-ghost" onClick={() => setChecking(true)}>
+              Check for damaged data
+            </button>
+          </>
+        )}
         <details className="recovery-details">
           <summary>Error details</summary>
           <code>{message}</code>

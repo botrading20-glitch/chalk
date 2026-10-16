@@ -3,6 +3,7 @@ import { db } from '../db';
 import { uid } from '../lib/format';
 import { EQUIPMENT, EQUIPMENT_LABEL, EXERCISE_TYPES, MUSCLES, MUSCLE_LABEL, TYPE_LABEL } from '../lib/meta';
 import type { Equipment, Exercise, ExerciseType, Muscle } from '../types';
+import { t } from '../i18n';
 
 export function ExerciseForm({
   initial,
@@ -29,7 +30,7 @@ export function ExerciseForm({
   async function save() {
     const trimmed = name.trim();
     if (!trimmed) {
-      setError('Give the exercise a name.');
+      setError(t('form.nameRequired'));
       return;
     }
     // The library original being replaced may keep its name.
@@ -38,7 +39,7 @@ export function ExerciseForm({
       .filter((e) => e.name.toLowerCase() === trimmed.toLowerCase() && e.id !== initial?.id && e.id !== replaces)
       .first();
     if (clash) {
-      setError(`"${clash.name}" already exists. Pick a different name.`);
+      setError(t('form.nameTaken', { name: clash.name }));
       return;
     }
     const exercise: Exercise = {
@@ -66,19 +67,19 @@ export function ExerciseForm({
       }}
     >
       <label className="field">
-        <span>Name</span>
+        <span>{t('form.name')}</span>
         <input
           value={name}
           onChange={(e) => {
             setName(e.target.value);
             setError('');
           }}
-          placeholder="e.g. Pendulum Squat (Machine)"
+          placeholder={t('form.namePlaceholder')}
           autoFocus={!from}
         />
       </label>
       <label className="field">
-        <span>What you log</span>
+        <span>{t('form.whatYouLog')}</span>
         <select value={type} onChange={(e) => setType(e.target.value as ExerciseType)}>
           {EXERCISE_TYPES.map((t) => (
             <option key={t} value={t}>
@@ -88,7 +89,7 @@ export function ExerciseForm({
         </select>
       </label>
       <label className="field">
-        <span>Equipment</span>
+        <span>{t('form.equipment')}</span>
         <select value={equipment} onChange={(e) => setEquipment(e.target.value as Equipment)}>
           {EQUIPMENT.map((q) => (
             <option key={q} value={q}>
@@ -98,7 +99,7 @@ export function ExerciseForm({
         </select>
       </label>
       <label className="field">
-        <span>Primary muscle</span>
+        <span>{t('form.primaryMuscle')}</span>
         <select value={primary} onChange={(e) => setPrimary(e.target.value as Muscle)}>
           {MUSCLES.map((m) => (
             <option key={m} value={m}>
@@ -108,7 +109,7 @@ export function ExerciseForm({
         </select>
       </label>
       <fieldset className="field">
-        <legend>Other muscles worked</legend>
+        <legend>{t('form.otherMuscles')}</legend>
         <div className="chips wrap">
           {MUSCLES.filter((m) => m !== primary && m !== 'cardio' && m !== 'other').map((m) => {
             const on = secondary.includes(m);
@@ -129,10 +130,10 @@ export function ExerciseForm({
       {error && <p className="form-error">{error}</p>}
       <div className="form-actions">
         <button type="button" className="btn btn-ghost" onClick={onCancel}>
-          Cancel
+          {t('common.cancel')}
         </button>
         <button type="submit" className="btn btn-primary">
-          {initial || copyOf ? 'Save changes' : 'Create exercise'}
+          {initial || copyOf ? t('form.saveChanges') : t('form.create')}
         </button>
       </div>
     </form>

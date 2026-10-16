@@ -1,5 +1,6 @@
 import { DEFAULT_SETTINGS } from '../db';
 import type { BodyWeight, Exercise, Routine, Settings, SetType, Workout, WorkoutExercise, WorkoutSet } from '../types';
+import { LOCALE_CODES } from '../i18n/locales';
 import { EQUIPMENT, EXERCISE_TYPES, MUSCLES } from './meta';
 
 // Shape checks for records that come from outside the app (backup files).
@@ -140,6 +141,24 @@ export function cleanSettings(v: unknown): Partial<Settings> | undefined {
     weightUnit: ['kg', 'lbs'],
     distanceUnit: ['km', 'mi'],
     theme: ['dark', 'light', 'system'],
+    language: ['auto', ...LOCALE_CODES],
+    timeFormat: ['auto', '24h', '12h'],
+    weekStart: ['auto', 'mon', 'sun', 'sat'],
+    oneRmFormula: ['epley', 'brzycki'],
+    previousFrom: ['any', 'routine'],
+    restSound: ['classic', 'chime', 'bell', 'pulse'],
+    soundVolume: ['low', 'medium', 'high'],
+    accent: ['purple', 'indigo', 'teal', 'pink'],
+    textSize: ['small', 'default', 'large', 'xlarge'],
+    reduceMotion: ['system', 'always'],
+    backupReminder: ['off', 'weekly', 'monthly'],
+  };
+  // Whole numbers inside a sensible range; anything else falls back to the default.
+  const ranges: Partial<Record<keyof Settings, [number, number]>> = {
+    weeklyGoal: [0, 7],
+    newExerciseSets: [0, 10],
+    warmupRest: [-1, 600],
+    defaultRest: [0, 3600],
   };
   for (const key of Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[]) {
     const value = v[key];
@@ -151,6 +170,11 @@ export function cleanSettings(v: unknown): Partial<Settings> | undefined {
       if (Array.isArray(value) && value.length && value.every((n) => isNum(n) && n > 0)) out[key] = value;
     } else if (isObj(fallback)) {
       if (isObj(value) && Object.values(value).every(isNum)) out[key] = value;
+    } else if (ranges[key]) {
+      const [min, max] = ranges[key]!;
+      if (isNum(value) && Number.isInteger(value) && value >= min && value <= max) out[key] = value;
+    } else if (key === 'profileName') {
+      if (isStr(value)) out[key] = value.slice(0, 40);
     } else if (typeof value === typeof fallback && (typeof value !== 'number' || isNum(value))) {
       out[key] = value;
     }

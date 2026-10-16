@@ -2,6 +2,7 @@ import { Component, useState, type ErrorInfo, type ReactNode } from 'react';
 import { exportBackup } from '../lib/backup';
 import { saveFile } from '../lib/csv';
 import { DataCheck } from './DataCheck';
+import { t } from '../i18n';
 
 /**
  * Last line of defence: a render error anywhere shows this screen instead of a
@@ -45,22 +46,22 @@ export function RecoveryScreen({ error, onHome }: { error: unknown; onHome?: () 
       await saveFile(`setward-backup-${new Date().toISOString().slice(0, 10)}.json`, await exportBackup(), 'application/json');
       setBackup('saved');
     } catch (e) {
-      setBackup(`Couldn't read your data: ${(e as Error).message}`);
+      setBackup(t('recovery.readFailed', { message: (e as Error).message }));
     }
   }
 
   return (
     <div className="page recovery" role="alert">
       <div className="empty">
-        <h3>Something went wrong</h3>
-        <p className="muted">Setward hit an error and couldn't show this screen. Your workouts are still saved on this device.</p>
+        <h3>{t('recovery.title')}</h3>
+        <p className="muted">{t('recovery.message')}</p>
         <div className="empty-actions">
           <button className="btn btn-primary" onClick={() => window.location.reload()}>
-            Reload
+            {t('recovery.reload')}
           </button>
           {onHome && (
             <button className="btn btn-secondary" onClick={onHome}>
-              Go to Workout
+              {t('recovery.home')}
             </button>
           )}
         </div>
@@ -69,24 +70,24 @@ export function RecoveryScreen({ error, onHome }: { error: unknown; onHome?: () 
           <DataCheck
             afterClean={
               <button className="btn btn-primary" onClick={() => window.location.reload()}>
-                Reload Setward
+                {t('recovery.reloadApp')}
               </button>
             }
           />
         ) : (
           <>
             <button className="btn btn-ghost" onClick={download} disabled={backup === 'saving'}>
-              Download a backup
+              {t('recovery.download')}
             </button>
-            {backup === 'saved' && <p className="muted small">Backup saved. Restore it any time from Settings.</p>}
+            {backup === 'saved' && <p className="muted small">{t('recovery.saved')}</p>}
             {backup !== 'idle' && backup !== 'saving' && backup !== 'saved' && <p className="form-error">{backup}</p>}
             <button className="btn btn-ghost" onClick={() => setChecking(true)}>
-              Check for damaged data
+              {t('recovery.check')}
             </button>
           </>
         )}
         <details className="recovery-details">
-          <summary>Error details</summary>
+          <summary>{t('recovery.details')}</summary>
           <code>{message}</code>
         </details>
       </div>

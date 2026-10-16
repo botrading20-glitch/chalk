@@ -2,6 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { db } from '../db';
 import type { Exercise, Workout, WorkoutSet } from '../types';
+import { useSettings } from './settings';
 import { computeRecords, typeLookup, type Records, type TypeOf } from './stats';
 
 interface AppData {
@@ -21,6 +22,8 @@ const Ctx = createContext<AppData | null>(null);
 export function DataProvider({ children }: { children: ReactNode }) {
   const exercises = useLiveQuery(() => db.exercises.toArray(), []);
   const workouts = useLiveQuery(() => db.workouts.orderBy('startTime').reverse().toArray(), []);
+  // Records depend on the 1RM formula, so they are recomputed when it changes.
+  const { oneRmFormula } = useSettings();
 
   const value = useMemo<AppData>(() => {
     const list = exercises ?? [];
@@ -34,7 +37,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       typeOf,
       records: computeRecords(workouts ?? [], typeOf),
     };
-  }, [exercises, workouts]);
+  }, [exercises, workouts, oneRmFormula]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

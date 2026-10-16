@@ -7,7 +7,7 @@ import { Empty, ExerciseAvatar, PageHeader, Segmented } from '../components/ui';
 import { db } from '../db';
 import { useData } from '../lib/data';
 import { exerciseUses, reassignExercise } from '../lib/exercises';
-import { fmtClock, fmtDate, fmtNum, kgTo, kmTo, plural } from '../lib/format';
+import { fmtClock, fmtDate, fmtNum, kgTo, kmTo } from '../lib/format';
 import { COUNTS_VOLUME, EQUIPMENT_LABEL, MUSCLE_LABEL, TYPE_LABEL } from '../lib/meta';
 import { Link, navigate } from '../lib/router';
 import { fmtSet, setLabels } from '../lib/sets';
@@ -22,6 +22,7 @@ import {
   type SessionMetric,
 } from '../lib/stats';
 import type { Settings } from '../types';
+import { count, t } from '../i18n';
 
 type Tab = 'progress' | 'history' | 'howto';
 type Range = '3m' | '1y' | 'all';
@@ -38,7 +39,7 @@ function metricFormatter(metric: SessionMetric, s: Settings) {
   if (WEIGHT_METRICS.includes(metric)) return (v: number) => `${fmtNum(v, 1)} ${s.weightUnit}`;
   if (metric === 'maxDuration') return (v: number) => fmtClock(v);
   if (metric === 'maxDistance') return (v: number) => `${fmtNum(v, 2)} ${s.distanceUnit}`;
-  return (v: number) => `${fmtNum(v, 0)} reps`;
+  return (v: number) => count('rep', v);
 }
 
 function recordFormat(kind: RecordKind, v: number, s: Settings) {
@@ -48,7 +49,7 @@ function recordFormat(kind: RecordKind, v: number, s: Settings) {
     case 'volume':
       return `${fmtNum(kgTo(v, s.weightUnit), 1)} ${s.weightUnit}`;
     case 'reps':
-      return `${fmtNum(v, 0)} reps`;
+      return count('rep', v);
     case 'duration':
       return fmtClock(v);
     case 'distance':
@@ -72,8 +73,8 @@ export function ExerciseDetail({ id }: { id: string }) {
   if (!ex) {
     return (
       <div className="page">
-        <PageHeader back="/exercises" title="Exercise" />
-        <Empty title="This exercise doesn't exist">It may have been deleted.</Empty>
+        <PageHeader back="/exercises" title={t('exercise.title')} />
+        <Empty title={t('missing.exercise')}>{t('missing.hint')}</Empty>
       </div>
     );
   }
@@ -87,9 +88,9 @@ export function ExerciseDetail({ id }: { id: string }) {
   const best = records.best.get(id) ?? {};
   const bestSession = COUNTS_VOLUME[ex.type] ? Math.max(0, ...sessions.map((s) => sessionMetric('sessionVolume', s.sets))) : 0;
   const tabs: { value: Tab; label: string }[] = [
-    { value: 'progress', label: 'Progress' },
-    { value: 'history', label: `History${sessions.length ? ` (${sessions.length})` : ''}` },
-    ...(hasHowTo ? [{ value: 'howto' as Tab, label: 'How to' }] : []),
+    { value: 'progress', label: t('exercise.tabProgress') },
+    { value: 'history', label: sessions.length ? t('exercise.tabHistoryCount', { n: sessions.length }) : t('exercise.tabHistory') },
+    ...(hasHowTo ? [{ value: 'howto' as Tab, label: t('exercise.tabHowTo') }] : []),
   ];
 
   return (
@@ -99,7 +100,7 @@ export function ExerciseDetail({ id }: { id: string }) {
         title=""
         actions={
           !replacedBy && (
-            <Link to={`/exercises/${id}/edit`} className="icon-btn" aria-label="Edit exercise">
+            <Link to={`/exercises/${id}/edit`} className="icon-btn" aria-label={t('exercise.edit')}>
               <IconEdit />
             </Link>
           )
@@ -112,46 +113,46 @@ export function ExerciseDetail({ id }: { id: string }) {
           <h1 className="detail-title">{ex.name}</h1>
           <p className="muted">
             {MUSCLE_LABEL[ex.primaryMuscle]}
-            {ex.secondaryMuscles.length > 0 && ` + ${ex.secondaryMuscles.map((m) => MUSCLE_LABEL[m]).join(', ')}`}
+            {ex.secondaryMuscles.length > 0 && ` + ${ex.secondaryMuscles.map((m) => MUSCLE_LABEL[m]).join(t('common.comma'))}`}
           </p>
           <p className="muted small">
             {EQUIPMENT_LABEL[ex.equipment]} · {TYPE_LABEL[ex.type]}
-            {ex.source === 'custom' && (original ? ' · Your version' : ' · Your exercise')}
+            {ex.source === 'custom' && ` · ${original ? t('exercise.yourVersion') : t('exercise.yourExercise')}`}
           </p>
         </div>
       </div>
 
       {replacedBy && (
         <Link to={`/exercises/${replacedBy.id}`} className="card replaced-note">
-          <strong>You use your own version of this exercise</strong>
-          <span>Your workouts are logged under “{replacedBy.name}”. Tap to open it.</span>
+          <strong>{t('exercise.replacedTitle')}</strong>
+          <span>{t('exercise.replacedText', { name: replacedBy.name })}</span>
         </Link>
       )}
 
-      <Segmented options={tabs} value={tab} onChange={setTab} label="Exercise sections" />
+      <Segmented options={tabs} value={tab} onChange={setTab} label={t('exercise.sections')} />
 
       {tab === 'progress' &&
         (sessions.length === 0 ? (
-          <Empty title="Not logged yet">Your chart and records appear after the first workout with this exercise.</Empty>
+          <Empty title={t('exercise.notLogged')}>{t('exercise.notLoggedProgress')}</Empty>
         ) : (
           <>
             <section className="card chart-card">
               <div className="chart-head">
                 <h2 className="card-title">{SESSION_METRIC_LABEL[metric]}</h2>
-                <select className="chip-select" value={range} onChange={(e) => setRange(e.target.value as Range)} aria-label="Time range">
-                  <option value="3m">Last 3 months</option>
-                  <option value="1y">Last year</option>
-                  <option value="all">All time</option>
+                <select className="chip-select" value={range} onChange={(e) => setRange(e.target.value as Range)} aria-label={t('exercise.timeRange')}>
+                  <option value="3m">{t('exercise.range3m')}</option>
+                  <option value="1y">{t('exercise.range1y')}</option>
+                  <option value="all">{t('exercise.rangeAll')}</option>
                 </select>
               </div>
               {points.length ? (
                 <LineChart
                   points={points}
                   format={metricFormatter(metric, settings)}
-                  caption={`${SESSION_METRIC_LABEL[metric]} per session for ${ex.name}`}
+                  caption={t('exercise.chartCaption', { metric: SESSION_METRIC_LABEL[metric], name: ex.name })}
                 />
               ) : (
-                <p className="muted chart-empty">No sessions in this range.</p>
+                <p className="muted chart-empty">{t('exercise.noSessions')}</p>
               )}
               {metrics.length > 1 && (
                 <div className="chips scroll">
@@ -165,7 +166,7 @@ export function ExerciseDetail({ id }: { id: string }) {
             </section>
 
             <section className="card">
-              <h2 className="card-title">Personal records</h2>
+              <h2 className="card-title">{t('exercise.records')}</h2>
               <dl className="records">
                 {(Object.entries(best) as [RecordKind, NonNullable<(typeof best)[RecordKind]>][]).map(([kind, entry]) => (
                   <div key={kind}>
@@ -181,17 +182,17 @@ export function ExerciseDetail({ id }: { id: string }) {
                 ))}
                 {bestSession > 0 && (
                   <div>
-                    <dt>Best session volume</dt>
+                    <dt>{t('exercise.bestSession')}</dt>
                     <dd>
                       <strong className="tabular">{recordFormat('volume', bestSession, settings)}</strong>
                     </dd>
                   </div>
                 )}
                 <div>
-                  <dt>Logged</dt>
+                  <dt>{t('exercise.logged')}</dt>
                   <dd>
-                    <strong>{plural(sessions.length, 'session')}</strong>
-                    <span className="muted small">last on {fmtDate(sessions[0].workout.startTime)}</span>
+                    <strong>{count('session', sessions.length)}</strong>
+                    <span className="muted small">{t('exercise.lastOn', { date: fmtDate(sessions[0].workout.startTime) })}</span>
                   </dd>
                 </div>
               </dl>
@@ -201,7 +202,7 @@ export function ExerciseDetail({ id }: { id: string }) {
 
       {tab === 'history' &&
         (sessions.length === 0 ? (
-          <Empty title="Not logged yet">Sessions with this exercise will be listed here.</Empty>
+          <Empty title={t('exercise.notLogged')}>{t('exercise.notLoggedHistory')}</Empty>
         ) : (
           <div className="stack">
             {sessions.map((s) => {
@@ -226,7 +227,7 @@ export function ExerciseDetail({ id }: { id: string }) {
                         <span className="set-value tabular">{fmtSet(set, ex.type, settings)}</span>
                         {records.bySet.has(set.id) && (
                           <span className="pr-tags">
-                            <IconTrophy size={14} /> Record
+                            <IconTrophy size={14} /> {t('exercise.recordTag')}
                           </span>
                         )}
                       </li>
@@ -255,9 +256,9 @@ export function ExerciseDetail({ id }: { id: string }) {
           className="btn btn-danger-ghost btn-block"
           onClick={async () => {
             const ok = await confirmDialog({
-              title: `Go back to “${original.name}”?`,
-              message: 'Your workouts and routines switch back to the library exercise, and your version is deleted.',
-              confirmLabel: 'Use the original',
+              title: t('exercise.backTitle', { name: original.name }),
+              message: t('exercise.backText'),
+              confirmLabel: t('exercise.backConfirm'),
               danger: true,
             });
             if (!ok) return;
@@ -266,7 +267,7 @@ export function ExerciseDetail({ id }: { id: string }) {
             navigate(`/exercises/${original.id}`, { replace: true });
           }}
         >
-          Go back to the library version
+          {t('exercise.backButton')}
         </button>
       )}
 
@@ -276,16 +277,16 @@ export function ExerciseDetail({ id }: { id: string }) {
           onClick={async () => {
             const uses = await exerciseUses(ex.id);
             if (uses) {
-              toast(`Used in ${uses} — remove it there first`);
+              toast(t('exercise.usedIn', { uses }));
               return;
             }
-            const ok = await confirmDialog({ title: `Delete "${ex.name}"?`, confirmLabel: 'Delete exercise', danger: true });
+            const ok = await confirmDialog({ title: t('exercise.deleteTitle', { name: ex.name }), confirmLabel: t('exercise.delete'), danger: true });
             if (!ok) return;
             await db.exercises.delete(ex.id);
             navigate('/exercises', { replace: true });
           }}
         >
-          Delete exercise
+          {t('exercise.delete')}
         </button>
       )}
     </div>

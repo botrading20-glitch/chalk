@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
 import { DialogHost } from './components/dialogs';
+import { t } from './i18n';
 import { Dock } from './components/Dock';
 import { useData } from './lib/data';
 import { useRoute } from './lib/router';
-import { useSettings } from './lib/settings';
+import { useAppearance, useFormatKey } from './lib/appearance';
 import { ActiveWorkoutPage } from './pages/ActiveWorkout';
 import { BodyWeightPage } from './pages/BodyWeight';
 import { EditWorkout } from './pages/EditWorkout';
@@ -19,23 +19,9 @@ import { WorkoutHome } from './pages/WorkoutHome';
 import { Empty } from './components/ui';
 import { Link } from './lib/router';
 
-function useTheme() {
-  const { theme } = useSettings();
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-color-scheme: light)');
-    const apply = () => {
-      const resolved = theme === 'system' ? (media.matches ? 'light' : 'dark') : theme;
-      document.documentElement.dataset.theme = resolved;
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', resolved === 'light' ? '#f3f3f6' : '#131217');
-    };
-    apply();
-    media.addEventListener('change', apply);
-    return () => media.removeEventListener('change', apply);
-  }, [theme]);
-}
-
 export function App() {
-  useTheme();
+  useAppearance();
+  const formatKey = useFormatKey();
   const { ready } = useData();
   const { path, segments, query } = useRoute();
   const [s0, s1, s2] = segments;
@@ -74,7 +60,7 @@ export function App() {
     default:
       page = (
         <div className="page">
-          <Empty title="Page not found" action={<Link to="/" className="btn btn-primary">Go to Workout</Link>} />
+          <Empty title={t('notFound.title')} action={<Link to="/" className="btn btn-primary">{t('notFound.action')}</Link>} />
         </div>
       );
   }
@@ -83,7 +69,7 @@ export function App() {
   const focused = s0 === 'workout' || s0 === 'routines' || s2 === 'edit' || s1 === 'new';
 
   return (
-    <div className="app">
+    <div className="app" key={formatKey}>
       <main key={path}>{ready ? page : null}</main>
       <Dock showTabs={!focused} showBanner={s0 !== 'workout'} />
       <DialogHost />

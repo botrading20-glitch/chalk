@@ -3,6 +3,7 @@ import { IMAGE_BASE } from '../lib/meta';
 import { goBack } from '../lib/router';
 import type { Exercise } from '../types';
 import { IconBack } from './Icons';
+import { t } from '../i18n';
 
 export function PageHeader({
   title,
@@ -22,7 +23,7 @@ export function PageHeader({
   return (
     <header className={`page-head ${large ? 'large' : ''}`}>
       {back !== undefined && (
-        <button className="icon-btn" onClick={onBack ?? (() => goBack(back))} aria-label="Back">
+        <button className="icon-btn" onClick={onBack ?? (() => goBack(back))} aria-label={t('common.back')}>
           <IconBack />
         </button>
       )}

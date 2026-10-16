@@ -2,6 +2,7 @@
 // with a fine-grained personal access token (Contents: read & write).
 
 import { SyncConflict, type RemoteStore } from './syncCore';
+import { t } from '../i18n';
 
 export interface RepoRef {
   owner: string;
@@ -36,7 +37,7 @@ async function call(ref: RepoRef, path: string, init: RequestInit & { accept?: s
       },
     });
   } catch {
-    throw new GitHubError("Couldn't reach GitHub. Check your connection.", 0);
+    throw new GitHubError(t('error.githubOffline'), 0);
   }
   return res;
 }
@@ -44,16 +45,16 @@ async function call(ref: RepoRef, path: string, init: RequestInit & { accept?: s
 function fail(res: Response): never {
   switch (res.status) {
     case 401:
-      throw new GitHubError('GitHub rejected the access token. It may have expired or been revoked.', 401);
+      throw new GitHubError(t('error.githubToken'), 401);
     case 403:
       if (res.headers.get('x-ratelimit-remaining') === '0') {
-        throw new GitHubError('GitHub is rate-limiting requests. Sync will try again later.', 403);
+        throw new GitHubError(t('error.githubRate'), 403);
       }
-      throw new GitHubError('The access token can’t write to this repository. Give it “Contents: Read and write” access.', 403);
+      throw new GitHubError(t('error.githubWrite'), 403);
     case 404:
-      throw new GitHubError('Repository not found, or the access token can’t see it.', 404);
+      throw new GitHubError(t('error.githubNotFound'), 404);
     default:
-      throw new GitHubError(`GitHub answered with error ${res.status}.`, res.status);
+      throw new GitHubError(t('error.githubStatus', { status: res.status }), res.status);
   }
 }
 

@@ -157,3 +157,41 @@ describe('backup', () => {
     expect(await getKV('active')).toBeUndefined();
   });
 });
+
+describe('new settings in a backup', () => {
+  it('keeps valid values, drops invalid ones and clamps nothing silently', async () => {
+    const { cleanSettings } = await import('./validate');
+    const cleaned = cleanSettings({
+      language: 'fr',
+      timeFormat: '12h',
+      weekStart: 'sun',
+      oneRmFormula: 'brzycki',
+      weeklyGoal: 4,
+      warmupRest: -1,
+      profileName: 'Sam',
+      accent: 'teal',
+      textSize: 'xlarge',
+      reduceMotion: 'always',
+      backupReminder: 'monthly',
+      showRpe: false,
+    });
+    expect(cleaned).toEqual({
+      language: 'fr',
+      timeFormat: '12h',
+      weekStart: 'sun',
+      oneRmFormula: 'brzycki',
+      weeklyGoal: 4,
+      warmupRest: -1,
+      profileName: 'Sam',
+      accent: 'teal',
+      textSize: 'xlarge',
+      reduceMotion: 'always',
+      backupReminder: 'monthly',
+      showRpe: false,
+    });
+    expect(
+      cleanSettings({ language: 'klingon', weeklyGoal: 12, newExerciseSets: 2.5, accent: 'red', profileName: 7, showRpe: 'yes', textSize: 'huge' }),
+    ).toEqual({});
+    expect(cleanSettings({ profileName: 'x'.repeat(100) })?.profileName).toHaveLength(40);
+  });
+});

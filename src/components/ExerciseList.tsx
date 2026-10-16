@@ -5,6 +5,7 @@ import { searchExercises, type ExerciseFilter } from '../lib/search';
 import type { Equipment, Exercise, Muscle } from '../types';
 import { IconCheck, IconClose, IconSearch } from './Icons';
 import { ExerciseAvatar } from './ui';
+import { t } from '../i18n';
 
 const PAGE = 60;
 
@@ -32,14 +33,14 @@ export function ExerciseFilters({
         <IconSearch size={18} />
         <input
           type="search"
-          placeholder="Search 1,000+ exercises"
+          placeholder={t('exercises.searchPlaceholder')}
           value={filter.query}
           onChange={(e) => onChange({ ...filter, query: e.target.value })}
-          aria-label="Search exercises"
+          aria-label={t('exercises.searchLabel')}
           autoFocus={autoFocus}
         />
         {filter.query && (
-          <button className="icon-btn small" onClick={() => onChange({ ...filter, query: '' })} aria-label="Clear search">
+          <button className="icon-btn small" onClick={() => onChange({ ...filter, query: '' })} aria-label={t('exercises.clearSearch')}>
             <IconClose size={16} />
           </button>
         )}
@@ -49,9 +50,9 @@ export function ExerciseFilters({
           className={`chip-select ${filter.muscle ? 'on' : ''}`}
           value={filter.muscle ?? ''}
           onChange={(e) => onChange({ ...filter, muscle: (e.target.value || undefined) as Muscle | undefined })}
-          aria-label="Filter by muscle"
+          aria-label={t('exercises.filterMuscle')}
         >
-          <option value="">All muscles</option>
+          <option value="">{t('exercises.allMuscles')}</option>
           {MUSCLES.map((m) => (
             <option key={m} value={m}>
               {MUSCLE_LABEL[m]}
@@ -62,9 +63,9 @@ export function ExerciseFilters({
           className={`chip-select ${filter.equipment ? 'on' : ''}`}
           value={filter.equipment ?? ''}
           onChange={(e) => onChange({ ...filter, equipment: (e.target.value || undefined) as Equipment | undefined })}
-          aria-label="Filter by equipment"
+          aria-label={t('exercises.filterEquipment')}
         >
-          <option value="">All equipment</option>
+          <option value="">{t('exercises.allEquipment')}</option>
           {EQUIPMENT.map((q) => (
             <option key={q} value={q}>
               {EQUIPMENT_LABEL[q]}
@@ -76,7 +77,7 @@ export function ExerciseFilters({
           aria-pressed={!!filter.customOnly}
           onClick={() => onChange({ ...filter, customOnly: !filter.customOnly })}
         >
-          Mine
+          {t('exercises.mine')}
         </button>
       </div>
     </div>
@@ -126,7 +127,7 @@ export function ExerciseRows({
                 <span className="ex-row-name">{e.name}</span>
                 <span className="ex-row-meta">
                   {MUSCLE_LABEL[e.primaryMuscle]} · {EQUIPMENT_LABEL[e.equipment]}
-                  {e.source === 'custom' && ' · Mine'}
+                  {e.source === 'custom' && ` · ${t('exercises.mine')}`}
                 </span>
               </span>
               {count ? <span className="ex-row-count">{count}×</span> : null}

@@ -6,6 +6,7 @@ import type { Exercise, WeightUnit } from '../types';
 import { NumberField } from './fields';
 import { Sheet } from './Sheet';
 import { Segmented } from './ui';
+import { t } from '../i18n';
 
 // Bumper-plate colours, matching the set badges: red, blue, yellow, green,
 // white, then the small change plates. Index follows DEFAULT_PLATES[unit].
@@ -60,7 +61,7 @@ export function PlateSheet({
   use?: PlateUse;
 }) {
   return (
-    <Sheet open={open} onClose={onClose} title="Plate calculator">
+    <Sheet open={open} onClose={onClose} title={t('plates.title')}>
       {open && <PlateCalculator exercise={exercise} initialKg={initialKg} use={use} onDone={onClose} />}
     </Sheet>
   );
@@ -95,17 +96,17 @@ function PlateCalculator({ exercise, initialKg, use, onDone }: { exercise?: Exer
   return (
     <div className="plates">
       <label className="field">
-        <span>Weight to load ({unit})</span>
-        <NumberField value={target} onChange={setTarget} autoFocus={initialKg === undefined} aria-label={`Weight to load in ${unit}`} />
+        <span>{t('plates.weightToLoad', { unit })}</span>
+        <NumberField value={target} onChange={setTarget} autoFocus={initialKg === undefined} aria-label={t('plates.weightToLoadLabel', { unit })} />
       </label>
 
       <div className="field">
-        <span>Bar</span>
+        <span>{t('plates.bar')}</span>
         <Segmented
-          label="Bar weight"
+          label={t('plates.barWeight')}
           value={String(bar)}
           onChange={(v) => chooseBar(Number(v))}
-          options={barOptions.map((b) => ({ value: String(b), label: b === 0 ? 'None' : fmt(b) }))}
+          options={barOptions.map((b) => ({ value: String(b), label: b === 0 ? t('common.none') : fmt(b) }))}
         />
       </div>
 
@@ -113,25 +114,25 @@ function PlateCalculator({ exercise, initialKg, use, onDone }: { exercise?: Exer
 
       <div className="plates-result" role="status">
         {tooHeavy ? (
-          <p className="form-error">That’s more than any bar holds ({fmt(MAX_TARGET[unit])} max). Check the number.</p>
+          <p className="form-error">{t('plates.tooHeavy', { max: fmt(MAX_TARGET[unit]) })}</p>
         ) : !result ? (
-          <p className="muted">Enter a weight to see what goes on each side.</p>
+          <p className="muted">{t('plates.enter')}</p>
         ) : result.underBar ? (
-          <p className="form-error">That’s lighter than the bar ({fmt(bar)}).</p>
+          <p className="form-error">{t('plates.underBar', { bar: fmt(bar) })}</p>
         ) : (
           <>
             <p className="plates-side">
               {shown!.perSide.length ? (
                 <>
-                  <span className="muted">Each side</span> {shown!.perSide.map((p) => fmtNum(p, 2)).join(' + ')} {unit}
+                  <span className="muted">{t('plates.eachSide')}</span> {shown!.perSide.map((p) => fmtNum(p, 2)).join(' + ')} {unit}
                 </>
               ) : (
-                'Just the bar'
+                t('plates.justBar')
               )}
             </p>
             {!result.exact && (
               <div className="plates-near">
-                <p className="muted small">Your plates can’t make {fmt(target!)} exactly. Closest:</p>
+                <p className="muted small">{t('plates.noExact', { target: fmt(target!) })}</p>
                 <div className="chips">
                   {[result.below, result.above].map(
                     (l) =>
@@ -161,7 +162,7 @@ function PlateCalculator({ exercise, initialKg, use, onDone }: { exercise?: Exer
       )}
 
       <details className="plates-owned">
-        <summary>Plates at your gym</summary>
+        <summary>{t('plates.owned')}</summary>
         <div className="chips wrap">
           {DEFAULT_PLATES[unit].map((p) => {
             const on = owned.includes(p);
@@ -184,7 +185,7 @@ function PlateDiagram({ load, unit, hasBar }: { load?: Load; unit: WeightUnit; h
     <div
       className="plate-diagram"
       role="img"
-      aria-label={plates.length ? `Each side: ${plates.map((p) => fmtNum(p, 2)).join(', ')} ${unit}` : 'Empty bar'}
+      aria-label={plates.length ? t('plates.diagram', { plates: plates.map((p) => fmtNum(p, 2)).join(', '), unit }) : t('plates.emptyBar')}
     >
       {hasBar && <span className="bar-shaft" />}
       <span className="bar-collar" />

@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { exportBackup } from '../lib/backup';
 import { saveFile } from '../lib/csv';
-import { checkData, deleteIssue, describeRecord, KIND_LABEL, repairIssue, type CheckResult, type Issue } from '../lib/dataCheck';
-import { listJoin, plural } from '../lib/format';
+import { count, listJoin, t } from '../i18n';
+import { checkData, deleteIssue, describeRecord, KIND_LABEL, KIND_WORD, repairIssue, type CheckResult, type Issue } from '../lib/dataCheck';
 import { getSyncConfig } from '../lib/sync';
 
 const issueId = (i: Issue) => `${i.kind}:${String(i.key)}`;
-const kindWord = (i: Issue) => KIND_LABEL[i.kind].toLowerCase();
+const kindWord = (i: Issue) => KIND_WORD[i.kind];
 
 /**
  * Finds records too damaged for the app to read, and lets the user repair or
@@ -47,13 +47,13 @@ export function DataCheck({ afterClean }: { afterClean?: ReactNode }) {
       const outcome = await (action === 'repair' ? repairIssue(issue) : deleteIssue(issue));
       if (outcome === 'done') {
         setActed(true);
-        setNotice(`${action === 'repair' ? 'Repaired' : 'Deleted'} ${kindWord(issue)}: ${issue.label}.`);
+        setNotice(t(action === 'repair' ? 'check.repaired' : 'check.deleted', { kind: kindWord(issue), label: issue.label }));
       } else {
-        setNotice('That record changed since the check, so it was left alone.');
+        setNotice(t('check.stale'));
       }
       await run();
     } catch (e) {
-      setNotice(`Couldn't ${action} it: ${(e as Error).message}`);
+      setNotice(t(action === 'repair' ? 'check.repairFailed' : 'check.deleteFailed', { message: (e as Error).message }));
     } finally {
       setBusy(false);
       summary.current?.focus();
@@ -66,7 +66,7 @@ export function DataCheck({ afterClean }: { afterClean?: ReactNode }) {
       await saveFile(`setward-backup-${new Date().toISOString().slice(0, 10)}.json`, await exportBackup(), 'application/json');
       setBackup('saved');
     } catch (e) {
-      setBackup(`Couldn't read your data: ${(e as Error).message}`);
+      setBackup(t('recovery.readFailed', { message: (e as Error).message }));
     }
   }
 
@@ -74,23 +74,23 @@ export function DataCheck({ afterClean }: { afterClean?: ReactNode }) {
     return (
       <div className="data-check">
         <p className="form-error" role="alert">
-          Couldn't check your data: {error}
+          {t('check.failed', { error })}
         </p>
         <button className="btn btn-secondary" onClick={() => void run()}>
-          Try again
+          {t('common.retry')}
         </button>
       </div>
     );
   }
-  if (!result) return <p className="muted data-check">Checking your data…</p>;
+  if (!result) return <p className="muted data-check">{t('check.running')}</p>;
 
   const { counts, issues } = result;
   const checked = [
-    counts.workouts ? plural(counts.workouts, 'workout') : '',
-    counts.routines ? plural(counts.routines, 'routine') : '',
-    counts.exercises ? plural(counts.exercises, 'exercise of your own', 'exercises of your own') : '',
-    counts.bodyweight ? plural(counts.bodyweight, 'weigh-in') : '',
-    counts.settings ? 'your settings' : '',
+    counts.workouts ? count('workout', counts.workouts) : '',
+    counts.routines ? count('routine', counts.routines) : '',
+    counts.exercises ? count('exerciseOwn', counts.exercises) : '',
+    counts.bodyweight ? count('weighIn', counts.bodyweight) : '',
+    counts.settings ? t('check.yourSettings') : '',
   ].filter(Boolean);
 
   return (
@@ -98,16 +98,13 @@ export function DataCheck({ afterClean }: { afterClean?: ReactNode }) {
       <div ref={summary} tabIndex={-1} className="data-check-summary">
         {issues.length ? (
           <>
-            <strong>Found {plural(issues.length, 'problem')}.</strong>
-            <p className="muted small">
-              These records can't be read the way Setward expects, and one of them can stop the app from opening. Download a backup first; then repair what
-              Setward can fix and delete the rest. Nothing changes until you tap a button.
-            </p>
+            <strong>{t('check.found', { count: count('problem', issues.length) })}</strong>
+            <p className="muted small">{t('check.explain')}</p>
           </>
         ) : (
           <>
-            <strong>{acted ? 'No problems left.' : 'No problems found.'}</strong>
-            <p className="muted small">{checked.length ? `Checked ${listJoin(checked)}.` : 'There is no data to check yet.'}</p>
+            <strong>{acted ? t('check.cleanLeft') : t('check.clean')}</strong>
+            <p className="muted small">{checked.length ? t('check.checked', { items: listJoin(checked) }) : t('check.nothing')}</p>
           </>
         )}
       </div>
@@ -123,21 +120,21 @@ export function DataCheck({ afterClean }: { afterClean?: ReactNode }) {
 
       <div className="data-check-backup">
         <button className="btn btn-secondary" onClick={download} disabled={backup === 'saving'}>
-          Download a backup
+          {t('recovery.download')}
         </button>
-        {backup === 'saved' && <span className="muted small">Backup saved.</span>}
+        {backup === 'saved' && <span className="muted small">{t('check.backupSaved')}</span>}
         {backup !== 'idle' && backup !== 'saving' && backup !== 'saved' && <span className="form-error">{backup}</span>}
       </div>
 
       {syncOn && issues.length > 0 && (
-        <p className="muted small">Cloud sync is on, so repairs and deletions here reach your other devices too.</p>
+        <p className="muted small">{t('check.syncOn')}</p>
       )}
 
       {issues.length > 0 && (
         <ul className="data-check-list">
           {issues.map((issue) => {
             const id = issueId(issue);
-            const name = issue.kind === 'settings' ? 'your settings' : `${kindWord(issue)} ${issue.label}`;
+            const name = issue.kind === 'settings' ? t('check.yourSettings') : t('check.named', { kind: kindWord(issue), label: issue.label });
             return (
               <li key={id} className="data-check-item" data-status={issue.status}>
                 <div className="data-check-title">
@@ -146,33 +143,33 @@ export function DataCheck({ afterClean }: { afterClean?: ReactNode }) {
                 </div>
                 <p className="muted small">
                   {issue.status === 'repairable'
-                    ? `Can be repaired. Setward will fix the ${listJoin(issue.fields)}.`
-                    : "Can't be read, so it can only be deleted."}
-                  {issue.status === 'damaged' && issue.usedBy && ` It is used in ${issue.usedBy}, which will show “Deleted exercise”.`}
+                    ? t('check.canRepair', { fields: listJoin(issue.fields) })
+                    : t('check.onlyDelete')}
+                  {issue.status === 'damaged' && issue.usedBy && t('check.usedBy', { uses: issue.usedBy, deleted: t('exercise.deleted') })}
                 </p>
                 <details>
-                  <summary>Show the record</summary>
+                  <summary>{t('check.show')}</summary>
                   <pre className="data-check-record">{describeRecord(issue.raw)}</pre>
                 </details>
                 <div className="data-check-actions">
                   {issue.status === 'repairable' && (
-                    <button className="btn btn-secondary" disabled={busy} aria-label={`Repair ${name}`} onClick={() => void act(issue, 'repair')}>
-                      Repair
+                    <button className="btn btn-secondary" disabled={busy} aria-label={t('check.repairLabel', { name })} onClick={() => void act(issue, 'repair')}>
+                      {t('check.repair')}
                     </button>
                   )}
                   {issue.status === 'damaged' && confirming !== id && (
-                    <button className="btn btn-danger-ghost" disabled={busy} aria-label={`Delete ${name}`} onClick={() => setConfirming(id)}>
-                      Delete
+                    <button className="btn btn-danger-ghost" disabled={busy} aria-label={t('check.deleteLabel', { name })} onClick={() => setConfirming(id)}>
+                      {t('common.delete')}
                     </button>
                   )}
                   {issue.status === 'damaged' && confirming === id && (
-                    <div className="data-check-confirm" role="group" aria-label={`Confirm deleting ${name}`}>
-                      <span>Delete this {kindWord(issue)} for good?</span>
+                    <div className="data-check-confirm" role="group" aria-label={t('check.confirmLabel', { name })}>
+                      <span>{t('check.confirmQuestion', { kind: kindWord(issue) })}</span>
                       <button className="btn btn-danger" disabled={busy} onClick={() => void act(issue, 'delete')}>
-                        Delete
+                        {t('common.delete')}
                       </button>
                       <button className="btn btn-ghost" autoFocus onClick={() => setConfirming(null)}>
-                        Keep
+                        {t('check.keep')}
                       </button>
                     </div>
                   )}

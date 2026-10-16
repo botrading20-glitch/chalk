@@ -5,6 +5,8 @@ import { checkRepo, connectSync, disconnectSync, hasLocalData, syncNow, useSyncS
 import { confirmDialog, toast } from './dialogs';
 import { IconCloud } from './Icons';
 import { Sheet } from './Sheet';
+import { t } from '../i18n';
+import { tRich } from '../i18n/rich';
 
 export function SyncSettings() {
   const status = useSyncStatus();
@@ -15,18 +17,15 @@ export function SyncSettings() {
   return (
     <section className="card settings-group">
       <div className="sync-head">
-        <h2 className="card-title">Cloud sync</h2>
-        {on && <span className={`sync-pill ${status.phase}`}>{status.phase === 'error' ? 'Needs attention' : 'On'}</span>}
+        <h2 className="card-title">{t('sync.title')}</h2>
+        {on && <span className={`sync-pill ${status.phase}`}>{status.phase === 'error' ? t('sync.pillAttention') : t('sync.pillOn')}</span>}
       </div>
 
       {!on ? (
         <>
-          <p className="muted small">
-            Keep a copy of everything in a private GitHub repository and use Setward on more than one device. Every sync is saved
-            in the repository’s history, so you can always go back to an earlier version.
-          </p>
+          <p className="muted small">{t('sync.intro')}</p>
           <button className="btn btn-secondary btn-block" onClick={() => setSetup(true)}>
-            <IconCloud size={18} /> Set up sync
+            <IconCloud size={18} /> {t('sync.setUp')}
           </button>
         </>
       ) : (
@@ -36,47 +35,54 @@ export function SyncSettings() {
           </a>
           <p className={`small ${status.phase === 'error' ? 'form-error' : 'muted'}`} role="status">
             {status.phase === 'syncing'
-              ? 'Syncing…'
+              ? t('sync.syncing')
               : status.phase === 'error'
                 ? status.message
                 : status.lastSyncAt
-                  ? `Last synced ${fmtAgo(status.lastSyncAt, now)}`
-                  : 'Waiting for the first sync'}
+                  ? t('sync.lastSynced', { when: fmtAgo(status.lastSyncAt, now) })
+                  : t('sync.waiting')}
           </p>
           <div className="button-pair">
             <button
               className="btn btn-secondary"
               disabled={status.phase === 'syncing'}
-              onClick={() => syncNow().catch(() => toast('Sync failed. See the message above.'))}
+              onClick={() => syncNow().catch(() => toast(t('sync.failed')))}
             >
-              Sync now
+              {t('sync.now')}
             </button>
             <button className="btn btn-ghost" onClick={() => setSetup(true)}>
-              Change token
+              {t('sync.changeToken')}
             </button>
           </div>
           <button
             className="btn btn-danger-ghost btn-block"
             onClick={async () => {
               const ok = await confirmDialog({
-                title: 'Turn off sync on this device?',
-                message: 'Your workouts stay on this device and in the cloud. Changes just stop syncing from here.',
-                confirmLabel: 'Turn off sync',
+                title: t('sync.turnOffTitle'),
+                message: t('sync.turnOffText'),
+                confirmLabel: t('sync.turnOffConfirm'),
               });
               if (ok) await disconnectSync();
             }}
           >
-            Turn off sync on this device
+            {t('sync.turnOff')}
           </button>
         </>
       )}
 
-      <Sheet open={setup} onClose={() => setSetup(false)} title="Set up cloud sync">
+      <Sheet open={setup} onClose={() => setSetup(false)} title={t('sync.setupTitle')}>
         <SyncSetup initialRepo={status.repo} onDone={() => setSetup(false)} />
       </Sheet>
     </section>
   );
 }
+
+const bold = (text: string) => <strong>{text}</strong>;
+const repoLink = (text: string, href: string) => (
+  <a href={href} target="_blank" rel="noreferrer">
+    {text}
+  </a>
+);
 
 function parseRepo(input: string) {
   const m = input
@@ -98,9 +104,9 @@ function SyncSetup({ initialRepo, onDone }: { initialRepo?: string; onDone: () =
     setBusy(true);
     try {
       await connectSync(config, mode);
-      toast('Sync is on');
+      toast(t('sync.on'));
     } catch (e) {
-      toast(`Connected, but the first sync failed: ${(e as Error).message}`);
+      toast(t('sync.firstFailed', { message: (e as Error).message }));
     } finally {
       setBusy(false);
       onDone();
@@ -109,15 +115,15 @@ function SyncSetup({ initialRepo, onDone }: { initialRepo?: string; onDone: () =
 
   async function submit() {
     const parsed = parseRepo(repo);
-    if (!parsed) return setError('Enter the repository as owner/name, for example yourname/setward-data.');
-    if (!token.trim()) return setError('Paste the access token.');
+    if (!parsed) return setError(t('sync.repoFormat'));
+    if (!token.trim()) return setError(t('sync.tokenRequired'));
     const config = { ...parsed, token: token.trim() };
     setBusy(true);
     setError('');
     try {
       const info = await checkRepo(config);
       if (!info.isPrivate) {
-        setError(`${info.fullName} is public, so anyone could read your workouts. Make it private in its GitHub settings, then try again.`);
+        setError(t('sync.public', { name: info.fullName }));
         return;
       }
       if (info.hasData && (await hasLocalData())) {
@@ -135,16 +141,14 @@ function SyncSetup({ initialRepo, onDone }: { initialRepo?: string; onDone: () =
   if (choice) {
     return (
       <div className="sync-choice">
-        <p>
-          This device and <strong>{choice.owner}/{choice.repo}</strong> both have Setward data already. What should happen?
-        </p>
+        <p>{tRich('sync.choice', { b: bold }, { repo: `${choice.owner}/${choice.repo}` })}</p>
         <button className="choice-card" disabled={busy} onClick={() => finish(choice, 'replace')}>
-          <strong>Use the cloud data on this device</strong>
-          <span>Best when adding a phone or computer. This device’s workouts, routines and exercises are replaced by the cloud copy.</span>
+          <strong>{t('sync.useCloud')}</strong>
+          <span>{t('sync.useCloudText')}</span>
         </button>
         <button className="choice-card" disabled={busy} onClick={() => finish(choice, 'merge')}>
-          <strong>Merge both</strong>
-          <span>Keeps everything from both sides. Workouts that exist on both, like a history imported twice, are kept once.</span>
+          <strong>{t('sync.mergeBoth')}</strong>
+          <span>{t('sync.mergeText')}</span>
         </button>
       </div>
     );
@@ -159,37 +163,29 @@ function SyncSetup({ initialRepo, onDone }: { initialRepo?: string; onDone: () =
       }}
     >
       <ol className="setup-steps">
+        <li>{tRich('sync.step1', { b: bold, link: (text) => repoLink(text, 'https://github.com/new?name=setward-data&visibility=private') })}</li>
         <li>
-          <strong>Create a private repository</strong> to hold your data.{' '}
-          <a href="https://github.com/new?name=setward-data&visibility=private" target="_blank" rel="noreferrer">
-            Create it on GitHub
-          </a>
+          {tRich('sync.step2', {
+            b: bold,
+            em: (text) => <em>{text}</em>,
+            link: (text) => repoLink(text, 'https://github.com/settings/personal-access-tokens/new'),
+          })}
         </li>
-        <li>
-          <strong>Create an access token</strong> that can only reach that repository.{' '}
-          <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noreferrer">
-            Create a token
-          </a>
-          . Under <em>Repository access</em> choose <em>Only select repositories</em> and pick it. Under <em>Permissions</em>, set{' '}
-          <em>Contents</em> to <em>Read and write</em>.
-        </li>
-        <li>
-          <strong>Paste both here</strong>, and do the same on every device you use.
-        </li>
+        <li>{tRich('sync.step3', { b: bold })}</li>
       </ol>
       <label className="field">
-        <span>Repository</span>
+        <span>{t('sync.repository')}</span>
         <input
           value={repo}
           onChange={(e) => setRepo(e.target.value)}
-          placeholder="yourname/setward-data"
+          placeholder={t('sync.repoPlaceholder')}
           autoCapitalize="off"
           autoCorrect="off"
           spellCheck={false}
         />
       </label>
       <label className="field">
-        <span>Access token</span>
+        <span>{t('sync.accessToken')}</span>
         <input
           type="password"
           value={token}
@@ -199,14 +195,14 @@ function SyncSetup({ initialRepo, onDone }: { initialRepo?: string; onDone: () =
           spellCheck={false}
         />
       </label>
-      <p className="muted small">The token is stored on this device and only ever sent to GitHub.</p>
+      <p className="muted small">{t('sync.tokenNote')}</p>
       {error && <p className="form-error">{error}</p>}
       <div className="form-actions">
         <button type="button" className="btn btn-ghost" onClick={onDone}>
-          Cancel
+          {t('common.cancel')}
         </button>
         <button type="submit" className="btn btn-primary" disabled={busy}>
-          {busy ? 'Connecting…' : 'Connect'}
+          {busy ? t('sync.connecting') : t('sync.connect')}
         </button>
       </div>
     </form>

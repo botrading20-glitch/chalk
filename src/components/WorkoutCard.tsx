@@ -6,6 +6,7 @@ import { useSettings } from '../lib/settings';
 import { bestSet, workoutVolume } from '../lib/stats';
 import type { Workout } from '../types';
 import { IconTrophy } from './Icons';
+import { count, t } from '../i18n';
 
 export function WorkoutCard({ workout }: { workout: Workout }) {
   const { exerciseMap, typeOf, records } = useData();
@@ -26,7 +27,7 @@ export function WorkoutCard({ workout }: { workout: Workout }) {
         <span>{fmtVolume(workoutVolume(workout, typeOf), settings.weightUnit)}</span>
         {prs > 0 && (
           <span className="pr-pill">
-            <IconTrophy size={14} /> {prs} {prs === 1 ? 'record' : 'records'}
+            <IconTrophy size={14} /> {count('record', prs)}
           </span>
         )}
       </div>
@@ -37,14 +38,14 @@ export function WorkoutCard({ workout }: { workout: Workout }) {
           return (
             <li key={we.id}>
               <span className="line-sets tabular">{we.sets.length} ×</span>
-              <span className="line-name">{exerciseMap.get(we.exerciseId)?.name ?? 'Deleted exercise'}</span>
+              <span className="line-name">{exerciseMap.get(we.exerciseId)?.name ?? t('exercise.deleted')}</span>
               <span className="line-best tabular">{best ? fmtSet(best, type, settings) : ''}</span>
             </li>
           );
         })}
       </ul>
       {workout.exercises.length > shown.length && (
-        <p className="muted small">+{workout.exercises.length - shown.length} more exercises</p>
+        <p className="muted small">{t('workoutCard.more', { n: workout.exercises.length - shown.length })}</p>
       )}
     </Link>
   );

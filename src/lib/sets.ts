@@ -1,6 +1,7 @@
 import type { ExerciseType, Settings, WorkoutSet } from '../types';
 import { fmtClock, fmtNum, kgTo, kmTo } from './format';
 import { FIELDS, type Field } from './meta';
+import { t } from '../i18n';
 
 type Units = Pick<Settings, 'weightUnit' | 'distanceUnit'>;
 
@@ -23,17 +24,18 @@ export function fmtSet(s: WorkoutSet, type: ExerciseType, units: Units, bare = f
   const dist = km !== undefined && !bare ? `${km} ${units.distanceUnit}` : km;
   const time = s.duration !== undefined ? fmtClock(s.duration) : undefined;
   const reps = s.reps !== undefined ? fmtNum(s.reps, 1) : undefined;
+  const repsText = s.reps !== undefined ? t('count.rep', { n: Math.round(s.reps * 10) / 10 }) : '';
   // Bare values sit in a narrow column; when they wrap, the reps keep their ×.
   const x = bare ? ' ×\u00a0' : ' × ';
   switch (type) {
     case 'weight_reps':
-      return w && reps ? `${w}${x}${reps}` : w ?? (reps ? `${reps} reps` : '');
+      return w && reps ? `${w}${x}${reps}` : w ?? (reps ? repsText : '');
     case 'bodyweight_reps':
-      return reps ? `${reps} reps` : '';
+      return reps ? repsText : '';
     case 'weighted_bodyweight':
-      return reps ? `${w && s.weight ? `+${w}${x}` : ''}${reps}${w && s.weight ? '' : ' reps'}` : '';
+      return reps ? (w && s.weight ? `+${w}${x}${reps}` : repsText) : '';
     case 'assisted_bodyweight':
-      return reps ? `${w && s.weight ? `−${w}${x}` : ''}${reps}${w && s.weight ? '' : ' reps'}` : '';
+      return reps ? (w && s.weight ? `−${w}${x}${reps}` : repsText) : '';
     case 'duration':
       return time ?? '';
     case 'weight_duration':
@@ -50,11 +52,11 @@ export function fieldHeader(field: Field, type: ExerciseType, units: Units) {
     case 'weight':
       return `${type === 'weighted_bodyweight' ? '+' : type === 'assisted_bodyweight' ? '−' : ''}${units.weightUnit}`;
     case 'reps':
-      return 'reps';
+      return t('field.reps');
     case 'distance':
       return units.distanceUnit;
     case 'duration':
-      return 'time';
+      return t('field.time');
   }
 }
 

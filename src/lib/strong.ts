@@ -1,6 +1,7 @@
 import type { SetType } from '../types';
 import { cellNumber, detectDelimiter, parseCsv } from './csv';
 import type { ParsedExercise, ParsedWorkout } from './importer';
+import { t } from '../i18n';
 
 // Strong's CSV export. Strong doesn't publish the format, so this reads what
 // users report and what the export has looked like across versions:
@@ -77,7 +78,7 @@ export function isStrongHeader(header: string[]) {
 export function parseStrongCsv(text: string, options: ReadOptions): ReadResult {
   const [header = [], ...rows] = parseCsv(text, detectDelimiter(text));
   if (!isStrongHeader(header)) {
-    throw new Error('This file isn’t a Strong export: the "Exercise Name" and "Set Order" columns are missing.');
+    throw new Error(t('error.notStrong'));
   }
   const names = header.map((h) => h.trim().toLowerCase());
   const at = (name: string) => names.findIndex((n) => n === name || n.startsWith(`${name} (`));
@@ -109,7 +110,7 @@ export function parseStrongCsv(text: string, options: ReadOptions): ReadResult {
     const startTime = parseLocalDate(get(row, col.date) ?? '');
     const kind = setKind(get(row, col.order) ?? '');
     if (startTime === undefined || !kind) continue;
-    const title = get(row, col.title)?.trim() || 'Workout';
+    const title = get(row, col.title)?.trim() || t('import.defaultWorkout');
     const key = `${title}|${get(row, col.date)}`;
     let w = workouts.get(key);
     if (!w) {
@@ -125,7 +126,7 @@ export function parseStrongCsv(text: string, options: ReadOptions): ReadResult {
       lastIndex = 0;
     }
 
-    const name = get(row, col.exercise)?.trim() || 'Unknown exercise';
+    const name = get(row, col.exercise)?.trim() || t('import.unknownExercise');
     // The same exercise again later is a new block: its numbering restarts, or a warm-up follows working sets.
     const restarts = kind.index !== undefined ? kind.index <= lastIndex : kind.type === 'warmup' && lastIndex > 0;
     if (!block || w.exercises.at(-1) !== block || block.name !== name || restarts) {

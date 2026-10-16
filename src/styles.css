@@ -88,7 +88,7 @@
 
 .brand-name {
   color: var(--text);
-  font: 800 28px/1 var(--font-display);
+  font: 800 1.75rem/1 var(--font-display);
   letter-spacing: -0.5px;
 }
 
@@ -107,7 +107,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 400 15px/1.45 var(--font-body);
+  font: 400 0.9375rem/1.45 var(--font-body);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }
@@ -153,7 +153,7 @@ p {
 }
 
 .small {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .tabular {
@@ -200,14 +200,14 @@ p {
 }
 
 .page-head .icon-btn:first-child {
-  margin-left: -8px;
+  margin-inline-start: -8px;
 }
 
 .page-title {
   flex: 1;
   min-width: 0;
   font-weight: 600;
-  font-size: 17px;
+  font-size: 1.0625rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -219,7 +219,7 @@ p {
 }
 
 .page-head.large .page-title {
-  font: 800 40px/1 var(--font-display);
+  font: 800 2.5rem/1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.01em;
 }
@@ -245,7 +245,7 @@ p {
 
 .section-title,
 .month-label {
-  font: 700 22px/1.1 var(--font-display);
+  font: 700 1.375rem/1.1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -258,7 +258,7 @@ p {
 }
 
 .month-label span {
-  font: 500 13px var(--font-body);
+  font: 500 0.8125rem var(--font-body);
   text-transform: none;
   color: var(--text-3);
   letter-spacing: 0;
@@ -272,7 +272,7 @@ p {
 
 .list-label {
   margin: 14px 0 2px;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -281,7 +281,7 @@ p {
 
 .eyebrow {
   display: block;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -296,7 +296,7 @@ p {
 }
 
 .card-title {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 650;
   margin-bottom: 12px;
 }
@@ -313,7 +313,7 @@ p {
   border: 0;
   border-radius: 12px;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 0.9375rem;
   text-decoration: none;
   white-space: nowrap;
   transition: transform 0.08s ease, background-color 0.15s ease;
@@ -362,13 +362,13 @@ p {
 .btn-small {
   min-height: 36px;
   padding: 0 12px;
-  font-size: 14px;
+  font-size: 0.875rem;
   border-radius: 10px;
 }
 
 .btn-hero {
   min-height: 58px;
-  font: 800 21px/1 var(--font-display);
+  font: 800 1.3125rem/1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -437,7 +437,7 @@ p {
   border-radius: 999px;
   background: var(--surface-2);
   color: var(--text-2);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   white-space: nowrap;
   flex: none;
@@ -451,7 +451,7 @@ p {
 
 .chip-select {
   appearance: none;
-  padding-right: 30px;
+  padding-inline-end: 30px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='m5 9 7 7 7-7'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 11px center;
@@ -474,7 +474,7 @@ p {
   background: transparent;
   color: var(--text-2);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.875rem;
   white-space: nowrap;
 }
 
@@ -512,7 +512,7 @@ p {
   content: '';
   position: absolute;
   top: 3px;
-  left: 3px;
+  inset-inline-start: 3px;
   width: 22px;
   height: 22px;
   border-radius: 50%;
@@ -552,7 +552,7 @@ p {
 .field > span,
 .field > legend {
   padding: 0;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -572,7 +572,7 @@ p {
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: var(--surface-2);
-  font-size: 16px;
+  font-size: 1rem;
   resize: vertical;
 }
 
@@ -591,7 +591,7 @@ p {
 
 .form-error {
   color: var(--danger);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .form-actions {
@@ -639,7 +639,7 @@ p {
   padding: 9px 0 8px;
   color: var(--text-3);
   text-decoration: none;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
 }
 
@@ -673,14 +673,14 @@ p {
   flex: 1;
   min-width: 0;
   display: grid;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-2);
   font-variant-numeric: tabular-nums;
 }
 
 .active-banner-text strong {
   color: var(--text);
-  font-size: 15px;
+  font-size: 0.9375rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -713,7 +713,8 @@ p {
   align-items: center;
   gap: 10px;
   margin: 0 8px 8px;
-  padding: 10px 10px 10px 16px;
+  padding: 10px;
+  padding-inline-start: 16px;
   border-radius: 14px;
   background: var(--surface-3);
   box-shadow: var(--shadow);
@@ -734,7 +735,7 @@ p {
 
 .rest-time {
   flex: 1;
-  font: 700 28px/1 var(--font-display);
+  font: 700 1.75rem/1 var(--font-display);
   font-variant-numeric: tabular-nums;
 }
 
@@ -822,12 +823,13 @@ dialog.sheet-full {
   justify-content: space-between;
   gap: 8px;
   margin: 0 -16px 8px;
-  padding: 16px 12px 8px 16px;
+  padding: 16px 12px 8px;
+  padding-inline-start: 16px;
   background: var(--surface);
 }
 
 .sheet-head h2 {
-  font: 700 24px/1.05 var(--font-display);
+  font: 700 1.5rem/1.05 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -842,7 +844,7 @@ dialog.sheet-full {
 }
 
 .confirm-body h2 {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 650;
 }
 
@@ -867,8 +869,8 @@ dialog.sheet-full {
   border: 0;
   border-top: 1px solid var(--line);
   background: transparent;
-  font-size: 16px;
-  text-align: left;
+  font-size: 1rem;
+  text-align: start;
 }
 
 .action-item svg {
@@ -907,7 +909,7 @@ dialog.sheet-full {
   background: var(--text);
   color: var(--bg);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 0.875rem;
   box-shadow: var(--shadow);
   animation: toast-in 0.2s ease-out;
 }
@@ -930,7 +932,7 @@ dialog.sheet-full {
 }
 
 .empty h3 {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 650;
 }
 
@@ -953,14 +955,14 @@ dialog.sheet-full {
 .recovery-details {
   max-width: 100%;
   color: var(--text-2);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .recovery-details code {
   display: block;
   margin-top: 6px;
   overflow-wrap: anywhere;
-  text-align: left;
+  text-align: start;
 }
 
 .stat-row {
@@ -975,7 +977,7 @@ dialog.sheet-full {
 }
 
 .stat-label {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -983,7 +985,7 @@ dialog.sheet-full {
 }
 
 .stat-value {
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 600;
 }
 
@@ -1001,7 +1003,7 @@ dialog.sheet-full {
 }
 
 .stat-grid .stat-value {
-  font-size: 28px;
+  font-size: 1.75rem;
   line-height: 1.1;
 }
 
@@ -1016,7 +1018,7 @@ dialog.sheet-full {
 }
 
 .resume-title {
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 650;
 }
 
@@ -1029,7 +1031,8 @@ dialog.sheet-full {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 8px 12px 12px;
+  padding: 12px;
+  padding-inline-end: 8px;
 }
 
 .install-icon {
@@ -1041,18 +1044,18 @@ dialog.sheet-full {
   flex: 1;
   min-width: 0;
   display: grid;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.3;
   color: var(--text-2);
 }
 
 .install-text strong {
   color: var(--text);
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .install-card .icon-btn {
-  margin-left: -4px;
+  margin-inline-start: -4px;
 }
 
 .install-how {
@@ -1070,7 +1073,7 @@ dialog.sheet-full {
   padding: 12px 14px;
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--accent) 12%, transparent);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .routine-list {
@@ -1093,7 +1096,7 @@ dialog.sheet-full {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-right: -8px;
+  margin-inline-end: -8px;
 }
 
 .folder-toggle {
@@ -1106,7 +1109,7 @@ dialog.sheet-full {
   padding: 0;
   border: 0;
   background: transparent;
-  text-align: left;
+  text-align: start;
 }
 
 .folder-chevron {
@@ -1121,7 +1124,7 @@ dialog.sheet-full {
 
 .folder-name {
   min-width: 0;
-  font: 700 19px/1.1 var(--font-display);
+  font: 700 1.1875rem/1.1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.03em;
   white-space: nowrap;
@@ -1135,7 +1138,7 @@ dialog.sheet-full {
   border-radius: 999px;
   background: var(--surface-2);
   color: var(--text-2);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -1231,11 +1234,12 @@ dialog.sheet-full {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin: -6px -8px -4px 0;
+  margin: -6px 0 -4px;
+  margin-inline-end: -8px;
 }
 
 .routine-title {
-  font: 700 24px/1.1 var(--font-display);
+  font: 700 1.5rem/1.1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.02em;
   text-decoration: none;
@@ -1243,7 +1247,7 @@ dialog.sheet-full {
 
 .routine-exercises {
   color: var(--text-2);
-  font-size: 14px;
+  font-size: 0.875rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -1251,7 +1255,7 @@ dialog.sheet-full {
 }
 
 .routine-meta {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-3);
 }
 
@@ -1276,12 +1280,12 @@ dialog.sheet-full {
 }
 
 .workout-head .icon-btn {
-  margin-left: -8px;
+  margin-inline-start: -8px;
 }
 
 .workout-clock {
   text-align: center;
-  font: 700 34px/1 var(--font-display);
+  font: 700 2.125rem/1 var(--font-display);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
 }
@@ -1292,7 +1296,7 @@ dialog.sheet-full {
   border: 0;
   border-bottom: 2px solid transparent;
   background: transparent;
-  font: 800 32px/1.1 var(--font-display);
+  font: 800 2rem/1.1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.01em;
 }
@@ -1331,14 +1335,14 @@ dialog.sheet-full {
 }
 
 .ex-block.in-superset {
-  border-left: 3px solid var(--accent);
+  border-inline-start: 3px solid var(--accent);
 }
 
 .ex-head {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-right: -4px;
+  margin-inline-end: -4px;
 }
 
 .ex-title {
@@ -1356,13 +1360,13 @@ dialog.sheet-full {
 }
 
 .ex-name {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 650;
   line-height: 1.25;
 }
 
 .superset-tag {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1376,12 +1380,12 @@ dialog.sheet-full {
   border: 0;
   border-radius: var(--radius-sm);
   background: var(--surface-2);
-  font-size: 16px;
+  font-size: 1rem;
   resize: vertical;
 }
 
 .ex-note {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-2);
   font-style: italic;
 }
@@ -1395,7 +1399,7 @@ dialog.sheet-full {
   border: 0;
   background: transparent;
   color: var(--accent-ink);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
 }
 
@@ -1428,7 +1432,7 @@ dialog.sheet-full {
   }
 
   .set-table .prev {
-    font-size: 11px;
+    font-size: 0.6875rem;
     line-height: 1.15;
     white-space: normal;
   }
@@ -1454,7 +1458,7 @@ dialog.sheet-full {
 
 .set-head {
   padding-block: 0;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1488,15 +1492,15 @@ dialog.sheet-full {
   background: var(--surface-2);
   box-shadow: inset 0 0 0 2px var(--surface-3);
   color: var(--text);
-  font: 700 17px/1 var(--font-display);
+  font: 700 1.0625rem/1 var(--font-display);
   font-variant-numeric: tabular-nums;
 }
 
 .set-badge sup {
   position: absolute;
   top: -5px;
-  right: -8px;
-  font: 700 9px/1 var(--font-body);
+  inset-inline-end: -8px;
+  font: 700 0.5625rem/1 var(--font-body);
   color: var(--text-2);
 }
 
@@ -1521,7 +1525,7 @@ dialog.sheet-full {
 .set-badge.static {
   width: 28px;
   height: 28px;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .prev {
@@ -1530,8 +1534,8 @@ dialog.sheet-full {
   border: 0;
   background: transparent;
   color: var(--text-3);
-  font-size: 13px;
-  text-align: left;
+  font-size: 0.8125rem;
+  text-align: start;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   overflow: hidden;
@@ -1555,7 +1559,7 @@ dialog.sheet-full {
   border-radius: 9px;
   background: var(--surface-2);
   text-align: center;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 650;
   font-variant-numeric: tabular-nums;
 }
@@ -1607,7 +1611,7 @@ dialog.sheet-full {
   background: var(--surface-2);
   color: var(--text-2);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .set-actions {
@@ -1643,7 +1647,7 @@ dialog.sheet-full {
   justify-content: space-between;
   gap: 8px;
   color: var(--text-2);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -1654,7 +1658,7 @@ dialog.sheet-full {
 
 .stopwatch-time {
   text-align: center;
-  font: 700 64px/1 var(--font-display);
+  font: 700 4rem/1 var(--font-display);
   font-variant-numeric: tabular-nums;
 }
 
@@ -1704,13 +1708,13 @@ dialog.sheet-full {
   border-radius: 12px;
   background: var(--surface-2);
   font-weight: 600;
-  text-align: left;
+  text-align: start;
 }
 
 .set-type-option .set-badge {
   width: 30px;
   height: 30px;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .set-type-option.on {
@@ -1758,7 +1762,7 @@ dialog.sheet-full {
   flex: none;
   width: var(--w);
   height: var(--h);
-  margin-left: 2px;
+  margin-inline-start: 2px;
   border-radius: 3px;
   background: var(--plate);
   box-shadow: inset -2px 0 0 rgb(0 0 0 / 0.18);
@@ -1768,7 +1772,7 @@ dialog.sheet-full {
   flex: 1;
   min-width: 16px;
   height: 14px;
-  margin-left: 2px;
+  margin-inline-start: 2px;
   border-radius: 0 4px 4px 0;
   background: var(--text-3);
 }
@@ -1780,13 +1784,13 @@ dialog.sheet-full {
 }
 
 .plates-side {
-  font: 700 28px/1.1 var(--font-display);
+  font: 700 1.75rem/1.1 var(--font-display);
   font-variant-numeric: tabular-nums;
 }
 
 .plates-side .muted {
   display: block;
-  font: 600 12px var(--font-body);
+  font: 600 0.75rem var(--font-body);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-3);
@@ -1798,7 +1802,7 @@ dialog.sheet-full {
 }
 
 .plates-owned summary {
-  font-size: 14px;
+  font-size: 0.875rem;
   margin-bottom: 10px;
 }
 
@@ -1825,7 +1829,8 @@ dialog.sheet-full {
   align-items: center;
   gap: 8px;
   min-height: 46px;
-  padding: 0 6px 0 14px;
+  padding: 0 6px;
+  padding-inline-start: 14px;
   border-radius: 12px;
   background: var(--surface-2);
   color: var(--text-3);
@@ -1838,7 +1843,7 @@ dialog.sheet-full {
   border: 0;
   background: transparent;
   color: var(--text);
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .search input:focus {
@@ -1877,7 +1882,7 @@ dialog.sheet-full {
   border: 0;
   border-bottom: 1px solid var(--line);
   background: transparent;
-  text-align: left;
+  text-align: start;
 }
 
 .ex-row.on {
@@ -1896,12 +1901,12 @@ dialog.sheet-full {
 }
 
 .ex-row-meta {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-3);
 }
 
 .ex-row-count {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--text-2);
   font-variant-numeric: tabular-nums;
@@ -1986,12 +1991,12 @@ dialog.sheet-full {
 }
 
 .workout-card-head h3 {
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 650;
 }
 
 .workout-card-head .muted {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .workout-card-stats {
@@ -1999,7 +2004,7 @@ dialog.sheet-full {
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 16px;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-2);
   font-variant-numeric: tabular-nums;
 }
@@ -2013,7 +2018,7 @@ dialog.sheet-full {
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent) 16%, transparent);
   color: var(--accent-ink);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -2025,7 +2030,7 @@ dialog.sheet-full {
   border-top: 1px solid var(--line);
   display: grid;
   gap: 5px;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .workout-card-lines li {
@@ -2049,7 +2054,7 @@ dialog.sheet-full {
 }
 
 .detail-title {
-  font: 800 34px/1.05 var(--font-display);
+  font: 800 2.125rem/1.05 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.01em;
   overflow-wrap: anywhere;
@@ -2077,11 +2082,11 @@ dialog.sheet-full {
 .saved-banner .muted {
   color: inherit;
   opacity: 0.75;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .saved-headline {
-  font: 800 46px/0.95 var(--font-display);
+  font: 800 2.875rem/0.95 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.01em;
 }
@@ -2164,7 +2169,7 @@ dialog.sheet-full {
 }
 
 .exercise-hero .detail-title {
-  font-size: 28px;
+  font-size: 1.75rem;
 }
 
 .chart-card {
@@ -2214,7 +2219,7 @@ dialog.sheet-full {
   margin: 0;
   display: grid;
   justify-items: end;
-  text-align: right;
+  text-align: end;
 }
 
 .records dd a {
@@ -2270,7 +2275,7 @@ dialog.sheet-full {
 .demo-toggle {
   position: absolute;
   top: 10px;
-  right: 10px;
+  inset-inline-end: 10px;
   display: grid;
   place-items: center;
   width: 36px;
@@ -2299,7 +2304,7 @@ dialog.sheet-full {
 
 .steps li::before {
   content: counter(step);
-  font: 700 22px/1.1 var(--font-display);
+  font: 700 1.375rem/1.1 var(--font-display);
   color: var(--accent-ink);
 }
 
@@ -2320,7 +2325,7 @@ dialog.sheet-full {
 
 .chart .axis {
   fill: var(--text-3);
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -2350,7 +2355,7 @@ dialog.sheet-full {
 
 .chart .bar-label {
   fill: var(--text-2);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
@@ -2390,14 +2395,14 @@ dialog.sheet-full {
   border-radius: 9px;
   background: var(--surface-3);
   box-shadow: var(--shadow);
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--text-2);
   white-space: nowrap;
   pointer-events: none;
 }
 
 .tooltip strong {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text);
   font-variant-numeric: tabular-nums;
 }
@@ -2415,7 +2420,7 @@ dialog.sheet-full {
   grid-template-columns: 7.5rem 1fr;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .hbar-label {
@@ -2451,9 +2456,9 @@ dialog.sheet-full {
 
 .cal-months {
   display: grid;
-  margin-left: 30px;
+  margin-inline-start: 30px;
   gap: 3px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--text-3);
   white-space: nowrap;
 }
@@ -2468,7 +2473,7 @@ dialog.sheet-full {
   grid-template-rows: repeat(7, 1fr);
   width: 24px;
   gap: 3px;
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--text-3);
   align-items: center;
 }
@@ -2546,7 +2551,7 @@ dialog.sheet-full {
 }
 
 .bw-value {
-  font: 700 34px/1 var(--font-display);
+  font: 700 2.125rem/1 var(--font-display);
 }
 
 .bw-more {
@@ -2578,7 +2583,7 @@ dialog.sheet-full {
   border: 0;
   border-bottom: 1px solid var(--line);
   background: transparent;
-  text-align: left;
+  text-align: start;
 }
 
 .bw-row-date {
@@ -2589,7 +2594,7 @@ dialog.sheet-full {
 
 .bw-row-value {
   min-width: 5.5rem;
-  text-align: right;
+  text-align: end;
   font-weight: 650;
 }
 
@@ -2630,7 +2635,7 @@ dialog.sheet-full {
 .sync-pill {
   padding: 2px 10px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 700;
   background: color-mix(in srgb, var(--done) 18%, transparent);
   color: var(--done);
@@ -2648,11 +2653,11 @@ dialog.sheet-full {
 
 .setup-steps {
   margin: 0;
-  padding-left: 20px;
+  padding-inline-start: 20px;
   display: grid;
   gap: 10px;
   color: var(--text-2);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .setup-steps strong {
@@ -2676,11 +2681,11 @@ dialog.sheet-full {
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--surface-2);
-  text-align: left;
+  text-align: start;
 }
 
 .choice-card span {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-2);
 }
 
@@ -2692,7 +2697,7 @@ dialog.sheet-full {
 }
 
 .replaced-note span {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-2);
 }
 
@@ -2700,11 +2705,12 @@ dialog.sheet-full {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 10px 10px 14px;
+  padding: 10px;
+  padding-inline-start: 14px;
   border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
   border-radius: var(--radius-sm);
   background: var(--surface);
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-2);
 }
 
@@ -2724,7 +2730,7 @@ dialog.sheet-full {
 }
 
 .sync-warning span {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-2);
 }
 
@@ -2735,9 +2741,9 @@ dialog.sheet-full {
 
 .plain-list {
   margin: 8px 0 0;
-  padding-left: 18px;
+  padding-inline-start: 18px;
   color: var(--text-2);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 details summary {
@@ -2767,7 +2773,7 @@ details summary {
   width: 100%;
   max-width: 36rem;
   min-width: 0;
-  text-align: left;
+  text-align: start;
 }
 
 /* On the crash screen it sits inside .empty, which centres text and narrows paragraphs. */
@@ -2809,16 +2815,16 @@ details summary {
   min-width: 0;
   padding: 12px;
   border: 1px solid var(--line);
-  border-left-width: 3px;
+  border-inline-start-width: 3px;
   border-radius: var(--radius-sm);
 }
 
 .data-check-item[data-status='repairable'] {
-  border-left-color: var(--accent);
+  border-inline-start-color: var(--accent);
 }
 
 .data-check-item[data-status='damaged'] {
-  border-left-color: var(--danger);
+  border-inline-start-color: var(--danger);
 }
 
 .data-check-title {
@@ -2832,7 +2838,7 @@ details summary {
 
 .data-check-kind {
   color: var(--text-2);
-  font-size: 12px;
+  font-size: 0.75rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -2845,7 +2851,7 @@ details summary {
   background: var(--surface-2);
   border-radius: var(--radius-sm);
   color: var(--text-2);
-  font-size: 12px;
+  font-size: 0.75rem;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -2860,5 +2866,123 @@ details summary {
 
 .data-check-confirm span {
   flex-basis: 100%;
-  font-size: 14px;
+  font-size: 0.875rem;
+}
+
+/* ---------- Right-to-left (Arabic) ---------- */
+
+/* Things a logical property can't flip: the chosen end of a select arrow, a toggle's thumb travel and growing bars. */
+[dir='rtl'] .chip-select {
+  background-position: left 11px center;
+}
+
+[dir='rtl'] .toggle input:checked + .toggle-track::after {
+  transform: translateX(-18px);
+}
+
+[dir='rtl'] .rest-progress,
+[dir='rtl'] .stopwatch-progress span {
+  transform-origin: right;
+}
+
+/* Arrows and chevrons that point along the reading direction. */
+[dir='rtl'] .flip-rtl {
+  transform: scaleX(-1);
+}
+
+/* ---------- Appearance settings ---------- */
+
+/* Text size: everything is in rem, so the root size scales the whole interface. */
+html[data-text='small'] {
+  font-size: 87.5%;
+}
+
+html[data-text='large'] {
+  font-size: 112.5%;
+}
+
+html[data-text='xlarge'] {
+  font-size: 125%;
+}
+
+/* Pure black for OLED screens. */
+:root[data-theme='dark'][data-black='true'] {
+  --bg: #000000;
+  --surface: #0c0b10;
+  --surface-2: #17161c;
+  --surface-3: #222129;
+  --line: #1d1c23;
+  --grid: #18171d;
+}
+
+/* Stronger text, borders and focus for people who need more separation. */
+:root[data-theme='dark'][data-contrast='high'] {
+  --text: #ffffff;
+  --text-2: #dcdae6;
+  --text-3: #bebcc9;
+  --line: #55546a;
+  --accent-ink: #d2c4ff;
+}
+
+:root[data-theme='light'][data-contrast='high'] {
+  --text: #000000;
+  --text-2: #2c2a36;
+  --text-3: #444250;
+  --line: #85838f;
+  --accent-ink: #3c2096;
+}
+
+:root[data-contrast='high'] :focus-visible {
+  outline-width: 3px;
+}
+
+/* Reduce motion on request, on top of the system setting. */
+:root[data-motion='reduce'] *,
+:root[data-motion='reduce'] *::before,
+:root[data-motion='reduce'] *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Accent colours. Purple is the default and lives at the top of this file. */
+:root[data-accent='indigo'] {
+  --accent: #4d63e0;
+  --accent-ink: #a3b1ff;
+  --viz: #6f84f2;
+  --viz-wash: rgb(111 132 242 / 0.12);
+}
+
+:root[data-accent='teal'] {
+  --accent: #0b7f84;
+  --accent-ink: #5fd6dc;
+  --viz: #25b3b9;
+  --viz-wash: rgb(37 179 185 / 0.12);
+}
+
+:root[data-accent='pink'] {
+  --accent: #c23a78;
+  --accent-ink: #ff9cc6;
+  --viz: #e2649f;
+  --viz-wash: rgb(226 100 159 / 0.12);
+}
+
+:root[data-theme='light'][data-accent='indigo'] {
+  --accent: #3a4bc2;
+  --accent-ink: #2e3fb0;
+  --viz: #4a5fd8;
+  --viz-wash: rgb(74 95 216 / 0.1);
+}
+
+:root[data-theme='light'][data-accent='teal'] {
+  --accent: #0a6b70;
+  --accent-ink: #07595e;
+  --viz: #0f8f94;
+  --viz-wash: rgb(15 143 148 / 0.1);
+}
+
+:root[data-theme='light'][data-accent='pink'] {
+  --accent: #a82a64;
+  --accent-ink: #98235a;
+  --viz: #c23a78;
+  --viz-wash: rgb(194 58 120 / 0.1);
 }

@@ -1,13 +1,14 @@
 import type { Equipment, Exercise, Muscle } from '../types';
+import { en } from '../i18n/en';
 import { EQUIPMENT_LABEL, MUSCLE_LABEL } from './meta';
 
 export function normalize(s: string) {
   return s
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/\p{M}+/gu, '')
     .replace(/dumbell/g, 'dumbbell')
-    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim();
 }
 
@@ -39,7 +40,8 @@ export function searchExercises(list: Exercise[], f: ExerciseFilter) {
       continue;
     }
     const name = normalize(e.name);
-    const hay = `${name} ${normalize(EQUIPMENT_LABEL[e.equipment])} ${normalize(MUSCLE_LABEL[e.primaryMuscle])}`;
+    // Exercise names are English whatever the interface language, so the English words for the muscle and equipment match too.
+    const hay = `${name} ${normalize(EQUIPMENT_LABEL[e.equipment])} ${normalize(MUSCLE_LABEL[e.primaryMuscle])} ${normalize(en[`equipment.${e.equipment}`])} ${normalize(en[`muscle.${e.primaryMuscle}`])}`;
     if (!qTokens.every((t) => hay.includes(t))) continue;
     const words = name.split(' ');
     let score = 3;

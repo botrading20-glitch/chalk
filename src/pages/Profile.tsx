@@ -5,18 +5,17 @@ import { useUsageCounts } from '../components/ExerciseList';
 import { IconSettings } from '../components/Icons';
 import { Empty, ExerciseAvatar, PageHeader, Segmented, Stat } from '../components/ui';
 import { useData } from '../lib/data';
-import { addDays, fmtDate, fmtDuration, fmtNum, kgTo, plural, startOfDay, startOfWeek } from '../lib/format';
+import { addDays, fmtDate, fmtDayMonth, fmtDuration, fmtMonthShort, fmtNum, fmtWeekdayDate, fmtWeekdayShort, kgTo, startOfDay, startOfWeek } from '../lib/format';
 import { MUSCLE_LABEL } from '../lib/meta';
 import { Link } from '../lib/router';
 import { useSettings } from '../lib/settings';
 import { weekStreak, weeklyBuckets, type WeekBucket } from '../lib/stats';
 import type { Muscle } from '../types';
+import { count as count_, t } from '../i18n';
 
 type WeekMetric = 'duration' | 'volume' | 'sets';
 const WEEKS = 12;
 const CAL_WEEKS = 17;
-
-const tickFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' });
 
 export function Profile() {
   const { workouts, typeOf, exerciseMap } = useData();
@@ -41,7 +40,7 @@ export function Profile() {
     const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
     const rows = sorted.slice(0, 8).map(([m, v]) => ({ label: MUSCLE_LABEL[m], value: v }));
     const rest = sorted.slice(8).reduce((n, [, v]) => n + v, 0);
-    if (rest) rows.push({ label: 'Everything else', value: rest });
+    if (rest) rows.push({ label: t('progress.everythingElse'), value: rest });
     return rows;
   }, [workouts, exerciseMap]);
 
@@ -57,16 +56,16 @@ export function Profile() {
   if (workouts.length === 0) {
     return (
       <div className="page">
-        <PageHeader large title="Progress" actions={<SettingsLink />} />
+        <PageHeader large title={t('tab.progress')} actions={<SettingsLink />} />
         <Empty
-          title="Your progress shows up here"
+          title={t('progress.emptyTitle')}
           action={
             <Link to="/settings" className="btn btn-secondary">
-              Import workouts
+              {t('import.workouts')}
             </Link>
           }
         >
-          Weekly training time, volume, muscle split and consistency — all from the workouts you log.
+          {t('progress.emptyText')}
         </Empty>
         <BodyWeightCard />
       </div>
@@ -80,23 +79,23 @@ export function Profile() {
       ? fmtDuration(v * 3600)
       : metric === 'volume'
         ? `${fmtNum(Math.round(v), 0)} ${settings.weightUnit}`
-        : plural(Math.round(v), 'set');
+        : count_('set', Math.round(v));
   const titles: Record<WeekMetric, string> = {
-    duration: 'Training time per week (hours)',
-    volume: `Volume per week (${settings.weightUnit})`,
-    sets: 'Sets per week',
+    duration: t('progress.titleTime'),
+    volume: t('progress.titleVolume', { unit: settings.weightUnit }),
+    sets: t('progress.titleSets'),
   };
   const thisWeek = buckets.at(-1)!;
 
   return (
     <div className="page">
-      <PageHeader large title="Progress" actions={<SettingsLink />} />
+      <PageHeader large title={t('tab.progress')} actions={<SettingsLink />} />
 
       <div className="stat-grid">
-        <Stat label="Workouts" value={fmtNum(workouts.length, 0)} />
-        <Stat label="This week" value={fmtNum(thisWeek.workouts, 0)} />
-        <Stat label="Week streak" value={fmtNum(streak, 0)} />
-        <Stat label="Time trained" value={`${fmtNum(Math.round(totalSeconds / 3600), 0)} h`} />
+        <Stat label={t('progress.workouts')} value={fmtNum(workouts.length, 0)} />
+        <Stat label={t('progress.thisWeek')} value={fmtNum(thisWeek.workouts, 0)} />
+        <Stat label={t('progress.streak')} value={fmtNum(streak, 0)} />
+        <Stat label={t('progress.timeTrained')} value={t('progress.hours', { n: Math.round(totalSeconds / 3600) })} />
       </div>
 
       <BodyWeightCard />
@@ -105,48 +104,48 @@ export function Profile() {
         <h2 className="card-title">{titles[metric]}</h2>
         <BarChart
           data={buckets.map((b) => ({
-            tick: tickFmt.format(b.start),
-            label: `Week of ${fmtDate(b.start)}`,
+            tick: fmtDayMonth(b.start),
+            label: t('progress.weekOf', { date: fmtDate(b.start) }),
             value: value(b),
           }))}
           format={format}
           caption={titles[metric]}
         />
         <Segmented
-          label="Weekly metric"
+          label={t('progress.weeklyMetric')}
           value={metric}
           onChange={setMetric}
           options={[
-            { value: 'duration', label: 'Time' },
-            { value: 'volume', label: 'Volume' },
-            { value: 'sets', label: 'Sets' },
+            { value: 'duration', label: t('progress.metricTime') },
+            { value: 'volume', label: t('progress.metricVolume') },
+            { value: 'sets', label: t('progress.metricSets') },
           ]}
         />
       </section>
 
       <section className="card">
-        <h2 className="card-title">Consistency · last {CAL_WEEKS} weeks</h2>
+        <h2 className="card-title">{t('progress.consistency', { n: CAL_WEEKS })}</h2>
         <Calendar />
       </section>
 
       <section className="card">
-        <h2 className="card-title">Working sets per muscle · last 30 days</h2>
+        <h2 className="card-title">{t('progress.muscles')}</h2>
         {muscleRows.length ? (
           <HBars rows={muscleRows} format={(v) => fmtNum(v, 0)} />
         ) : (
-          <p className="muted">No workouts in the last 30 days.</p>
+          <p className="muted">{t('progress.noMuscles')}</p>
         )}
       </section>
 
       <section className="card">
-        <h2 className="card-title">Most logged exercises</h2>
+        <h2 className="card-title">{t('progress.mostLogged')}</h2>
         <ul className="top-list">
           {top.map(({ exercise, id, count }) => (
             <li key={id}>
               <Link to={`/exercises/${id}`} className="top-row">
                 <ExerciseAvatar exercise={exercise} size={36} />
-                <span className="ex-row-name">{exercise?.name ?? 'Deleted exercise'}</span>
-                <span className="muted tabular">{plural(count, 'session')}</span>
+                <span className="ex-row-name">{exercise?.name ?? t('exercise.deleted')}</span>
+                <span className="muted tabular">{count_('session', count)}</span>
               </Link>
             </li>
           ))}
@@ -158,15 +157,11 @@ export function Profile() {
 
 function SettingsLink() {
   return (
-    <Link to="/settings" className="icon-btn" aria-label="Settings">
+    <Link to="/settings" className="icon-btn" aria-label={t('progress.settings')}>
       <IconSettings />
     </Link>
   );
 }
-
-const DAY_NAMES = ['Mon', '', 'Wed', '', 'Fri', '', 'Sun'];
-const monthFmt = new Intl.DateTimeFormat('en-GB', { month: 'short' });
-const dayFmt = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
 
 function Calendar() {
   const { workouts } = useData();
@@ -185,17 +180,17 @@ function Calendar() {
   const trained = weeks.reduce((n, wk) => n + Array.from({ length: 7 }, (_, d) => days.has(addDays(wk, d))).filter(Boolean).length, 0);
 
   return (
-    <div className="calendar" role="img" aria-label={`${plural(trained, 'training day')} in the last ${CAL_WEEKS} weeks`}>
+    <div className="calendar" role="img" aria-label={t('progress.calendarLabel', { days: count_('trainingDay', trained), n: CAL_WEEKS })}>
       <div className="cal-months" style={{ gridTemplateColumns: `repeat(${CAL_WEEKS}, minmax(0, 1fr))` }}>
         {weeks.map((wk, i) => {
           const prev = i ? new Date(weeks[i - 1]).getMonth() : -1;
-          return <span key={wk}>{new Date(wk).getMonth() !== prev ? monthFmt.format(wk) : ''}</span>;
+          return <span key={wk}>{new Date(wk).getMonth() !== prev ? fmtMonthShort(wk) : ''}</span>;
         })}
       </div>
       <div className="cal-body">
         <div className="cal-days">
-          {DAY_NAMES.map((d, i) => (
-            <span key={i}>{d}</span>
+          {Array.from({ length: 7 }, (_, i) => (
+            <span key={i}>{i % 2 === 0 ? fmtWeekdayShort(addDays(first, i)) : ''}</span>
           ))}
         </div>
         <div className="cal-grid" style={{ gridTemplateColumns: `repeat(${CAL_WEEKS}, minmax(0, 1fr))` }}>
@@ -209,7 +204,7 @@ function Calendar() {
                   <span
                     key={d}
                     className={`cal-cell ${titles ? 'on' : ''} ${day === today ? 'today' : ''} ${future ? 'future' : ''}`}
-                    title={`${dayFmt.format(day)}${titles ? ` — ${titles.join(', ')}` : ''}`}
+                    title={`${fmtWeekdayDate(day)}${titles ? ` — ${titles.join(t('common.comma'))}` : ''}`}
                   />
                 );
               })}
@@ -217,7 +212,7 @@ function Calendar() {
           ))}
         </div>
       </div>
-      <p className="muted small cal-foot">{plural(trained, 'training day')} · filled squares are days you trained</p>
+      <p className="muted small cal-foot">{t('progress.calendarFoot', { days: count_('trainingDay', trained) })}</p>
     </div>
   );
 }

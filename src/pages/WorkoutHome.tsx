@@ -10,7 +10,7 @@ import { Empty, PageHeader } from '../components/ui';
 import { db } from '../db';
 import { useData, useNow } from '../lib/data';
 import { groupRoutines, removeFolder, toggleFolder, useCollapsedFolders, type Folder } from '../lib/folders';
-import { fmtClock, fmtRelativeDay, plural, uid } from '../lib/format';
+import { fmtClock, fmtDate, startOfDay, uid } from '../lib/format';
 import { Link, navigate } from '../lib/router';
 import { useSyncStatus } from '../lib/sync';
 import {
@@ -22,15 +22,16 @@ import {
   useActiveWorkout,
 } from '../lib/workouts';
 import type { Routine, WorkoutExercise } from '../types';
+import { count, t } from '../i18n';
 
 export async function beginWorkout(opts: { title?: string; exercises?: WorkoutExercise[]; routineId?: string } = {}) {
   const running = await db.kv.get('active');
   if (running) {
     const ok = await confirmDialog({
-      title: 'A workout is already running',
-      message: 'Starting a new one throws away the workout in progress and everything logged in it.',
-      confirmLabel: 'Discard it and start new',
-      cancelLabel: 'Keep current workout',
+      title: t('home.runningTitle'),
+      message: t('home.runningText'),
+      confirmLabel: t('home.runningConfirm'),
+      cancelLabel: t('home.runningCancel'),
       danger: true,
     });
     if (!ok) return;
@@ -56,49 +57,49 @@ export function WorkoutHome() {
 
   return (
     <div className="page">
-      <PageHeader large title="Workout" actions={<Brand />} />
+      <PageHeader large title={t('tab.workout')} actions={<Brand />} />
 
       <SyncWarning />
       {active ? <ResumeCard /> : null}
       <InstallBanner />
 
       <button className="btn btn-primary btn-block btn-hero" onClick={() => beginWorkout()}>
-        <IconPlus /> Start empty workout
+        <IconPlus /> {t('live.startEmpty')}
       </button>
 
       <section className="section">
         <div className="section-head">
-          <h2 className="section-title">Routines</h2>
+          <h2 className="section-title">{t('home.routines')}</h2>
           <div className="section-actions">
             {!!routines?.length && (
-              <button className="icon-btn" onClick={() => setFolderSheet({})} aria-label="New folder">
+              <button className="icon-btn" onClick={() => setFolderSheet({})} aria-label={t('folder.new')}>
                 <IconFolderPlus />
               </button>
             )}
             <Link to="/routines/new" className="btn btn-ghost btn-small">
-              <IconPlus size={18} /> New routine
+              <IconPlus size={18} /> {t('home.newRoutine')}
             </Link>
           </div>
         </div>
 
         {routines && routines.length === 0 && (
           <Empty
-            title="No routines yet"
+            title={t('home.noRoutines')}
             action={
               workouts.length > 0 ? (
                 <button
                   className="btn btn-secondary"
                   onClick={async () => {
                     const created = await createRoutinesFromHistory();
-                    toast(created.length ? `Created ${plural(created.length, 'routine')}` : 'No workout title repeats often enough to make a routine');
+                    toast(created.length ? t('home.created', { n: created.length }) : t('home.noRepeats'));
                   }}
                 >
-                  Create routines from my history
+                  {t('home.fromHistory')}
                 </button>
               ) : undefined
             }
           >
-            A routine is a saved list of exercises and sets. Start one and everything is loaded, ready to log.
+            {t('home.noRoutinesText')}
           </Empty>
         )}
 
@@ -107,7 +108,7 @@ export function WorkoutHome() {
             {f.routines.map(card)}
           </FolderSection>
         ))}
-        {folders.length > 0 && loose.length > 0 && <h3 className="list-label">Not in a folder</h3>}
+        {folders.length > 0 && loose.length > 0 && <h3 className="list-label">{t('home.notInFolder')}</h3>}
         <div className="routine-list">{loose.map(card)}</div>
       </section>
 
@@ -118,37 +119,37 @@ export function WorkoutHome() {
         actions={
           menu
             ? [
-                { label: 'Edit routine', icon: <IconEdit />, onSelect: () => navigate(`/routines/${menu.id}`) },
-                { label: menu.folder ? 'Move to another folder' : 'Move to a folder', icon: <IconFolder />, onSelect: () => setMoving(menu) },
+                { label: t('home.editRoutine'), icon: <IconEdit />, onSelect: () => navigate(`/routines/${menu.id}`) },
+                { label: menu.folder ? t('home.moveToAnother') : t('home.moveToFolder'), icon: <IconFolder />, onSelect: () => setMoving(menu) },
                 {
-                  label: 'Reorder routines',
+                  label: t('home.reorder'),
                   icon: <IconGrip />,
                   hidden: groupOf(menu.folder?.trim() || undefined).length < 2,
                   onSelect: () => setReorder({ folder: menu.folder?.trim() || undefined }),
                 },
                 {
-                  label: 'Duplicate',
+                  label: t('home.duplicate'),
                   icon: <IconCopy />,
                   onSelect: async () => {
                     await saveRoutine({
                       id: uid(),
-                      title: `${menu.title} (copy)`,
+                      title: t('home.copyTitle', { title: menu.title }),
                       notes: menu.notes,
                       exercises: cloneExercises(menu.exercises),
                       ...(menu.folder ? { folder: menu.folder } : {}),
                     });
-                    toast('Routine duplicated');
+                    toast(t('home.duplicated'));
                   },
                 },
                 {
-                  label: 'Delete routine',
+                  label: t('home.deleteRoutine'),
                   icon: <IconTrash />,
                   danger: true,
                   onSelect: async () => {
                     const ok = await confirmDialog({
-                      title: `Delete "${menu.title}"?`,
-                      message: 'Workouts you logged with it stay in your history.',
-                      confirmLabel: 'Delete routine',
+                      title: t('home.deleteTitle', { title: menu.title }),
+                      message: t('home.deleteText'),
+                      confirmLabel: t('home.deleteRoutine'),
                       danger: true,
                     });
                     if (ok) await db.routines.delete(menu.id);
@@ -167,29 +168,29 @@ export function WorkoutHome() {
           folderMenu
             ? [
                 {
-                  label: 'New routine in this folder',
+                  label: t('home.newInFolder'),
                   icon: <IconPlus />,
                   onSelect: () => navigate(`/routines/new?folder=${encodeURIComponent(folderMenu.name)}`),
                 },
                 {
-                  label: 'Reorder routines',
+                  label: t('home.reorder'),
                   icon: <IconGrip />,
                   hidden: folderMenu.routines.length < 2,
                   onSelect: () => setReorder({ folder: folderMenu.name }),
                 },
-                { label: 'Rename or change routines', icon: <IconEdit />, onSelect: () => setFolderSheet({ folder: folderMenu.name }) },
+                { label: t('home.renameFolder'), icon: <IconEdit />, onSelect: () => setFolderSheet({ folder: folderMenu.name }) },
                 {
-                  label: 'Remove folder',
+                  label: t('home.removeFolder'),
                   icon: <IconTrash />,
                   danger: true,
                   onSelect: async () => {
                     const ok = await confirmDialog({
-                      title: `Remove the folder “${folderMenu.name}”?`,
+                      title: t('home.removeFolderTitle', { name: folderMenu.name }),
                       message:
                         folderMenu.routines.length === 1
-                          ? 'Its routine stays, just outside a folder.'
-                          : `Its ${folderMenu.routines.length} routines stay, just outside a folder.`,
-                      confirmLabel: 'Remove folder',
+                          ? t('home.removeFolderOne')
+                          : t('home.removeFolderMany', { n: folderMenu.routines.length }),
+                      confirmLabel: t('home.removeFolder'),
                     });
                     if (ok) await removeFolder(folderMenu.name);
                   },
@@ -203,7 +204,7 @@ export function WorkoutHome() {
       <MoveToFolderSheet routine={moving} routines={routines ?? []} onClose={() => setMoving(null)} />
       <ReorderSheet
         open={!!reorder}
-        title={reorder?.folder ? `Reorder “${reorder.folder}”` : 'Reorder routines'}
+        title={reorder?.folder ? t('home.reorderFolder', { folder: reorder.folder }) : t('home.reorder')}
         routines={groupOf(reorder?.folder)}
         onClose={() => setReorder(null)}
       />
@@ -220,7 +221,7 @@ function FolderSection({ folder, collapsed, onMenu, children }: { folder: Folder
           <span className="folder-name">{folder.name}</span>
           <span className="folder-count">{folder.routines.length}</span>
         </button>
-        <button className="icon-btn" onClick={onMenu} aria-label={`Options for folder ${folder.name}`}>
+        <button className="icon-btn" onClick={onMenu} aria-label={t('home.folderOptions', { name: folder.name })}>
           <IconMore />
         </button>
       </div>
@@ -234,8 +235,8 @@ function SyncWarning() {
   if (!sync.attention) return null;
   return (
     <Link to="/settings" className="card sync-warning">
-      <strong>Cloud sync has stopped</strong>
-      <span>{sync.message} Tap to fix it in Settings.</span>
+      <strong>{t('home.syncStopped')}</strong>
+      <span>{t('home.syncFix', { message: sync.message ?? '' })}</span>
     </Link>
   );
 }
@@ -247,7 +248,7 @@ function ResumeCard() {
   return (
     <div className="card resume-card">
       <div>
-        <span className="eyebrow">In progress</span>
+        <span className="eyebrow">{t('home.inProgress')}</span>
         <h2 className="resume-title">{active.title}</h2>
         <span className="muted tabular">{fmtClock((now - active.startTime) / 1000)}</span>
       </div>
@@ -256,18 +257,18 @@ function ResumeCard() {
           className="btn btn-ghost btn-small"
           onClick={async () => {
             const ok = await confirmDialog({
-              title: 'Discard this workout?',
-              message: 'Everything logged in it will be lost.',
-              confirmLabel: 'Discard workout',
+              title: t('live.discardTitle'),
+              message: t('live.discardText'),
+              confirmLabel: t('live.discardWorkout'),
               danger: true,
             });
             if (ok) await discardActive();
           }}
         >
-          Discard
+          {t('common.discard')}
         </button>
         <Link to="/workout" className="btn btn-primary btn-small">
-          Resume
+          {t('banner.resume')}
         </Link>
       </div>
     </div>
@@ -275,13 +276,16 @@ function ResumeCard() {
 }
 
 function lastDone(ts: number) {
-  const rel = fmtRelativeDay(ts);
-  return /^(Today|Yesterday)$|ago$/.test(rel) ? rel.toLowerCase() : `on ${rel}`;
+  const days = Math.round((startOfDay(Date.now()) - startOfDay(ts)) / 86_400_000);
+  if (days === 0) return t('home.lastToday');
+  if (days === 1) return t('home.lastYesterday');
+  if (days < 7) return t('home.lastDaysAgo', { n: days });
+  return t('home.lastOn', { date: fmtDate(ts) });
 }
 
 function RoutineCard({ routine, onMenu }: { routine: Routine; onMenu: () => void }) {
   const { exerciseMap, workouts } = useData();
-  const names = routine.exercises.map((we) => exerciseMap.get(we.exerciseId)?.name ?? 'Deleted exercise');
+  const names = routine.exercises.map((we) => exerciseMap.get(we.exerciseId)?.name ?? t('exercise.deleted'));
   const setCount = routine.exercises.reduce((n, we) => n + we.sets.length, 0);
   const key = routine.title.trim().toLowerCase();
   const last = workouts.find((w) => w.routineId === routine.id || w.title.trim().toLowerCase() === key);
@@ -292,23 +296,23 @@ function RoutineCard({ routine, onMenu }: { routine: Routine; onMenu: () => void
         <Link to={`/routines/${routine.id}`} className="routine-title">
           {routine.title}
         </Link>
-        <button className="icon-btn" onClick={onMenu} aria-label={`Options for ${routine.title}`}>
+        <button className="icon-btn" onClick={onMenu} aria-label={t('home.routineOptions', { title: routine.title })}>
           <IconMore />
         </button>
       </header>
       <p className="routine-exercises">
-        {names.slice(0, 4).join(', ')}
-        {names.length > 4 && `, +${names.length - 4} more`}
+        {names.slice(0, 4).join(t('common.comma'))}
+        {names.length > 4 && t('home.moreNames', { n: names.length - 4 })}
       </p>
       <p className="routine-meta">
-        {plural(routine.exercises.length, 'exercise')} · {plural(setCount, 'set')}
-        {last && ` · Last done ${lastDone(last.startTime)}`}
+        {t('home.meta', { exercises: count('exercise', routine.exercises.length), sets: count('set', setCount) })}
+        {last && ` · ${lastDone(last.startTime)}`}
       </p>
       <button
         className="btn btn-secondary btn-block"
         onClick={() => beginWorkout({ title: routine.title, exercises: routine.exercises, routineId: routine.id })}
       >
-        <IconPlay size={16} /> Start routine
+        <IconPlay size={16} /> {t('home.startRoutine')}
       </button>
     </article>
   );

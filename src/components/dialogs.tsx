@@ -1,5 +1,6 @@
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { Sheet } from './Sheet';
+import { t } from '../i18n';
 
 // Imperative confirm() and toast() so any handler can await a decision.
 
@@ -80,7 +81,7 @@ export function DialogHost() {
                 {confirm.confirmLabel}
               </button>
               <button className="btn btn-ghost" onClick={() => settle(false)}>
-                {confirm.cancelLabel ?? 'Cancel'}
+                {confirm.cancelLabel ?? t('common.cancel')}
               </button>
             </div>
           </div>

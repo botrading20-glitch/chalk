@@ -2,6 +2,7 @@ import type { Exercise, SetType, Workout } from '../types';
 import { cellNumber, detectDelimiter, parseCsv, toCsv } from './csv';
 import type { ParsedExercise, ParsedWorkout } from './importer';
 import { parseLocalDate } from './strong';
+import { t } from '../i18n';
 
 // Setward's own CSV: one row per set, newest workout first. Column names carry
 // the units (weight_kg, distance_km, duration_s) because stored values are
@@ -70,7 +71,7 @@ export function isSetwardHeader(header: string[]) {
 
 export function parseSetwardCsv(text: string): ParsedWorkout[] {
   const [header = [], ...rows] = parseCsv(text, detectDelimiter(text));
-  if (!isSetwardHeader(header)) throw new Error('This file isn’t a Setward CSV: the "set_type" and "weight_kg" columns are missing.');
+  if (!isSetwardHeader(header)) throw new Error(t('error.notSetwardCsv'));
   const col = new Map(header.map((h, i) => [h.trim().toLowerCase(), i]));
   const get = (row: string[], name: string) => {
     const i = col.get(name);
@@ -82,7 +83,7 @@ export function parseSetwardCsv(text: string): ParsedWorkout[] {
   for (const row of rows) {
     const startTime = parseLocalDate(get(row, 'date') ?? '');
     if (startTime === undefined) continue;
-    const title = get(row, 'workout')?.trim() || 'Workout';
+    const title = get(row, 'workout')?.trim() || t('import.defaultWorkout');
     const key = `${title}|${get(row, 'date')}`;
     let w = workouts.get(key);
     if (!w) {
@@ -96,7 +97,7 @@ export function parseSetwardCsv(text: string): ParsedWorkout[] {
       workouts.set(key, w);
       lastSet = 0;
     }
-    const name = get(row, 'exercise')?.trim() || 'Unknown exercise';
+    const name = get(row, 'exercise')?.trim() || t('import.unknownExercise');
     const index = cellNumber(get(row, 'set')) ?? lastSet + 1;
     let block: ParsedExercise | undefined = w.exercises.at(-1);
     // A repeated exercise is a new run whose set number starts again.

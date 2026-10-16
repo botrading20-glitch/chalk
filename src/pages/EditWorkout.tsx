@@ -9,6 +9,7 @@ import { goBack } from '../lib/router';
 import { hasValues } from '../lib/stats';
 import { workoutFromDraft } from '../lib/workouts';
 import type { ActiveWorkout, Workout } from '../types';
+import { t } from '../i18n';
 
 function toLocalInput(ts: number) {
   const d = new Date(ts);
@@ -24,8 +25,8 @@ export function EditWorkout({ id }: { id: string }) {
   if (!original) {
     return (
       <div className="page">
-        <PageHeader back="/history" title="Edit workout" />
-        <Empty title="This workout doesn't exist">It may have been deleted.</Empty>
+        <PageHeader back="/history" title={t('editWorkout.title')} />
+        <Empty title={t('missing.workout')}>{t('missing.hint')}</Empty>
       </div>
     );
   }
@@ -61,7 +62,7 @@ function Editor({ draftKey, original, stored }: { draftKey: string; original: Wo
     );
     await db.workouts.put(workout);
     await draft.clear();
-    toast('Workout updated');
+    toast(t('editWorkout.updated'));
     goBack(back);
   }
 
@@ -74,22 +75,22 @@ function Editor({ draftKey, original, stored }: { draftKey: string; original: Wo
           await clearDraft(draftKey);
           goBack(back);
         }}
-        title="Edit workout"
+        title={t('editWorkout.title')}
         actions={
           <button className="btn btn-primary btn-small" onClick={save}>
-            Save
+            {t('common.save')}
           </button>
         }
       />
       {stored && draft.dirty && <DraftBar onDiscard={draft.discard} />}
       <div className="form">
         <label className="field">
-          <span>Name</span>
+          <span>{t('form.name')}</span>
           <input value={w.title} onChange={(e) => set({ title: e.target.value })} />
         </label>
         <div className="field-row">
           <label className="field">
-            <span>Started</span>
+            <span>{t('editWorkout.started')}</span>
             <input
               type="datetime-local"
               value={toLocalInput(w.startTime)}
@@ -101,7 +102,7 @@ function Editor({ draftKey, original, stored }: { draftKey: string; original: Wo
             />
           </label>
           <label className="field field-narrow">
-            <span>Minutes</span>
+            <span>{t('editWorkout.minutes')}</span>
             <input
               type="number"
               inputMode="numeric"
@@ -112,7 +113,7 @@ function Editor({ draftKey, original, stored }: { draftKey: string; original: Wo
           </label>
         </div>
         <label className="field">
-          <span>Notes</span>
+          <span>{t('common.notes')}</span>
           <textarea rows={2} value={w.description ?? ''} onChange={(e) => set({ description: e.target.value || undefined })} />
         </label>
       </div>

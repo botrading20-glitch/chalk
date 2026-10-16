@@ -4,6 +4,7 @@ import type { Routine } from '../types';
 import { toast } from './dialogs';
 import { IconArrowDown, IconCheck, IconClose, IconFolder, IconGrip, IconUp } from './Icons';
 import { Sheet } from './Sheet';
+import { t } from '../i18n';
 
 const folderNames = (routines: Routine[]) => [...new Set(routines.flatMap((r) => (r.folder ? [r.folder] : [])))];
 
@@ -21,7 +22,7 @@ export function FolderSheet({
   routines: Routine[];
 }) {
   return (
-    <Sheet open={open} onClose={onClose} title={folder ? 'Edit folder' : 'New folder'}>
+    <Sheet open={open} onClose={onClose} title={folder ? t('folder.edit') : t('folder.new')}>
       {open && <FolderForm folder={folder} routines={routines} onDone={onClose} />}
     </Sheet>
   );
@@ -46,27 +47,27 @@ function FolderForm({ folder, routines, onDone }: { folder?: string; routines: R
       onSubmit={async (e) => {
         e.preventDefault();
         const final = folderName(name, folderNames(routines).filter((f) => f !== folder));
-        if (!final) return setError('Name the folder, e.g. "Push Pull Legs".');
-        if (!picked.size) return setError('Pick at least one routine to put in it.');
+        if (!final) return setError(t('folder.nameRequired'));
+        if (!picked.size) return setError(t('folder.pickOne'));
         await saveFolder(final, [...picked], folder);
-        toast(folder ? 'Folder saved' : `Created “${final}”`);
+        toast(folder ? t('folder.saved') : t('folder.created', { name: final }));
         onDone();
       }}
     >
       <label className="field">
-        <span>Folder name</span>
+        <span>{t('folder.name')}</span>
         <input
           value={name}
           onChange={(e) => {
             setName(e.target.value);
             setError('');
           }}
-          placeholder="e.g. Push Pull Legs"
+          placeholder={t('folder.namePlaceholder')}
           autoFocus={!folder}
         />
       </label>
       <fieldset className="field">
-        <legend>Routines in this folder</legend>
+        <legend>{t('folder.routinesIn')}</legend>
         <ul className="ex-list">
           {routines.map((r) => {
             const on = picked.has(r.id);
@@ -83,7 +84,7 @@ function FolderForm({ folder, routines, onDone }: { folder?: string; routines: R
                 >
                   <span className="ex-row-text">
                     <span className="ex-row-name">{r.title}</span>
-                    {r.folder && r.folder !== folder && <span className="ex-row-meta">Now in {r.folder}</span>}
+                    {r.folder && r.folder !== folder && <span className="ex-row-meta">{t('folder.nowIn', { folder: r.folder })}</span>}
                   </span>
                   {on && (
                     <span className="ex-row-check">
@@ -99,10 +100,10 @@ function FolderForm({ folder, routines, onDone }: { folder?: string; routines: R
       {error && <p className="form-error">{error}</p>}
       <div className="form-actions">
         <button type="button" className="btn btn-ghost" onClick={onDone}>
-          Cancel
+          {t('common.cancel')}
         </button>
         <button type="submit" className="btn btn-primary">
-          {folder ? 'Save folder' : 'Create folder'}
+          {folder ? t('folder.save') : t('folder.create')}
         </button>
       </div>
     </form>
@@ -112,7 +113,7 @@ function FolderForm({ folder, routines, onDone }: { folder?: string; routines: R
 /** Quick filing from a routine's menu: pick a folder, take it out, or start a new one. */
 export function MoveToFolderSheet({ routine, routines, onClose }: { routine: Routine | null; routines: Routine[]; onClose: () => void }) {
   return (
-    <Sheet open={!!routine} onClose={onClose} title={routine ? `Move “${routine.title}”` : undefined}>
+    <Sheet open={!!routine} onClose={onClose} title={routine ? t('folder.move', { title: routine.title }) : undefined}>
       {routine && <MoveForm routine={routine} routines={routines} onDone={onClose} />}
     </Sheet>
   );
@@ -124,7 +125,7 @@ function MoveForm({ routine, routines, onDone }: { routine: Routine; routines: R
 
   async function move(folder: string | undefined) {
     await moveToFolder([routine.id], folder);
-    toast(folder ? `Moved to “${folder}”` : 'Taken out of the folder');
+    toast(folder ? t('folder.moved', { folder }) : t('folder.takenOut'));
     onDone();
   }
 
@@ -142,7 +143,7 @@ function MoveForm({ routine, routines, onDone }: { routine: Routine; routines: R
           {routine.folder && (
             <button className="action-item" onClick={() => move(undefined)}>
               <IconClose />
-              <span>No folder</span>
+              <span>{t('folder.none')}</span>
             </button>
           )}
         </div>
@@ -156,11 +157,11 @@ function MoveForm({ routine, routines, onDone }: { routine: Routine; routines: R
         }}
       >
         <label className="field">
-          <span>New folder</span>
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Upper / Lower" />
+          <span>{t('folder.new')}</span>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('folder.newPlaceholder')} />
         </label>
         <button type="submit" className="btn btn-secondary" disabled={!name.trim()}>
-          Create
+          {t('folder.createShort')}
         </button>
       </form>
     </div>
@@ -216,7 +217,7 @@ function ReorderList({ routines, onDone }: { routines: Routine[]; onDone: () => 
     const next = moveItem(shown, from, to);
     setIds(next);
     void reorderRoutines(next);
-    setAnnouncement(`${byId.get(shown[from])?.title}: position ${to + 1} of ${next.length}`);
+    setAnnouncement(t('reorder.position', { title: byId.get(shown[from])?.title ?? '', n: to + 1, total: next.length }));
     if (control) setRefocus({ id: shown[from], control });
   }
 
@@ -232,7 +233,7 @@ function ReorderList({ routines, onDone }: { routines: Routine[]; onDone: () => 
   return (
     <div className="reorder">
       <p className="muted small" id={hint}>
-        Drag a routine by its handle, or use the arrows. Changes are saved as you go.
+        {t('reorder.hint')}
       </p>
       <ol className={`reorder-list ${drag ? 'is-dragging' : ''}`} ref={list}>
         {shown.map((id, i) => {
@@ -252,7 +253,7 @@ function ReorderList({ routines, onDone }: { routines: Routine[]; onDone: () => 
                 type="button"
                 className="drag-handle"
                 data-move="handle"
-                aria-label={`Move ${r.title}`}
+                aria-label={t('reorder.move', { title: r.title })}
                 aria-describedby={hint}
                 onPointerDown={(e) => {
                   if (e.button !== 0) return;
@@ -292,7 +293,7 @@ function ReorderList({ routines, onDone }: { routines: Routine[]; onDone: () => 
                 className="icon-btn"
                 data-move="up"
                 disabled={i === 0}
-                aria-label={`Move ${r.title} up`}
+                aria-label={t('reorder.up', { title: r.title })}
                 onClick={() => commit(i, i - 1, 'up')}
               >
                 <IconUp size={20} />
@@ -302,7 +303,7 @@ function ReorderList({ routines, onDone }: { routines: Routine[]; onDone: () => 
                 className="icon-btn"
                 data-move="down"
                 disabled={i === last}
-                aria-label={`Move ${r.title} down`}
+                aria-label={t('reorder.down', { title: r.title })}
                 onClick={() => commit(i, i + 1, 'down')}
               >
                 <IconArrowDown size={20} />
@@ -315,7 +316,7 @@ function ReorderList({ routines, onDone }: { routines: Routine[]; onDone: () => 
         {announcement}
       </p>
       <button type="button" className="btn btn-primary btn-block" onClick={onDone}>
-        Done
+        {t('common.done')}
       </button>
     </div>
   );

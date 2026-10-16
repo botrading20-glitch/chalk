@@ -5,6 +5,7 @@ import { isSetwardHeader, parseSetwardCsv } from './exportCsv';
 import { uid } from './format';
 import { normalize } from './search';
 import { isStrongHeader, parseStrongCsv, type ReadOptions } from './strong';
+import { t } from '../i18n';
 
 // Format-neutral import pipeline. Each file format (Strong, Setward's own CSV)
 // parses into ParsedWorkout; planImport matches the exercises against the
@@ -202,5 +203,5 @@ export function readWorkoutCsv(text: string, options: ReadOptions): FileReading 
   const [header = []] = parseCsv(text, detectDelimiter(text));
   if (isSetwardHeader(header)) return { format: 'setward', workouts: parseSetwardCsv(text), needsWeightUnit: false };
   if (isStrongHeader(header)) return { format: 'strong', ...parseStrongCsv(text, options) };
-  throw new Error('Setward can’t read this file. Use a CSV exported from Strong, or from Setward itself.');
+  throw new Error(t('error.importUnknown'));
 }

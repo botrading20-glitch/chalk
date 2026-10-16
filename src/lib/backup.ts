@@ -1,6 +1,7 @@
 import { db, getKV, setKV } from '../db';
 import type { BodyWeight, Exercise, Routine, Settings, Workout } from '../types';
 import { cleanAll, cleanBodyWeight, cleanExercise, cleanRoutine, cleanSettings, cleanWorkout } from './validate';
+import { t } from '../i18n';
 
 interface Backup {
   app: 'chalk';
@@ -46,10 +47,10 @@ export function parseBackup(text: string): ParsedBackup {
   try {
     data = JSON.parse(text);
   } catch {
-    throw new Error("This file isn't valid JSON. Pick a backup exported from Setward.");
+    throw new Error(t('error.backupJson'));
   }
   if (data?.app !== 'chalk' || !Array.isArray(data.workouts)) {
-    throw new Error("This file isn't a Setward backup. Pick a file exported from Settings → Back up data.");
+    throw new Error(t('error.backupApp'));
   }
   const workouts = cleanAll(data.workouts, cleanWorkout);
   const routines = cleanAll(data.routines, cleanRoutine);

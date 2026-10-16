@@ -1,6 +1,7 @@
 // Draws a workout summary as a 1080×1350 PNG (the 4:5 portrait size most
 // apps show uncropped), in the app's own colours and fonts.
 import { BRAND_MARK_PATHS, BRAND_NAME } from './brand';
+import { count, intlLocale, t } from '../i18n';
 
 export interface CardData {
   title: string;
@@ -25,6 +26,9 @@ const C = {
   accentInk: '#b39dff',
   onAccent: '#ffffff',
 };
+/** Upper case by the rules of the current language (Turkish dotted İ, no case in Arabic). */
+const upper = (s: string) => s.toLocaleUpperCase(intlLocale());
+
 const DISPLAY = '"Big Shoulders Display Variable", "Archivo Variable", sans-serif';
 const BODY = '"Archivo Variable", system-ui, sans-serif';
 const TROPHY = new Path2D('M8 4h8v5a4 4 0 0 1-8 0V4ZM8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 20h7M10 17h4v3h-4z');
@@ -107,7 +111,7 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
   ctx.fillStyle = C.accentInk;
   ctx.font = `800 48px ${DISPLAY}`;
   ctx.letterSpacing = '3px';
-  ctx.fillText(BRAND_NAME.toUpperCase(), M + 66, M + 39);
+  ctx.fillText(upper(BRAND_NAME), M + 66, M + 39);
   ctx.letterSpacing = '0px';
   ctx.fillStyle = C.text2;
   ctx.font = `500 30px ${BODY}`;
@@ -119,7 +123,7 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
   let y = M + 170;
   ctx.fillStyle = C.text;
   ctx.font = `800 120px ${DISPLAY}`;
-  for (const line of wrap(ctx, data.title.toUpperCase(), W - 2 * M, 2)) {
+  for (const line of wrap(ctx, upper(data.title), W - 2 * M, 2)) {
     ctx.fillText(line, M, y);
     y += 112;
   }
@@ -138,7 +142,7 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
     trophy(ctx, M + 28, y + 26, 44, C.onAccent);
     ctx.fillStyle = C.onAccent;
     ctx.font = `800 56px ${DISPLAY}`;
-    ctx.fillText(`${data.records} NEW ${data.records === 1 ? 'RECORD' : 'RECORDS'}`, M + 92, y + 68);
+    ctx.fillText(upper(count('newRecord', data.records)), M + 92, y + 68);
     y += 96 + 40;
   } else {
     y += 16;
@@ -151,7 +155,7 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
     ctx.fillStyle = C.text3;
     ctx.font = `600 24px ${BODY}`;
     ctx.letterSpacing = '2px';
-    ctx.fillText(s.label.toUpperCase(), x, y + 24);
+    ctx.fillText(upper(s.label), x, y + 24);
     ctx.letterSpacing = '0px';
     ctx.fillStyle = C.text;
     ctx.font = `700 64px ${DISPLAY}`;
@@ -192,12 +196,12 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
     ctx.fillStyle = C.text3;
     ctx.font = `500 30px ${BODY}`;
     const more = data.exercises.length - shown.length;
-    ctx.fillText(`+ ${more} more ${more === 1 ? 'exercise' : 'exercises'}`, M + 90, y + 50);
+    ctx.fillText(t('share.more', { n: more }), M + 90, y + 50);
   }
 
   ctx.fillStyle = C.text3;
   ctx.font = `500 26px ${BODY}`;
-  ctx.fillText(`Logged with ${BRAND_NAME}`, M, footerY);
+  ctx.fillText(t('share.footer', { app: BRAND_NAME }), M, footerY);
 
-  return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Could not create the image.'))), 'image/png'));
+  return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error(t('share.imageFailed')))), 'image/png'));
 }

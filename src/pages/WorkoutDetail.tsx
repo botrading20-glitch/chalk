@@ -10,18 +10,13 @@ import { fmtDateLong, fmtDuration, fmtTime, fmtVolume } from '../lib/format';
 import { Link, navigate } from '../lib/router';
 import { fmtSet, setLabels } from '../lib/sets';
 import { useSettings } from '../lib/settings';
-import { RECORD_LABEL, workoutSets, workoutVolume } from '../lib/stats';
+import { RECORD_LABEL, workoutSets, workoutVolume, type RecordKind } from '../lib/stats';
 import { routineFromWorkout, templateFrom } from '../lib/workouts';
 import { beginWorkout } from './WorkoutHome';
+import { count, t } from '../i18n';
+import { labelMap } from '../i18n/labels';
 
-const RECORD_SHORT = {
-  weight: 'Weight',
-  e1rm: '1RM',
-  volume: 'Volume',
-  reps: 'Reps',
-  duration: 'Time',
-  distance: 'Distance',
-} as const;
+const RECORD_SHORT = labelMap<RecordKind>('recordShort', ['weight', 'e1rm', 'volume', 'reps', 'duration', 'distance']);
 
 export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolean }) {
   const { workouts, exerciseMap, typeOf, records } = useData();
@@ -33,8 +28,8 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
   if (!w) {
     return (
       <div className="page">
-        <PageHeader back="/history" title="Workout" />
-        <Empty title="This workout doesn't exist">It may have been deleted.</Empty>
+        <PageHeader back="/history" title={t('tab.workout')} />
+        <Empty title={t('missing.workout')}>{t('missing.hint')}</Empty>
       </div>
     );
   }
@@ -48,7 +43,7 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
         back="/history"
         title=""
         actions={
-          <button className="icon-btn" onClick={() => setMenu(true)} aria-label="Workout options">
+          <button className="icon-btn" onClick={() => setMenu(true)} aria-label={t('detail.options')}>
             <IconMore />
           </button>
         }
@@ -56,11 +51,11 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
 
       {justSaved && (
         <div className="saved-banner" role="status">
-          <span className="eyebrow">Workout {number} saved</span>
-          <strong className="saved-headline">{prs ? `${prs} new ${prs === 1 ? 'record' : 'records'}` : 'Logged'}</strong>
-          {prs > 0 && <span className="muted">Marked with a trophy below.</span>}
+          <span className="eyebrow">{t('detail.saved', { n: number })}</span>
+          <strong className="saved-headline">{prs ? count('newRecord', prs) : t('detail.logged')}</strong>
+          {prs > 0 && <span className="muted">{t('detail.trophy')}</span>}
           <button className="btn btn-small saved-share" onClick={() => setSharing(true)}>
-            <IconShare size={16} /> Share
+            <IconShare size={16} /> {t('detail.share')}
           </button>
         </div>
       )}
@@ -72,10 +67,10 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
       {w.description && <p className="description">{w.description}</p>}
 
       <div className="stat-row">
-        <Stat label="Duration" value={fmtDuration((w.endTime - w.startTime) / 1000)} />
-        <Stat label="Volume" value={fmtVolume(workoutVolume(w, typeOf), settings.weightUnit)} />
-        <Stat label="Sets" value={workoutSets(w)} />
-        <Stat label="Records" value={prs} />
+        <Stat label={t('stat.duration')} value={fmtDuration((w.endTime - w.startTime) / 1000)} />
+        <Stat label={t('stat.volume')} value={fmtVolume(workoutVolume(w, typeOf), settings.weightUnit)} />
+        <Stat label={t('stat.sets')} value={workoutSets(w)} />
+        <Stat label={t('detail.stats.records')} value={prs} />
       </div>
 
       <div className="stack">
@@ -87,7 +82,7 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
             <section key={we.id} className="card ex-summary">
               <Link to={`/exercises/${we.exerciseId}`} className="ex-title">
                 <ExerciseAvatar exercise={ex} size={38} />
-                <span className="ex-name">{ex?.name ?? 'Deleted exercise'}</span>
+                <span className="ex-name">{ex?.name ?? t('exercise.deleted')}</span>
               </Link>
               {we.notes && <p className="ex-note">{we.notes}</p>}
               <ol className="set-list">
@@ -100,7 +95,7 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
                       </span>
                       <span className="set-value tabular">
                         {fmtSet(s, type, settings)}
-                        {s.rpe !== undefined && <span className="muted"> @ RPE {s.rpe}</span>}
+                        {s.rpe !== undefined && <span className="muted">{t('detail.rpe', { n: s.rpe })}</span>}
                       </span>
                       {kinds.length > 0 && (
                         <span className="pr-tags" title={kinds.map((k) => RECORD_LABEL[k]).join(', ')}>
@@ -124,35 +119,35 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
         onClose={() => setMenu(false)}
         title={w.title}
         actions={[
-          { label: 'Share summary', icon: <IconShare />, onSelect: () => setSharing(true) },
-          { label: 'Edit workout', icon: <IconEdit />, onSelect: () => navigate(`/history/${w.id}/edit`) },
+          { label: t('detail.menu.share'), icon: <IconShare />, onSelect: () => setSharing(true) },
+          { label: t('detail.menu.edit'), icon: <IconEdit />, onSelect: () => navigate(`/history/${w.id}/edit`) },
           {
-            label: 'Do this workout again',
+            label: t('detail.menu.again'),
             icon: <IconPlay />,
             onSelect: () => beginWorkout({ title: w.title, exercises: templateFrom(w.exercises) }),
           },
           {
-            label: 'Save as routine',
+            label: t('detail.menu.saveRoutine'),
             icon: <IconCopy />,
             onSelect: async () => {
               await routineFromWorkout(w);
-              toast(`Saved "${w.title}" as a routine`);
+              toast(t('detail.savedAsRoutine', { title: w.title }));
             },
           },
           {
-            label: 'Delete workout',
+            label: t('detail.menu.delete'),
             icon: <IconTrash />,
             danger: true,
             onSelect: async () => {
               const ok = await confirmDialog({
-                title: 'Delete this workout?',
-                message: 'Its sets and records are removed from your history.',
-                confirmLabel: 'Delete workout',
+                title: t('detail.deleteTitle'),
+                message: t('detail.deleteText'),
+                confirmLabel: t('detail.menu.delete'),
                 danger: true,
               });
               if (!ok) return;
               await db.workouts.delete(w.id);
-              toast('Workout deleted');
+              toast(t('detail.deleted'));
               navigate('/history', { replace: true });
             },
           },

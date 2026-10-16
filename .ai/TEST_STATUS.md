@@ -1,5 +1,27 @@
 # Test status
 
+## Data check (DATA-002): 2026-10-16, branch `data-check` (@ ce3daae, off `main` @ 663cb56)
+
+Environment: Windows 11, Node 24.19.0, npm 11.17.0; the desktop app's built-in Chromium (dev server on localhost:5173, preview on localhost:4173/chalk/), 375 and 320 px emulation. Baseline before the change: typecheck clean, 67 passed, 2 skipped.
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Types / tests | PASS | `tsc` exit 0; 88 passed, 2 skipped (new: `dataCheck.test.ts`, 21) |
+| Tests can fail | PASS | Dropping the `exerciseIds` normalisation fails the "another order" test; letting delete take a repairable record fails the delete-safety test; both changes reverted (file identical to the original) |
+| The crash is real | PASS | A workout with `exercises: null` throws `w.exercises is not iterable` at `computeRecords` and shows the crash screen (unit test and dev console) |
+| No false positives | PASS | Sample data (65 workouts, 6 routines, 1 custom exercise, 16 weigh-ins): "No problems found". Unit tests cover `workoutFromDraft`, `saveRoutine` + `templateFrom`, a Hevy import, `logBodyWeight` and an exercise-form record, all through IndexedDB |
+| Crash → check → delete → reload | PASS | Dev and production preview: listed with label and date; the backup file contained the raw record; Delete then Keep (Enter on the focused Keep) left it; Delete then Delete removed only it; "No problems left"; Reload Setward opened the app; History intact |
+| Repair | PASS | A workout without `exerciseIds` got its 6 ids back (and is found through the exercise index) with an unknown field kept; a routine with `order: "first"` was reset to 0 with `updatedAt` bumped, title and exercises kept; settings dropped only `platesKg` and kept `weightUnit` and an unknown key |
+| Narrow / themes | PASS | 320 px, dark and light, on the crash screen: page width 320, no element past the viewport, a 70-character unbreakable title wraps, the expanded record wraps, the page scrolls to the last card; light text #52505e on #f3f3f6. Screenshots in the pane were drawn at a reduced scale, so the layout was confirmed by measuring |
+| Production build | PASS | `/chalk/` build; main chunk 153.77 kB gzip (was 150.96), CSS 8.42 kB gzip (was 8.18) |
+| S-08 / CSP | PASS | `/chalk/` preview: CSP meta present, service worker in control, 0 violations through open, backup and delete |
+| S-01 / S-02 / S-03 | PASS / PASS / PARTIAL | App opens after the repair; 5 routes render without overflow; a started workout survives a reload (no sets or exercises were typed) |
+| Console | PASS | Only the two deliberate crash errors; none after the repair |
+| Screen reader | NOT_RUN | None here. The buttons carry names ("Repair workout …"), a polite live region announces results, and focus moves to the summary after an action |
+| Phone | NOT_RUN | Needs a deploy (REL-103) |
+
+Notes: a raw IndexedDB write does not notify Dexie, so on the production preview the page was reloaded to trigger the crash. The dev database was returned to the clean sample afterwards (65 workouts, 6 routines, 1 custom exercise, no settings row).
+
 ## Features - 2026-10-05, branch `features` @ 44c6840
 
 | Check | Result | Evidence |

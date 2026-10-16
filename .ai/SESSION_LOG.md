@@ -1,5 +1,13 @@
 # Session log
 
+## Session: 2026-10-16 (DATA-002, master prompt v2)
+
+The owner supplied only the master prompt (v2) and "implement the first complete, usable workflow". The core logging workflow already exists and is live (`main` @ 663cb56, clean tree), so I asked which part to deliver and the owner picked DATA-002 (Check data) from the backlog. Planned in plan mode and approved, then built on the new local branch `data-check`: `src/lib/dataCheck.ts`, `src/components/DataCheck.tsx`, 21 tests, entry points in Settings and on the crash screen, `listJoin` moved to `format.ts`. Verification is in `TEST_STATUS.md` (Data check): all PASS except the screen-reader pass and the phone (NOT_RUN) and S-03 (PARTIAL). Notes, `CLAUDE.md` and memory updated. Committed on `data-check` at the owner's request afterwards (code ce3daae, then the notes); not pushed (NN-15). The dev and preview servers started for the checks were stopped at the end.
+
+Problems met: a long heredoc containing apostrophes was rejected by the shell, so the two new source files were written with the Write tool; a compound `python - <<EOF || node` command hung and was abandoned (its only effect was the `listJoin` append to `format.ts`, which was wanted and kept).
+
+Stopping point: DATA-002 done locally; REL-103 waits for the owner. Next session: ask whether to commit and merge `data-check`, and how the phone checks went.
+
 ## Session: 2026-10-05 (release of REL-102)
 
 The owner said "merge and push it". Merged as c232c2d (`--no-ff`); on `main`: 67 tests, `/chalk/` build (same bundle `index-D7zhvP27.js` as the branch), `npm ci --dry-run` and a secret scan passed. Pushed 9c06bea..c232c2d; Pages run 37302757241 succeeded with 0 annotations. Live: the new bundle, `--warmup` #f2994a, the stopwatch and reorder styles present, 5 routes without overflow, 0 CSP violations, no console messages; the cached older version updated itself with one reload. Stopping point: released; waiting for the owner's phone checks.

@@ -8,7 +8,7 @@
 
 ## Current status
 - **Phase:** released. The quality pass (REL-100, 2026-10-04) and Setward with UX-002, UX-003, A11Y-002 and DOC-002 (REL-101, 2026-10-05) are live. Waiting on the owner's phone checks.
-- **Branches:** `main` = live. `quality-pass`, `setward` and `features` are merged (kept locally). `google-sync` is parked (FEAT-001).
+- **Branches:** `main` = live. `quality-pass`, `setward` and `features` are merged (kept locally). `google-sync` is parked (FEAT-001). `data-check` (DATA-002, Check data) is built and verified, committed locally (ce3daae) and not pushed.
 - **Completion:** all product requirements work. Quality requirements REQ-Q01–Q05 are done, apart from screen-reader and real-device checks.
 - **Release decision:** READY WITH DOCUMENTED LIMITATIONS, released 2026-10-05 (`RELEASE_CHECKLIST.md`, REL-101).
 
@@ -28,7 +28,7 @@ Setward identity: an angular split-S mark and “Forward, one set at a time.” 
 See `NON_NEGOTIABLES.md` (NN-01 to NN-16). None were changed this session.
 
 ## Current problems
-None known at medium or high severity. Low-severity items left in the roadmap "Discovered" table: DATA-002, UX-004. Deploy runners pinned to Ubuntu 24.04 (ENV-002). No linter by the owner's choice (DX-002 cancelled).
+None known at medium or high severity. Low-severity items left in the roadmap "Discovered" table: UX-004 (DATA-002 is done on the local branch `data-check`). Deploy runners pinned to Ubuntu 24.04 (ENV-002). No linter by the owner's choice (DX-002 cancelled).
 
 ## Current risks
 - Neither release has been checked on the owner's Android phone yet (`RELEASE_CHECKLIST.md`).
@@ -37,8 +37,11 @@ None known at medium or high severity. Low-severity items left in the roadmap "D
 
 ## Immediate next steps
 1. The owner runs the phone checks in `RELEASE_CHECKLIST.md` for REL-101 and REL-102.
+2. Decide whether to merge and publish `data-check` (REL-103; every push to `main` deploys, NN-15).
 
 ## Last verified
+2026-10-16 (branch `data-check` @ ce3daae, off `main` @ 663cb56): typecheck clean, 88 tests passed (2 skipped), `/chalk/` build (main chunk 153.77 kB gzip). Browser: DATA-002 on dev with the sample data and on the `/chalk/` preview: crash screen → check → backup → delete → reload works, repairs verified, 320 px dark and light, 0 CSP violations. Phone and screen reader not run.
+
 2026-10-04: typecheck, 59 tests, build, and smoke S-01 to S-11 on dev and the `/chalk/` preview; the live deploy loads cleanly.
 
 2026-10-05: 59 tests passed (2 live-sync checks skipped), `/chalk/` production build passed. Dark/light 360 px home/header, settings, icons and sample share card verified locally. No console warnings/errors in the inspected preview. Phone branding refresh not run.

@@ -1,5 +1,23 @@
 # Test status
 
+## Settings experience (LAUNCH-M4): 2026-10-17, branch `launch`
+
+Environment: Windows 11, built-in Chromium, dev server on localhost:5173 and production preview on localhost:4173/chalk/ (sample backup), 375 and 320 px.
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Types / tests | PASS | `tsc --noEmit` exit 0; 113 passed, 2 skipped (new: `previous.test.ts`, `backupReminder.test.ts`, `sounds.test.ts`) |
+| Contrast | PASS | 732 pairs, 0 failing |
+| Production build | PASS | `/chalk/` build; main chunk 164.82 kB gzip, `Settings-*.js` 10.29 kB gzip (lazy, in the service worker's precache) |
+| Overflow sweep | PASS | 22 routes at 375 and 320 px, three setting combinations each (see roadmap). Found and fixed: Segmented at extra-large text on the Accessibility page (377 px), the week card's greeting and streak chip (404 px) |
+| Rest settings | PASS | Warm-up rest 30 s, working 90 s; auto-rest off leaves the rest alone; warm-up rest Off starts none |
+| Countdown and sounds | PASS | A 5 s rest with the countdown created 6 oscillators (3 ticks, 3 end tones). Sounds not judged by ear |
+| Backup reminder and data page | PASS | Card at 10 days; Later hides it (snooze 3 days); Back up now stamps the date; Reset settings writes `{}` and the accent returns to purple |
+| Narrowest combination | PASS | 320 px, extra-large text, larger controls: boxes and checks readable, Previous column hidden by design |
+| Production preview | PASS | All Settings pages render from the lazy chunk, 0 CSP violations, service worker in control |
+| Language switching | NOT_RUN | Only English exists until M6 |
+| Phone / screen reader / reduced motion | NOT_RUN | Needs the owner's phone |
+
 ## Visual refresh, checkpoint 2 and M3 checks (LAUNCH-M3): 2026-10-17, branch `launch`
 
 Environment: Windows 11, built-in Chromium, dev server on localhost:5173 and production preview on localhost:4173/chalk/, both with the sample backup; 320, 360, 375 and a 1280 emulation.

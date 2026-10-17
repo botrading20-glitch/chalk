@@ -4,7 +4,7 @@ import { fmtClock } from '../lib/format';
 import { Link, useRoute } from '../lib/router';
 import { useSettings } from '../lib/settings';
 import { ringRest, startRestAlert, stopRestAlert } from '../lib/restAlert';
-import { beep, buzz } from '../lib/timer';
+import { beep, buzz, tick } from '../lib/timer';
 import { updateActive, useActiveWorkout } from '../lib/workouts';
 import { IconBarbell, IconChart, IconHistory, IconList, IconTimer } from './Icons';
 import { t } from '../i18n';
@@ -83,7 +83,18 @@ function RestTimer() {
   const endsAt = active?.restEndsAt;
   const now = useNow(250, !!endsAt);
   const fired = useRef<number | undefined>(undefined);
+  const ticked = useRef('');
   const lockScreen = settings.timerSound && settings.timerLockScreen;
+  const left = endsAt ? Math.max(0, Math.ceil((endsAt - now) / 1000)) : 0;
+
+  // The 3-2-1 countdown: one short tick as each of the last three seconds starts.
+  useEffect(() => {
+    if (!endsAt || !settings.restCountdown || !settings.timerSound || left < 1 || left > 3) return;
+    const key = `${endsAt}:${left}`;
+    if (ticked.current === key) return;
+    ticked.current = key;
+    tick();
+  }, [endsAt, left, settings.restCountdown, settings.timerSound]);
 
   useEffect(() => {
     if (endsAt && lockScreen) startRestAlert(endsAt, { skip: skipRest, adjust: adjustRest });

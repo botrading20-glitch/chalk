@@ -121,6 +121,7 @@ export function ActiveWorkoutPage() {
         exercises={active.exercises}
         onChange={(fn) => updateActive((a) => ({ ...a, exercises: fn(a.exercises) }))}
         mode="live"
+        routineId={active.routineId}
         onRest={(seconds) => {
           if (seconds > 0) void updateActive((a) => ({ ...a, restEndsAt: Date.now() + seconds * 1000, restTotal: seconds }));
         }}

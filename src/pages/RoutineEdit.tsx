@@ -100,7 +100,7 @@ function Editor({ draftKey, existing, stored, folder }: { draftKey: string; exis
         </label>
       </div>
       <p className="muted small editor-hint">{t('routineEdit.hint')}</p>
-      <WorkoutEditor exercises={exercises} onChange={(fn) => draft.update((d) => ({ ...d, exercises: fn(d.exercises) }))} mode="routine" />
+      <WorkoutEditor exercises={exercises} onChange={(fn) => draft.update((d) => ({ ...d, exercises: fn(d.exercises) }))} mode="routine" routineId={existing?.id} />
       {existing && (
         <button
           className="btn btn-danger-ghost btn-block"

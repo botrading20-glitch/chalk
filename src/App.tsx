@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { DialogHost } from './components/dialogs';
 import { t } from './i18n';
 import { Dock } from './components/Dock';
@@ -13,11 +14,14 @@ import { Exercises } from './pages/Exercises';
 import { History } from './pages/History';
 import { Profile } from './pages/Profile';
 import { RoutineEdit } from './pages/RoutineEdit';
-import { SettingsPage } from './pages/Settings';
 import { WorkoutDetail } from './pages/WorkoutDetail';
 import { WorkoutHome } from './pages/WorkoutHome';
 import { Empty } from './components/ui';
 import { Link } from './lib/router';
+
+// Settings is rarely open and brings the import, sync and data-check code with it, so it loads on demand
+// (the service worker precaches the chunk, so it still works offline).
+const SettingsPage = lazy(() => import('./pages/Settings').then((m) => ({ default: m.SettingsPage })));
 
 export function App() {
   useAppearance();
@@ -55,7 +59,7 @@ export function App() {
       page = s1 === 'bodyweight' ? <BodyWeightPage /> : <Profile />;
       break;
     case 'settings':
-      page = <SettingsPage />;
+      page = <SettingsPage section={s1} />;
       break;
     default:
       page = (
@@ -70,7 +74,7 @@ export function App() {
 
   return (
     <div className="app" key={formatKey}>
-      <main key={path}>{ready ? page : null}</main>
+      <main key={path}>{ready ? <Suspense fallback={null}>{page}</Suspense> : null}</main>
       <Dock showTabs={!focused} showBanner={s0 !== 'workout'} />
       <DialogHost />
     </div>

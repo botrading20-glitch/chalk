@@ -123,6 +123,7 @@ function Editor({ draftKey, original, stored }: { draftKey: string; original: Wo
         mode="edit"
         previousBefore={original.startTime}
         excludeWorkoutId={original.id}
+        routineId={original.routineId}
       />
     </div>
   );

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useData, useNow, usePreviousSets } from '../lib/data';
+import { previousSession } from '../lib/previous';
 import { fmtClock, fmtRest, kgTo, kmTo, toKg, toKm, uid } from '../lib/format';
 import { SET_TYPE_LABEL, type Field } from '../lib/meta';
 import { Link } from '../lib/router';
@@ -44,6 +45,7 @@ export function WorkoutEditor({
   mode,
   previousBefore,
   excludeWorkoutId,
+  routineId,
   onRest,
   stopwatch,
   onStopwatch,
@@ -54,6 +56,8 @@ export function WorkoutEditor({
   /** Only sessions that started before this time count as "previous". */
   previousBefore?: number;
   excludeWorkoutId?: string;
+  /** The routine this workout or template belongs to, for "Same routine first". */
+  routineId?: string;
   /** Live mode: called with the rest length after a set is checked off. */
   onRest?: (seconds: number) => void;
   /** Live mode: the timed set in progress, and how to start or clear it. */
@@ -64,7 +68,7 @@ export function WorkoutEditor({
   const settings = useSettings();
   const previous = usePreviousSets(
     exercises.map((e) => e.exerciseId),
-    { before: previousBefore, excludeId: excludeWorkoutId },
+    { before: previousBefore, excludeId: excludeWorkoutId, routineId },
   );
   const [picker, setPicker] = useState<{ replace?: string } | null>(null);
   const [menuFor, setMenuFor] = useState<string | null>(null);
@@ -88,12 +92,12 @@ export function WorkoutEditor({
     updateEx(exId, (we) => ({ ...we, sets: we.sets.map((s) => (s.id === setId ? { ...s, ...patch } : s)) }));
 
   function lastBlocks(exerciseId: string) {
-    for (const w of workouts) {
-      if (w.id === excludeWorkoutId || (previousBefore !== undefined && w.startTime >= previousBefore)) continue;
-      const blocks = w.exercises.filter((we) => we.exerciseId === exerciseId);
-      if (blocks.length) return blocks;
-    }
-    return undefined;
+    const w = previousSession(workouts, exerciseId, {
+      before: previousBefore,
+      excludeId: excludeWorkoutId,
+      routineId: settings.previousFrom === 'routine' ? routineId : undefined,
+    });
+    return w?.exercises.filter((we) => we.exerciseId === exerciseId);
   }
 
   function newBlock(exerciseId: string): WorkoutExercise {
@@ -101,7 +105,7 @@ export function WorkoutEditor({
     const prevSets = prev?.flatMap((b) => b.sets);
     const sets = prevSets?.length
       ? prevSets.map((s) => emptySet(s.type))
-      : Array.from({ length: mode === 'routine' ? 3 : 1 }, () => emptySet());
+      : Array.from({ length: settings.newExerciseSets || (mode === 'routine' ? 3 : 1) }, () => emptySet());
     return { id: uid(), exerciseId, sets, restSeconds: prev?.[0]?.restSeconds };
   }
 
@@ -141,11 +145,13 @@ export function WorkoutEditor({
     return earlier !== undefined ? { seconds: earlier, label: t('stopwatch.previousSet') } : undefined;
   }
 
-  function restAfter(we: WorkoutExercise) {
+  function restAfter(we: WorkoutExercise, set: WorkoutSet) {
     if (we.supersetId !== undefined) {
       const group = exercises.filter((x) => x.supersetId === we.supersetId);
       if (group.at(-1)?.id !== we.id) return 0;
     }
+    // Warm-ups can rest for their own time (0 turns the timer off for them).
+    if (set.type === 'warmup' && settings.warmupRest >= 0) return settings.warmupRest;
     return we.restSeconds ?? settings.defaultRest;
   }
 
@@ -174,7 +180,7 @@ export function WorkoutEditor({
     setPopId(s.id);
     if (settings.vibrateOnCheck) navigator.vibrate?.(12);
     updateSet(we.id, s.id, { ...filled, completed: true });
-    onRest?.(restAfter(we));
+    if (settings.autoRest) onRest?.(restAfter(we, s));
   }
 
   function startTiming(setId: string) {
@@ -316,7 +322,7 @@ export function WorkoutEditor({
                       aria-label={t('editor.setLabel', { label: labels[i], type: SET_TYPE_LABEL[s.type] })}
                     >
                       {labels[i]}
-                      {s.rpe !== undefined && <sup>@{s.rpe}</sup>}
+                      {settings.showRpe && s.rpe !== undefined && <sup>@{s.rpe}</sup>}
                     </button>
                     <button
                       className="prev-col prev"
@@ -485,7 +491,7 @@ export function WorkoutEditor({
                 </button>
               ))}
             </div>
-            {mode !== 'routine' && (
+            {mode !== 'routine' && settings.showRpe && (
               <>
                 <h3 className="list-label">{t('editor.rpeTitle')}</h3>
                 <div className="chips wrap">

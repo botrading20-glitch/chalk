@@ -61,19 +61,20 @@ export function toCsv(rows: (string | number | undefined | null)[][]) {
     .join('\n');
 }
 
-/** Phones get the share sheet (save to Files, Drive, mail…); desktops get a download. */
+/** Phones get the share sheet (save to Files, Drive, mail…); desktops get a download. False when the user backed out of the share sheet. */
 export async function saveFile(name: string, content: BlobPart, type: string) {
   const file = new File([content], name, { type });
   const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   if (mobile && navigator.canShare?.({ files: [file] })) {
     try {
       await navigator.share({ files: [file], title: name });
-      return;
+      return true;
     } catch (e) {
-      if ((e as DOMException).name === 'AbortError') return;
+      if ((e as DOMException).name === 'AbortError') return false;
     }
   }
   downloadFile(file);
+  return true;
 }
 
 export function downloadFile(file: File) {

@@ -1,4 +1,6 @@
 import { db, getKV, setKV } from '../db';
+import { saveFile } from './csv';
+import { setPref } from './prefs';
 import type { BodyWeight, Exercise, Routine, Settings, Workout } from '../types';
 import { cleanAll, cleanBodyWeight, cleanExercise, cleanRoutine, cleanSettings, cleanWorkout } from './validate';
 import { t } from '../i18n';
@@ -24,6 +26,19 @@ export interface ParsedBackup {
   bodyweight: BodyWeight[];
   /** Records in the file too damaged to restore; they are left out. */
   skipped: number;
+}
+
+/** Name for a file the user saves: setward-backup-2026-10-17.json. */
+export const exportFileName = (kind: string, ext: string) => `setward-${kind}-${new Date().toISOString().slice(0, 10)}.${ext}`;
+
+/** Saves a backup file and remembers when; false when the user backed out of the share sheet. */
+export async function saveBackupFile() {
+  const saved = await saveFile(exportFileName('backup', 'json'), await exportBackup(), 'application/json');
+  if (saved) {
+    await setPref('lastBackupAt', Date.now());
+    await setPref('backupSnoozedUntil', 0);
+  }
+  return saved;
 }
 
 export async function exportBackup() {

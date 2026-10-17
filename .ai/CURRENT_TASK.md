@@ -1,9 +1,12 @@
 # Current task
 
 ## Task
-Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, not deployed). The owner-approved plan is `.ai/LAUNCH_PLAN.md`; milestone status is in the roadmap ("Setward 1.0 launch"). **Stopped after M3** (visual refresh, 2026-10-17): M1 (Hevy retired, Strong import, Setward CSV), M2 (i18n layer, settings model, rem/logical CSS) and M3 (the Forward look on every screen) are done and committed. M4 (Settings home and sub-pages) is next. REL-101 to REL-103 are live and still wait on the owner's phone checks.
+Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, not deployed). The owner-approved plan is `.ai/LAUNCH_PLAN.md`; milestone status is in the roadmap ("Setward 1.0 launch"). **Stopped after M4** (Settings experience, 2026-10-17): M1 (Hevy retired, Strong import, Setward CSV), M2 (i18n layer, settings model, rem/logical CSS), M3 (the Forward look on every screen) and M4 (grouped Settings with every new setting wired) are done and committed. M5 (welcome, starter programs, log a past workout, recent records) is next. REL-101 to REL-103 are live and still wait on the owner's phone checks.
 
-## This session (2026-10-17): M3 checkpoint 2 and checks
+## This session (2026-10-17): M4
+- Owner approved starting M4 and asked to see the Settings home first: sent dark and light 375 px screenshots as soon as the home existed, then built the eleven pages and wired the settings. Details and evidence: roadmap LAUNCH-M4 and `TEST_STATUS.md`.
+
+## Earlier today (2026-10-17): M3 checkpoint 2 and checks
 - The owner approved the Forward direction at checkpoint 1. Built the celebration, History and workout detail, exercises, Progress (heat map and gradient charts), body weight and the share card, then ran the M3 checks. Details and evidence: roadmap LAUNCH-M3 and `TEST_STATUS.md`.
 
 ## Earlier today (2026-10-17): M3 checkpoint 1
@@ -38,9 +41,9 @@ Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, 
 - ENV-002: deploy jobs are pinned to `ubuntu-24.04` (2026-10-05) because `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19. Revisit when GitHub retires that image.
 
 ## Next exact action (resume here)
-1. `git checkout launch` (HEAD should be the commit "Finish the Forward look: celebration, history, exercises, progress, share card"). Read the roadmap sections LAUNCH-M3 and the Settings catalogue in `.ai/LAUNCH_PLAN.md`.
-2. Start **M4, the Settings experience**: a grouped home (icon, label, current value, chevron) with each row opening `#/settings/<section>`; convert `src/pages/Settings.tsx`, the one screen still hard-coded in English, to `t()` as it moves. Wire the new settings where the catalogue says they act, including `compactRoutines` (Home) and the `vibrateOnCheck` toggle (the haptic itself is already in `WorkoutEditor`). **Show the owner the Settings home (dark and light, 375 px) as soon as it exists**, because the plan counts it as part of the visual checkpoint.
-3. Then M5 (Settings home and sub-pages, which also converts `src/pages/Settings.tsx`, the one screen still hard-coded in English), M5, M6, M7, M8 in order. Merge and push only with the owner's go-ahead (NN-15).
+1. `git checkout launch` (HEAD should be the commit "Add the grouped Settings pages and wire the new settings"). Read the roadmap section LAUNCH-M4 and M5 in `.ai/LAUNCH_PLAN.md`.
+2. Start **M5**: the welcome screen (`#/welcome`, shown only with no workouts, no routines and `welcomeSeen` false; `welcomeSeen` is in `src/lib/prefs.ts`), starter programs (`src/data/programs.ts`, with a test that every exercise id exists), log a past workout (`#/history/new`, reusing `EditWorkout`), recent records on Progress (`src/lib/records.ts`). Every string goes through `t()`; the look is the Forward look (use `SlantBar`, `.btn-glow` only for the hero action).
+3. Then M6 (Settings home and sub-pages, which also converts `src/pages/Settings.tsx`, the one screen still hard-coded in English), M5, M6, M7, M8 in order. Merge and push only with the owner's go-ahead (NN-15).
 
 ### M3 design brief (decided, not yet built)
 - Keep the violet-charcoal palette, purple accent, Big Shoulders Display and Archivo. Owner asked for refine + bolder together. Amend NN-16 in `DECISIONS.md` when it lands.
@@ -53,9 +56,9 @@ Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, 
 - **Bash tool limit:** a single command longer than about 6 KB fails with "unexpected EOF". Split big heredocs into several calls. Doubled backslashes in a command are collapsed to one, so build strings containing a backslash with `chr(92)` or raw strings.
 - **Handy helper pattern:** small python scripts that replace exact strings (each old string must exist once) were used for all the string extraction. `src/i18n/en/*.ts` holds the catalog parts, merged in `src/i18n/en.ts`; add a key there and use `t('key')`.
 - Dev server: `.claude/launch.json` → `chalk-dev` (:5173) and `chalk-preview` (:4173, built with `MSYS_NO_PATHCONV=1 BASE_PATH=/chalk/ npm run build`). The dev browser has the sample data and default settings. No server is left running.
-- Baseline at the stop: typecheck clean, 104 tests pass (2 skipped), contrast 0 of 732 failing, `/chalk/` build main chunk 165.73 kB gzip.
+- Baseline at the stop: typecheck clean, 104 tests pass (2 skipped), contrast 0 of 732 failing, 113 tests, `/chalk/` build main chunk 164.82 kB gzip (Settings chunk 10.29 kB, lazy).
 - The dev browser has the sample data; its settings row was reset (theme System, no goal, no name). To see the week card with a goal: `(await import('/src/lib/settings.ts')).updateSettings({ weeklyGoal: 4, profileName: 'Name' })` in the page console.
 - The Hevy removal is final (owner decision); do not reintroduce Hevy wording.
 
 ## Last updated
-2026-10-17 (M3 done; M4 next)
+2026-10-17 (M4 done; M5 next)

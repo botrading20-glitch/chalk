@@ -9,7 +9,7 @@ npm run dev            # http://localhost:5173 (launch config: chalk-dev)
 node scripts/sample-backup.mjs   # writes tmp-import/chalk-sample-backup.json
 ```
 
-The data in the dev browser belongs to `localhost:5173` only. Restore the sample through **Progress → ⚙ Settings → Restore backup**. To start clean, use **Settings → Erase all data** (dev browser only, never the owner's phone).
+The data in the dev browser belongs to `localhost:5173` only. Restore the sample through **Progress → ⚙ Settings → Your data → Restore backup**. To start clean, use **Settings → Your data → Erase all data** (dev browser only, never the owner's phone).
 
 ## Automated
 
@@ -31,7 +31,7 @@ The data in the dev browser belongs to `localhost:5173` only. Restore the sample
 | S-06 | Finish and history | Finish the workout: the detail page shows "Workout N saved"; it appears in History; edit it and save. |
 | S-07 | Offline | On the preview build (S-08), load once, go offline in devtools, reload: the app works. |
 | S-08 | Sub-path build | `npm run build` with `BASE_PATH=/chalk/` (in Git Bash prefix `MSYS_NO_PATHCONV=1`, or it rewrites the path to `/Program Files/Git/chalk/` and the page loads blank), then `npx vite preview --base /chalk/ --port 4173` (launch config `chalk-preview`); open `/chalk/`: loads with no CSP violations in the console. |
-| S-09 | Backup round trip | Settings → Back up data; Erase all data; Restore the file: counts match. |
+| S-09 | Backup round trip | Settings → Your data → Back up now (the page then says "Backed up today"); Erase all data; Restore the file: counts match. |
 | S-10 | CSV import | Import a Strong CSV (or an export from Setward itself); the preview shows workouts and exercises, and asks for kg or lbs when the file has no unit; import; records appear. |
 | S-11 | Crash screen | (dev only) throw inside a page render: the recovery screen shows, and *Download backup* works. |
 | S-12 | Data check | Settings → Your data → *Check data for problems* reads "No problems found" on healthy data. (dev only) Put a workout with `exercises: null` into IndexedDB and reload: the crash screen shows; *Check for damaged data* lists it; *Download a backup* works; Delete then Keep leaves it; Delete then Delete removes it; *Reload Setward* opens the app. |

@@ -3,6 +3,7 @@ import { DEFAULT_SETTINGS, db, getKV, setKV } from '../db';
 import { resolveLanguage, setLocale } from '../i18n';
 import type { Settings } from '../types';
 import { setCalcContext } from './context';
+import { setSoundConfig } from './sounds';
 import { requestSync } from './sync';
 
 /** Last settings read, so components mounted later (sheets, forms) start from them instead of the defaults. */
@@ -11,6 +12,7 @@ let cached: Partial<Settings> | undefined;
 /** Puts the settings that plain functions depend on (language, time format, week start, 1RM formula) into effect. */
 export function applySettings(s: Settings) {
   setCalcContext({ timeFormat: s.timeFormat, weekStart: s.weekStart, oneRmFormula: s.oneRmFormula });
+  setSoundConfig({ sound: s.restSound, volume: s.soundVolume });
   return setLocale(resolveLanguage(s.language));
 }
 

@@ -83,6 +83,45 @@ export function Segmented<T extends string>({
   );
 }
 
+/** A radio group of free-form options: one tab stop, arrow keys move and select (the Segmented pattern). */
+export function RadioGroup<T extends string>({
+  options,
+  value,
+  onChange,
+  label,
+  className = '',
+  render,
+}: {
+  options: T[];
+  value: T;
+  onChange: (v: T) => void;
+  label: string;
+  className?: string;
+  render: (option: T, selected: boolean) => ReactNode;
+}) {
+  const current = Math.max(0, options.indexOf(value));
+
+  function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    const n = options.length;
+    const step = ARROW_STEP.get(e.key);
+    const next = e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : step ? (current + step + n) % n : -1;
+    if (next < 0) return;
+    e.preventDefault();
+    onChange(options[next]);
+    (e.currentTarget.children[next] as HTMLElement | undefined)?.focus();
+  }
+
+  return (
+    <div className={className} role="radiogroup" aria-label={label} onKeyDown={onKeyDown}>
+      {options.map((o, i) => (
+        <button key={o} type="button" role="radio" aria-checked={o === value} tabIndex={i === current ? 0 : -1} onClick={() => onChange(o)}>
+          {render(o, o === value)}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
   return (
     <label className="toggle">

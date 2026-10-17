@@ -530,15 +530,18 @@ p {
 
 .segmented button {
   flex: 1;
+  min-width: 0;
   min-height: 34px;
-  padding: 0 12px;
+  padding: 3px 8px;
   border: 0;
   border-radius: 9px;
   background: transparent;
   color: var(--text-2);
   font-weight: 600;
   font-size: 0.875rem;
-  white-space: nowrap;
+  line-height: 1.2;
+  /* Long labels (Extra large, Same routine first) wrap rather than push the page sideways. */
+  overflow-wrap: anywhere;
 }
 
 .segmented button {
@@ -1178,6 +1181,10 @@ dialog.sheet-full {
   background: var(--wash);
   border-color: color-mix(in srgb, var(--accent) 32%, var(--line));
   box-shadow: var(--lift), var(--elev-2);
+}
+
+.week-card > * {
+  min-width: 0;
 }
 
 .week-top {
@@ -3446,4 +3453,381 @@ html[data-text='xlarge'] {
   --accent-ink: #98235a;
   --viz: #c23a78;
   --viz-wash: rgb(194 58 120 / 0.1);
+}
+
+/* ---------- Settings home: grouped rows ---------- */
+
+.srow-group {
+  display: grid;
+  gap: 8px;
+}
+
+.srow-title {
+  margin: 0;
+  padding-inline-start: 4px;
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.srow-card {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--surface-hi), var(--surface));
+  box-shadow: var(--lift), var(--elev-1);
+}
+
+.srow-card li + li {
+  border-top: 1px solid var(--line);
+}
+
+.srow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 10px 14px;
+  text-decoration: none;
+  transition: background-color var(--dur-fast) ease;
+}
+
+.srow:active {
+  background: var(--surface-2);
+}
+
+.srow-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface-2));
+  color: var(--accent-ink);
+}
+
+.srow-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.srow-label {
+  font-weight: 600;
+}
+
+.srow-value {
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.srow-chevron {
+  flex: none;
+  color: var(--text-3);
+}
+
+.srow-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: 0.8125rem;
+}
+
+.srow-foot-mark {
+  color: var(--accent-ink);
+  opacity: 0.7;
+}
+
+/* ---------- Settings pages ---------- */
+
+.sound-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.choice-chips {
+  flex: 1 1 100%;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.choice-chips button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background-color var(--dur) ease, color var(--dur) ease;
+}
+
+.choice-chips button[aria-checked='true'] {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.swatches button {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 10px 4px 8px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.swatches button[aria-checked='true'] {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.swatch {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--sw);
+  color: #fff;
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.18);
+}
+
+/* The accent presets as the dark and light themes draw them. */
+.swatch-purple {
+  --sw: #7a55e6;
+}
+.swatch-indigo {
+  --sw: #4d63e0;
+}
+.swatch-teal {
+  --sw: #0b7f84;
+}
+.swatch-pink {
+  --sw: #c23a78;
+}
+
+:root[data-theme='light'] .swatch-purple {
+  --sw: #5b3cc4;
+}
+:root[data-theme='light'] .swatch-indigo {
+  --sw: #3a4bc2;
+}
+:root[data-theme='light'] .swatch-teal {
+  --sw: #0a6b70;
+}
+:root[data-theme='light'] .swatch-pink {
+  --sw: #a82a64;
+}
+
+.lang-list > button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 0;
+  background: transparent;
+  text-align: start;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.lang-list > button + button {
+  border-top: 1px solid var(--line);
+}
+
+.lang-list > button[aria-checked='true'] {
+  font-weight: 650;
+}
+
+.lang-hint {
+  color: var(--text-3);
+  font-size: 0.8125rem;
+}
+
+.lang-check {
+  margin-inline-start: auto;
+  color: var(--accent-ink);
+}
+
+.about-hero {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 18px 0 6px;
+  text-align: center;
+}
+
+.about-mark {
+  color: var(--accent-ink);
+  filter: drop-shadow(0 6px 18px color-mix(in srgb, var(--accent) 55%, transparent));
+}
+
+.about-name {
+  margin-top: 8px;
+  font: 800 2.25rem/1 var(--font-display);
+  letter-spacing: 0.01em;
+}
+
+.about-item summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+
+.about-item[open] summary {
+  margin-bottom: 10px;
+}
+
+.about-item p {
+  color: var(--text-2);
+  font-size: 0.9375rem;
+}
+
+.faq {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+}
+
+.faq dt {
+  font-weight: 600;
+}
+
+.faq dd {
+  margin: 2px 0 0;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+}
+
+/* ---------- Backup reminder and compact routine cards ---------- */
+
+.backup-card {
+  display: grid;
+  gap: 12px;
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--line));
+}
+
+.backup-text {
+  display: grid;
+  gap: 2px;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+.backup-text strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.backup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Setting "Compact routine cards": names of exercises are hidden, the rest tightens up. */
+.routine-card.compact {
+  gap: 4px;
+  padding: 12px 14px;
+}
+
+.routine-card.compact .routine-exercises {
+  display: none;
+}
+
+.routine-card.compact .routine-title {
+  font-size: 1.25rem;
+}
+
+.routine-card.compact .btn {
+  min-height: 38px;
+  margin-top: 4px;
+}
+
+/* ---------- Larger workout controls ---------- */
+
+html[data-controls='large'] .set-table {
+  --field-w: 4.75rem;
+  --badge-w: 3rem;
+  --check-w: 3.5rem;
+}
+
+html[data-controls='large'] .set-input {
+  height: 50px;
+  font-size: 1.125rem;
+}
+
+html[data-controls='large'] .check {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+}
+
+html[data-controls='large'] .set-badge {
+  width: 42px;
+  height: 42px;
+}
+
+html[data-controls='large'] .add-set {
+  min-height: 48px;
+}
+
+html[data-controls='large'] .rest-actions button {
+  min-height: 46px;
+}
+
+@media (max-width: 379px) {
+  html[data-controls='large'] .set-table {
+    --field-w: 4rem;
+    --badge-w: 2.75rem;
+    --check-w: 3.25rem;
+  }
+}
+
+@media (max-width: 339px) {
+  html[data-controls='large'] .set-table {
+    --field-w: 3.5rem;
+    --badge-w: 2.5rem;
+    --check-w: 3rem;
+  }
+
+  html[data-controls='large'] .set-input {
+    font-size: 1rem;
+  }
+
+  /* Big controls and big text on the narrowest phones leave no room for Previous; the grey
+     placeholders in the boxes still show last time's numbers. */
+  html[data-controls='large'][data-text='large'] .set-table .prev-col,
+  html[data-controls='large'][data-text='xlarge'] .set-table .prev-col {
+    visibility: hidden;
+  }
 }

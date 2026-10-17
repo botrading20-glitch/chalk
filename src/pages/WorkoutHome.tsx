@@ -3,6 +3,7 @@ import { useState, type ReactNode } from 'react';
 import { Brand } from '../components/Brand';
 import { confirmDialog, toast } from '../components/dialogs';
 import { IconChevron, IconCopy, IconEdit, IconFolder, IconFolderPlus, IconGrip, IconMore, IconPlay, IconPlus, IconTrash } from '../components/Icons';
+import { BackupReminder } from '../components/BackupReminder';
 import { InstallBanner } from '../components/InstallPrompt';
 import { FolderSheet, MoveToFolderSheet, ReorderSheet } from '../components/RoutineFolders';
 import { ActionSheet } from '../components/Sheet';
@@ -13,6 +14,7 @@ import { useData, useNow } from '../lib/data';
 import { groupRoutines, removeFolder, toggleFolder, useCollapsedFolders, type Folder } from '../lib/folders';
 import { fmtClock, fmtDate, startOfDay, uid } from '../lib/format';
 import { Link, navigate } from '../lib/router';
+import { useSettings } from '../lib/settings';
 import { useSyncStatus } from '../lib/sync';
 import {
   cloneExercises,
@@ -61,6 +63,7 @@ export function WorkoutHome() {
       <PageHeader large title={t('tab.workout')} actions={<Brand />} />
 
       <SyncWarning />
+      <BackupReminder />
       {active ? <ResumeCard /> : null}
       <WeekCard />
       <InstallBanner />
@@ -291,9 +294,10 @@ function RoutineCard({ routine, onMenu }: { routine: Routine; onMenu: () => void
   const setCount = routine.exercises.reduce((n, we) => n + we.sets.length, 0);
   const key = routine.title.trim().toLowerCase();
   const last = workouts.find((w) => w.routineId === routine.id || w.title.trim().toLowerCase() === key);
+  const { compactRoutines } = useSettings();
 
   return (
-    <article className="card routine-card">
+    <article className={`card routine-card ${compactRoutines ? 'compact' : ''}`}>
       <header className="routine-head">
         <Link to={`/routines/${routine.id}`} className="routine-title">
           {routine.title}

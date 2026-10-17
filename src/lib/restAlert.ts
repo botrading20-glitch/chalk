@@ -11,6 +11,7 @@
 // If the app was frozen anyway and the timer can't beep, the track's own beep
 // FALLBACK seconds later still wakes you, at the cost of pausing the music.
 
+import { SOUNDS, TRACK_AMPLITUDE, soundConfig, soundSeconds } from './sounds';
 import { beep } from './timer';
 import { t } from '../i18n';
 
@@ -56,26 +57,27 @@ function wav(samples: Int16Array) {
   return new Blob([buf], { type: 'audio/wav' });
 }
 
-/** The in-app beep (880, 880, 1320 Hz), played twice so it carries from a pocket. */
-const TONES = [0, 1.1].flatMap((offset) => [
-  { at: offset, freq: 880, length: 0.18 },
-  { at: offset + 0.25, freq: 880, length: 0.18 },
-  { at: offset + 0.5, freq: 1320, length: 0.45 },
-]);
-const BEEP_SECONDS = 2.1;
+/** The chosen sound, played twice so it carries from a pocket. */
+function trackTones() {
+  const { sound } = soundConfig();
+  const period = soundSeconds(sound) + 0.15;
+  return { tones: [0, period].flatMap((offset) => SOUNDS[sound].map((tone) => ({ ...tone, at: tone.at + offset }))), seconds: period + soundSeconds(sound) + 0.1 };
+}
 
 function buildTrack(silence: number) {
   const lead = Math.round(silence * RATE);
-  const samples = new Int16Array(lead + Math.round(BEEP_SECONDS * RATE));
+  const { tones, seconds } = trackTones();
+  const amplitude = TRACK_AMPLITUDE[soundConfig().volume];
+  const samples = new Int16Array(lead + Math.round(seconds * RATE));
   // A whisper of noise (about −80 dB): inaudible, but still a playing track.
   for (let i = 0; i < lead; i++) samples[i] = (Math.random() * 7 - 3) | 0;
-  for (const tone of TONES) {
+  for (const tone of tones) {
     const start = lead + Math.round(tone.at * RATE);
     const n = Math.round(tone.length * RATE);
     for (let i = 0; i < n; i++) {
       const t = i / RATE;
       const envelope = Math.min(1, t / 0.01) * Math.exp((-4 * t) / tone.length);
-      samples[start + i] = Math.round(Math.sin(2 * Math.PI * tone.freq * t) * envelope * 0.6 * 32767);
+      samples[start + i] = Math.round(Math.sin(2 * Math.PI * tone.freq * t) * envelope * amplitude * (tone.level ?? 1) * 32767);
     }
   }
   return wav(samples);

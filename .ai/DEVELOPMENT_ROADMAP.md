@@ -268,7 +268,7 @@ Plan: `C:\Users\ousse\.claude\plans\c-users-ousse-downloads-ultimate-projec-stea
 | LAUNCH-M5 | Welcome, starter programs, log a past workout, recent records | DONE 2026-10-17 (see below) |
 | LAUNCH-M6 | Ten translations and Arabic right-to-left | DONE 2026-10-17 (see below) |
 | LAUNCH-M7 | Link previews, privacy page, licence, README, store groundwork | DONE 2026-10-17 (see below) |
-| LAUNCH-M8 | Verify, record, ask to release (REL-104) | VERIFIED 2026-10-17; release waits for the owner's go-ahead (see below and `RELEASE_CHECKLIST.md`) |
+| LAUNCH-M8 | Verify, record, ask to release (REL-104) | DONE and RELEASED 2026-10-17 (`main` @ c3da695; see below and `RELEASE_CHECKLIST.md`) |
 
 ### LAUNCH-M1: Retire Hevy, add Strong import and Setward's own CSV
 - **Done:** `hevy.ts` became the format-neutral `importer.ts` (`planImport`, `applyImport`, `readWorkoutCsv`; duplicates matched by start second and title). New `strong.ts` (Strong's CSV: W/D/F set orders, rest-timer rows skipped, units from a column, the header or the user's choice, semicolons and decimal commas, durations like "1h 3m", distance in meters) and `exportCsv.ts` (Setward's own CSV, units in column names, local dates; reads itself back). Settings: "Import workouts (CSV)" with a kg/lbs question when the file has no unit, and "Export workouts as CSV" in the new format. Hevy wording removed from the UI, source, README, CLAUDE.md/AGENTS.md and the notes (history entries kept as written). NN-06 retired, NN-14 generalised, REQ-009 and S-10 rewritten.
@@ -347,6 +347,6 @@ Plan: `C:\Users\ousse\.claude\plans\c-users-ousse-downloads-ultimate-projec-stea
   - at large text on phones under 380 px the Previous column header takes its short title and its values wrap onto two lines (they ended in "35 ×…");
   - at the largest text the column is under 50 px up to 460 px wide, so there it takes the short title too, and it is hidden under 390 px (and, with larger controls, under 460 px); the grey placeholders in the boxes still show last time.
 - **Also recorded:** `REQUIREMENTS.md` REQ-019 to REQ-023; `NON_NEGOTIABLES.md` NN-17 and NN-18; `RELEASE_CHECKLIST.md` REL-104 with the after-deploy checks; the "sweeps must use `clientWidth`" lesson in `CURRENT_TASK.md`.
-- **Not done, on purpose:** merging `launch` into `main` and pushing, which deploys (NN-15). The owner is asked first. Rollback is `git revert -m 1 <merge>` and push.
+- **Release:** the owner approved; `launch` was merged into `main` as c3da695 and pushed, Pages run 39056196923 succeeded and the live page was checked (`TEST_STATUS.md`). Rollback: `git revert -m 1 c3da695` and push.
 - **Limits:** see REL-104. Not run: a real phone, an iPhone, a screen reader, a native speaker for any translation, real link previews, launcher shortcuts.
 

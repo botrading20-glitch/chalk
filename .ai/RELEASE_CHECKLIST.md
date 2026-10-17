@@ -2,9 +2,9 @@
 
 Pushing `main` deploys to the live app (NN-15); each new release needs the owner's authorization.
 
-## REL-104: branch `launch` (Setward 1.0), verified 2026-10-17, NOT yet released
+## REL-104: branch `launch` (Setward 1.0), released 2026-10-17
 
-**Decision: READY WITH DOCUMENTED LIMITATIONS, waiting for the owner's go-ahead (NN-15).** Nothing is merged, pushed or deployed. The branch is local, eight milestones ahead of `main` (M1 Hevy removal and Strong import, M2 i18n and settings model, M3 the Forward look, M4 grouped Settings, M5 welcome / starter programs / past workouts / recent records, M6 ten languages and Arabic right to left, M7 link previews / privacy page / licence / README / wide-screen panel / What's new / store notes, M8 verification fixes). Rollback after a release: `git revert -m 1 <merge>` and push; installed copies update on next open.
+**Decision: READY WITH DOCUMENTED LIMITATIONS, released.** The owner approved after the verification ("Yes: merge launch into main with --no-ff and push it, then check the live site and record it."). Merged as c3da695 (`--no-ff`; parents 2473881 and 9641d1d; its tree is identical to `launch`) and pushed; Pages run 39056196923 succeeded (build and deploy jobs). The branch was eight milestones ahead of `main` (M1 Hevy removal and Strong import, M2 i18n and settings model, M3 the Forward look, M4 grouped Settings, M5 welcome / starter programs / past workouts / recent records, M6 ten languages and Arabic right to left, M7 link previews / privacy page / licence / README / wide-screen panel / What's new / store notes, M8 verification fixes). Rollback: `git revert -m 1 c3da695` and push; installed copies update on next open.
 
 **Data safety:** no Dexie schema change and no sync-format change in the whole branch (the `chalk` database name, backup `app: 'chalk'`, `chalk-sync/1` and the `/chalk/` scope are untouched). New per-device state is prefs in `kv` (`lastSeenVersion`, `welcomeSeen`, backup reminder) and new fields in the settings record with defaults, so an existing install opens exactly as before, keeps English until the user picks a language, and sees the What's new sheet once. Backups made by any earlier version still restore (`backup.test.ts`).
 
@@ -19,15 +19,17 @@ Pushing `main` deploys to the live app (NN-15); each new release needs the owner
 | Overflow: every route, all ten languages at 320 and 375 px (and German, French, Dutch, Polish, Turkish, Arabic at extra-large text with larger controls); English at 320, 360, 375 and 412 px in four or more setting combinations; all measured against `clientWidth` | ✅ after the fixes recorded in TEST_STATUS (M6, M8) |
 | Keyboard and reduced motion | ✅ no unnamed control on 27 routes, arrow keys in radio groups, motion off under the setting |
 | CSP and service worker | ✅ 0 violations; `privacy.html` served as itself; no console errors in the final build |
-| Owner's go-ahead (NN-15) | ⏳ asked, not given |
-| Real phone, iPhone, screen reader | ⚠ not run (owner) |
+| Owner's go-ahead (NN-15) | ✅ 2026-10-17 |
+| Merged, pushed and deployed | ✅ c3da695, Pages run 39056196923 |
+| Live page checked | ✅ bundle `index-DXCdjz-F.js` (the verified build), manifest scope `/chalk/` with 2 shortcuts, 5 screenshots and categories, og tags with absolute URLs, `og-image.jpg`, `privacy.html` (served as itself under the service worker) and `store/` files answer 200, a new install lands on the welcome page, starter program added, the weigh shortcut opens its sheet, French / Arabic / English switch with the right `lang` and `dir`, 0 CSP violations, no console errors |
+| Real phone, iPhone, screen reader | ⚠ not run (owner); the installed copies on the owner's phone have not been checked after the update |
 | Native-speaker review of the translations | ⚠ not run: all ten are machine translations |
 | Real link previews (Facebook debugger, WhatsApp) and launcher long-press shortcuts | ⚠ need the deployed address and a phone |
 | Google Play | ⚠ groundwork only (`.ai/PLAY_STORE.md`); screenshots must be retaken; the owner decides fee, testers, package name |
 
 Known limitations: the translations are machine-made and some wording will be off; exercise names and instructions stay English; a few translated words are short on purpose (German "Weiter", the set-table headers); at the largest text size the live workout's Previous column is hidden on phones, and the placeholders show last time instead; the Arabic font needs the network the first time Arabic is shown; the privacy page is English only; `LICENSE` names "The Setward authors" until the owner chooses a name; sweeps before M6 may have been measured against `innerWidth` (redone for the whole app in M6 and M8).
 
-After a release, the owner (or a session with the live address) should check: the live page loads and the service worker updates; the What's new sheet appears once on a device that has data; `/chalk/privacy.html` opens as the privacy page; Chrome devtools, Application, Manifest shows the shortcuts and screenshots with no errors; a link to the app pasted into Facebook's sharing debugger and WhatsApp shows the preview image.
+Still to check after this release, on a phone and in the sharing tools (the live page itself was checked, above):  the live page loads and the service worker updates; the What's new sheet appears once on a device that has data; `/chalk/privacy.html` opens as the privacy page; Chrome devtools, Application, Manifest shows the shortcuts and screenshots with no errors; a link to the app pasted into Facebook's sharing debugger and WhatsApp shows the preview image.
 
 ## REL-103: branch `data-check` (Check data), released 2026-10-16
 

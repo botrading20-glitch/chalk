@@ -1,9 +1,12 @@
 # Current task
 
 ## Task
-Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, not deployed). The owner-approved plan is `.ai/LAUNCH_PLAN.md`; milestone status is in the roadmap ("Setward 1.0 launch"). **Stopped after M8** (2026-10-17): all eight launch milestones are done and committed on `launch`, and the full verification passed (`RELEASE_CHECKLIST.md` REL-104, `TEST_STATUS.md`). **Setward 1.0 is ready to release; it waits only for the owner's go-ahead to merge `launch` into `main` and push, which deploys (NN-15).** REL-101 to REL-103 are live and still wait on the owner's phone checks.
+Setward 1.0 is **released** (2026-10-17): `launch` was merged into `main` as c3da695 (`--no-ff`), pushed at the owner's request, deployed by Pages run 39056196923, and the live page was checked (`RELEASE_CHECKLIST.md` REL-104). The launch plan (`.ai/LAUNCH_PLAN.md`) is complete: M1 to M8. REL-101 to REL-103 are live and still wait on the owner's phone checks.
 
-## This session (2026-10-17): M8
+## This session (2026-10-17): release
+- The owner said "Yes: merge launch into main with --no-ff and push it, then check the live site and record it." Merged as c3da695, re-ran typecheck, 163 tests, contrast and the `/chalk/` build on `main` (same bundle `index-DXCdjz-F.js`), pushed, watched the deploy succeed, checked the live site, recorded it. This notes commit is local on `main`; it has not been pushed (a push deploys again).
+
+## Earlier today (2026-10-17): M8
 - Owner approved M8 ("run the full verification and update the notes, then ask me before merging launch into main"). Ran every check in the plan; the sweeps (now measured against `clientWidth`) found the last layout problems, in the live workout's set table at large text, and they are fixed. Added REQ-019 to REQ-023, NN-17 and NN-18, REL-104 and the M8 test evidence. Nothing was merged or pushed.
 
 ## Earlier today (2026-10-17): M7
@@ -55,10 +58,9 @@ Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, 
 - ENV-002: deploy jobs are pinned to `ubuntu-24.04` (2026-10-05) because `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19. Revisit when GitHub retires that image.
 
 ## Next exact action (resume here)
-1. `git checkout launch` and read `RELEASE_CHECKLIST.md` REL-104. The branch is ready; nothing is merged or deployed.
-2. **Ask the owner whether to merge `launch` into `main` and push** (that deploys, NN-15). Mention what the owner still has to decide or do: the copyright holder in `LICENSE`, the Play decisions in `.ai/PLAY_STORE.md`, phone checks, a native-speaker look at the translations. Do not merge or push without a clear yes.
-3. If the owner says yes: merge with `--no-ff`, push (set `GH_TOKEN` from `gh auth token --user botrading20-glitch`), watch the Pages run, then run the "After a release" checks in REL-104 on the live address and record the result in `RELEASE_CHECKLIST.md`, `PROJECT_STATE.md` and `TEST_STATUS.md`. Rollback: `git revert -m 1 <merge>` and push.
-4. After the release: retake the Play screenshots on a phone (1080 × 1920), then the Play Store steps if the owner chooses them.
+1. `git checkout main`. 1.0 is live; nothing is waiting to be merged. If this notes commit is still unpushed, push it only if the owner asks (a push redeploys the same bundle).
+2. Open for the owner: phone checks (`RELEASE_CHECKLIST.md`, REL-101 to REL-104), the copyright holder in `LICENSE`, the Google Play decisions in `.ai/PLAY_STORE.md`, a native-speaker look at the translations.
+3. Ideas not started (none approved): retake the Play screenshots at 1080 × 1920 on a phone; re-measure the overflow sweeps if the layout changes (use `clientWidth`); Google Drive sync (parked branch `google-sync`, needs its origins in the CSP `connect-src`).
 
 ### M3 design brief (decided, not yet built)
 - Keep the violet-charcoal palette, purple accent, Big Shoulders Display and Archivo. Owner asked for refine + bolder together. Amend NN-16 in `DECISIONS.md` when it lands.
@@ -76,4 +78,4 @@ Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, 
 - The Hevy removal is final (owner decision); do not reintroduce Hevy wording.
 
 ## Last updated
-2026-10-17 (M8 done; release waits for the owner)
+2026-10-17 (1.0 released and checked live)

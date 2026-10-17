@@ -2,7 +2,7 @@
 
 ## Session: 2026-10-16 to 2026-10-17 (Setward 1.0 launch work)
 
-The owner approved a launch plan (`LAUNCH_PLAN.md`) and then released each milestone to me in turn: M1 to M8 on the local branch `launch`, each committed, each with its checks in `TEST_STATUS.md`. At the end all of it is verified (REL-104) and **nothing is merged, pushed or deployed**: the last step, as agreed, is to ask the owner before merging `launch` into `main`.
+The owner approved a launch plan (`LAUNCH_PLAN.md`) and then released each milestone to me in turn: M1 to M8 on the local branch `launch`, each committed, each with its checks in `TEST_STATUS.md`. At the end all of it was verified (REL-104); the owner then said "Yes: merge launch into main with --no-ff and push it, then check the live site and record it." It was merged as c3da695, pushed, deployed (Pages run 39056196923) and checked live. (`git merge -F -` does not read stdin; the merge message went through a file.)
 
 What changed for users: Hevy removed in favour of Strong and Setward CSV; the Forward look; grouped Settings with accessibility and comfort options; a welcome screen, six starter programs, logging a past workout and recent records; ten machine translations with right-to-left Arabic; link previews, a privacy page, an MIT licence, a user README, home-screen shortcuts, a wide-screen panel, version 1.0.0 with a What's new sheet; Play Store groundwork. Details per milestone are in the roadmap.
 
@@ -13,7 +13,7 @@ Problems met and what they taught:
 - Hot reload of `data.tsx` duplicates its context ("useData must be used inside DataProvider"): a dev artefact, reload the page.
 - The share card drew every line left to right, which garbled Arabic durations; each line now takes the direction of its script.
 
-Open for the owner: the release decision (REL-104), phone checks, a native-speaker look at the translations, the copyright holder in `LICENSE`, and the Google Play decisions in `PLAY_STORE.md`.
+Open for the owner: phone checks, a native-speaker look at the translations, the copyright holder in `LICENSE`, and the Google Play decisions in `PLAY_STORE.md`.
 
 ## Session: 2026-10-16 (release of REL-103)
 

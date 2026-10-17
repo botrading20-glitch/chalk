@@ -1,5 +1,21 @@
 # Test status
 
+## Live check after the 1.0 release (REL-104): 2026-10-17, `main` @ c3da695
+
+Environment: the built-in browser on https://botrading20-glitch.github.io/chalk/ (a fresh origin, so a new install), phone emulation 375 px. Pages run 39056196923: build and deploy jobs succeeded.
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Served build | PASS | `index-DXCdjz-F.js`, identical to the verified local build; service worker activated and in control |
+| Link previews | PASS | `og:image` and `twitter:image` are `https://botrading20-glitch.github.io/chalk/og-image.jpg` (200, image/jpeg, 69 kB); canonical and `og:url` the live address; `twitter:card` summary_large_image |
+| Manifest | PASS | `start_url` and `scope` `/chalk/`; shortcuts `/chalk/#/?action=start` and `#/?action=weigh`; 5 screenshots (the home one answers 200); categories health, fitness, sports |
+| Privacy page | PASS | `/chalk/privacy.html` opens as the privacy page with the service worker in control (not the app shell) |
+| First run, shortcut, languages | PASS | a new install lands on the welcome page; Push / Pull / Legs adds 3 routines; `#/?action=weigh` opens "Log body weight"; French, Arabic and English set `lang` and `dir` (fr/ltr, ar/rtl, en/ltr) |
+| CSP / console | PASS | 0 violations, no console errors |
+| Not run | NOT_RUN | the owner's installed copy updating, a phone, real link previews in Facebook's debugger or WhatsApp |
+
+The pane's test data on the live origin (a starter program) was deleted afterwards; nothing of the owner's was touched.
+
 ## Full verification for 1.0 (LAUNCH-M8): 2026-10-17, branch `launch` after M7, with the M8 fixes
 
 Environment: Windows 11, built-in Chromium; dev server on :5173 with the sample backup (65 workouts, 6 routines) and the production preview on :4173/chalk/ (empty storage); phone emulation 320, 360, 375 and 412 px.

@@ -2,7 +2,7 @@
 
 Completed roadmap work, newest first. Evidence is in `TEST_STATUS.md` and on each task in `DEVELOPMENT_ROADMAP.md`.
 
-## 2026-10-17: Setward 1.0 launch work (branch `launch`, verified, not yet released)
+## 2026-10-17: Setward 1.0 (merged as c3da695 and deployed)
 
 | Task | Result | Notes |
 |------|--------|-------|
@@ -13,7 +13,7 @@ Completed roadmap work, newest first. Evidence is in `TEST_STATUS.md` and on eac
 | LAUNCH-M5 | Welcome, starter programs, past workouts, recent records | roadmap LAUNCH-M5 |
 | LAUNCH-M6 | Ten translations and Arabic right to left | roadmap LAUNCH-M6 |
 | LAUNCH-M7 | Link previews, privacy page, licence, README, wide-screen panel, 1.0.0 and What's new, Play notes | roadmap LAUNCH-M7 |
-| LAUNCH-M8 | Full verification and REL-104 | roadmap LAUNCH-M8; waits for the owner's go-ahead |
+| LAUNCH-M8 | Full verification and REL-104 | roadmap LAUNCH-M8; released and checked live |
 
 ## 2026-10-16: data check (merged as e7ad7fe and deployed)
 

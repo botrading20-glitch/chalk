@@ -2,7 +2,8 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useState } from 'react';
 import { confirmDialog, toast } from '../components/dialogs';
 import { BufferedText } from '../components/fields';
-import { IconDown } from '../components/Icons';
+import { IconBody, IconDown } from '../components/Icons';
+import { MuscleMap } from '../components/MuscleMap';
 import { Sheet } from '../components/Sheet';
 import { Empty, Stat, Toggle } from '../components/ui';
 import { SlantBar } from '../components/WeekCard';
@@ -10,6 +11,7 @@ import { WorkoutEditor } from '../components/WorkoutEditor';
 import { db } from '../db';
 import { useData, useNow } from '../lib/data';
 import { fmtClock, fmtDuration, fmtTime, fmtVolume } from '../lib/format';
+import { muscleSets } from '../lib/muscles';
 import { goBack, navigate } from '../lib/router';
 import { useSettings } from '../lib/settings';
 import { hasValues, workoutSets, workoutVolume } from '../lib/stats';
@@ -22,9 +24,10 @@ import { t } from '../i18n';
 export function ActiveWorkoutPage() {
   const active = useActiveWorkout();
   const settings = useSettings();
-  const { typeOf } = useData();
+  const { typeOf, exerciseMap } = useData();
   const now = useNow(1000, !!active);
   const [finishing, setFinishing] = useState(false);
+  const [showMuscles, setShowMuscles] = useState(false);
   const running = !!active;
 
   useEffect(() => {
@@ -115,6 +118,9 @@ export function ActiveWorkoutPage() {
         <Stat label={t('stat.volume')} value={fmtVolume(volume, settings.weightUnit)} />
         <Stat label={t('stat.setsDone')} value={completed} />
         <Stat label={t('stat.started')} value={fmtTime(active.startTime)} />
+        <button className="icon-btn stat-action" onClick={() => setShowMuscles(true)} aria-label={t('muscles.open')}>
+          <IconBody size={28} />
+        </button>
       </div>
 
       <WorkoutEditor
@@ -150,6 +156,10 @@ export function ActiveWorkoutPage() {
       >
         {t('live.discardWorkout')}
       </button>
+
+      <Sheet open={showMuscles} onClose={() => setShowMuscles(false)} title={t('muscles.title')}>
+        <MuscleMap totals={muscleSets(active.exercises, exerciseMap, { completedOnly: true })} />
+      </Sheet>
 
       <Sheet open={finishing} onClose={() => setFinishing(false)} title={t('live.saveTitle')}>
         <FinishForm active={active} onCancel={() => setFinishing(false)} />

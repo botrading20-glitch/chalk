@@ -35,4 +35,16 @@ export default {
   'set.plateShortcut': 'Pulsante dischi sugli esercizi con bilanciere',
   'record.toast': 'Nuovo record! {exercise}: {record}',
   'record.setLabel': 'La serie {label} ha battuto un record',
+
+  // Muscle map
+  'muscles.title': 'Muscoli',
+  'muscles.label': 'Muscoli lavorati: {list}',
+  'muscles.none': 'Nessuna serie contata finora.',
+  'muscles.front': 'Davanti',
+  'muscles.back': 'Dietro',
+  'muscles.colMuscle': 'Muscolo',
+  'muscles.colSets': 'Serie',
+  'muscles.how': 'Una serie conta una volta per il muscolo principale e mezza per ogni muscolo secondario. Il riscaldamento non conta.',
+  'muscles.worked': 'Muscoli lavorati',
+  'muscles.open': 'Mostra i muscoli lavorati finora',
 } satisfies Record<string, Message>;

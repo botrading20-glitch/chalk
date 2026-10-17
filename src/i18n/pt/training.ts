@@ -35,4 +35,16 @@ export default {
   'set.plateShortcut': 'Botão de anilhas em exercícios com barra',
   'record.toast': 'Novo recorde! {exercise}: {record}',
   'record.setLabel': 'A série {label} bateu um recorde',
+
+  // Muscle map
+  'muscles.title': 'Músculos',
+  'muscles.label': 'Músculos trabalhados: {list}',
+  'muscles.none': 'Nenhuma série contada ainda.',
+  'muscles.front': 'Frente',
+  'muscles.back': 'Costas',
+  'muscles.colMuscle': 'Músculo',
+  'muscles.colSets': 'Séries',
+  'muscles.how': 'Uma série conta uma vez para o músculo principal e meia vez para cada músculo auxiliar. O aquecimento não conta.',
+  'muscles.worked': 'Músculos trabalhados',
+  'muscles.open': 'Mostrar os músculos trabalhados até agora',
 } satisfies Record<string, Message>;

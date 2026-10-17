@@ -35,4 +35,16 @@ export default {
   'set.plateShortcut': 'Tombol pelat pada latihan barbel',
   'record.toast': 'Rekor baru! {exercise}: {record}',
   'record.setLabel': 'Set {label} memecahkan rekor',
+
+  // Muscle map
+  'muscles.title': 'Otot',
+  'muscles.label': 'Otot yang dilatih: {list}',
+  'muscles.none': 'Belum ada set yang dihitung.',
+  'muscles.front': 'Depan',
+  'muscles.back': 'Belakang',
+  'muscles.colMuscle': 'Otot',
+  'muscles.colSets': 'Set',
+  'muscles.how': 'Satu set dihitung satu kali untuk otot utama dan setengah untuk setiap otot bantu. Pemanasan tidak dihitung.',
+  'muscles.worked': 'Otot yang dilatih',
+  'muscles.open': 'Tampilkan otot yang sudah dilatih',
 } satisfies Record<string, Message>;

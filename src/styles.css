@@ -4312,3 +4312,91 @@ html[data-controls='large'] .rest-actions button {
   width: 100%;
   min-width: 0;
 }
+
+/* Muscle map: flat panels, shaded by how much each muscle did. */
+.muscle-map {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.muscle-map svg {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  margin-inline: auto;
+  direction: ltr;
+}
+
+.mm-body {
+  fill: var(--surface-2);
+}
+
+.mm-region path {
+  fill: var(--surface-3);
+  stroke: var(--surface);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+.mm-region[data-level='1'] path {
+  fill: color-mix(in srgb, var(--viz) 30%, var(--surface-3));
+}
+
+.mm-region[data-level='2'] path {
+  fill: color-mix(in srgb, var(--viz) 55%, var(--surface-3));
+}
+
+.mm-region[data-level='3'] path {
+  fill: color-mix(in srgb, var(--viz) 80%, var(--surface-3));
+}
+
+.mm-region[data-level='4'] path {
+  fill: var(--viz);
+}
+
+.mm-views {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 340px;
+  margin-inline: auto;
+  width: 100%;
+  direction: ltr;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+.muscle-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.muscle-table th,
+.muscle-table td {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  text-align: start;
+  font-weight: 500;
+}
+
+.muscle-table thead th {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+}
+
+.muscle-table td,
+.muscle-table thead th:last-child {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The small figure that opens the muscle sheet sits at the end of the live workout's numbers. */
+.stat-row .stat-action {
+  margin-inline-start: auto;
+  align-self: center;
+  color: var(--accent-ink);
+}

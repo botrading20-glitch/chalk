@@ -35,4 +35,16 @@ export default {
   'set.plateShortcut': 'Przycisk talerzy przy ćwiczeniach ze sztangą',
   'record.toast': 'Nowy rekord! {exercise}: {record}',
   'record.setLabel': 'Seria {label} pobiła rekord',
+
+  // Muscle map
+  'muscles.title': 'Mięśnie',
+  'muscles.label': 'Pracujące mięśnie: {list}',
+  'muscles.none': 'Nie zliczono jeszcze żadnej serii.',
+  'muscles.front': 'Przód',
+  'muscles.back': 'Tył',
+  'muscles.colMuscle': 'Mięsień',
+  'muscles.colSets': 'Serie',
+  'muscles.how': 'Seria liczy się raz dla mięśnia głównego i pół raza dla każdego mięśnia pomocniczego. Rozgrzewka się nie liczy.',
+  'muscles.worked': 'Pracujące mięśnie',
+  'muscles.open': 'Pokaż dotychczas pracujące mięśnie',
 } satisfies Record<string, Message>;

@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { confirmDialog, toast } from '../components/dialogs';
 import { SavedCelebration } from '../components/Celebration';
 import { IconCopy, IconEdit, IconMore, IconPlay, IconShare, IconTrash, IconTrophy } from '../components/Icons';
+import { MuscleMap } from '../components/MuscleMap';
 import { ShareWorkoutSheet } from '../components/ShareWorkout';
 import { ActionSheet } from '../components/Sheet';
 import { Empty, ExerciseAvatar, PageHeader, Stat } from '../components/ui';
 import { db } from '../db';
 import { useData } from '../lib/data';
 import { fmtDateLong, fmtDuration, fmtTime, fmtVolume } from '../lib/format';
+import { muscleSets } from '../lib/muscles';
 import { Link, navigate } from '../lib/router';
 import { fmtSet, setLabels } from '../lib/sets';
 import { useSettings } from '../lib/settings';
@@ -103,6 +105,11 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
           );
         })}
       </div>
+
+      <section className="card">
+        <h2 className="card-title">{t('muscles.worked')}</h2>
+        <MuscleMap totals={muscleSets(w.exercises, exerciseMap)} />
+      </section>
 
       <ShareWorkoutSheet workout={w} open={sharing} onClose={() => setSharing(false)} />
 

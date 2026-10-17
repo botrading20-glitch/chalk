@@ -35,4 +35,16 @@ export default {
   'set.plateShortcut': 'Bouton disques sur les exercices à la barre',
   'record.toast': 'Nouveau record ! {exercise} : {record}',
   'record.setLabel': 'La série {label} a battu un record',
+
+  // Muscle map
+  'muscles.title': 'Muscles',
+  'muscles.label': 'Muscles travaillés : {list}',
+  'muscles.none': 'Aucune série comptée pour l’instant.',
+  'muscles.front': 'Face',
+  'muscles.back': 'Dos',
+  'muscles.colMuscle': 'Muscle',
+  'muscles.colSets': 'Séries',
+  'muscles.how': 'Une série compte une fois pour le muscle principal et à moitié pour chaque muscle secondaire. Les échauffements ne comptent pas.',
+  'muscles.worked': 'Muscles travaillés',
+  'muscles.open': 'Afficher les muscles travaillés jusqu’ici',
 } satisfies Record<string, Message>;

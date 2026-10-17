@@ -35,4 +35,16 @@ export default {
   'set.plateShortcut': 'Schijvenknop bij oefeningen met stang',
   'record.toast': 'Nieuw record! {exercise}: {record}',
   'record.setLabel': 'Set {label} verbrak een record',
+
+  // Muscle map
+  'muscles.title': 'Spieren',
+  'muscles.label': 'Getrainde spieren: {list}',
+  'muscles.none': 'Nog geen sets geteld.',
+  'muscles.front': 'Voor',
+  'muscles.back': 'Achter',
+  'muscles.colMuscle': 'Spier',
+  'muscles.colSets': 'Sets',
+  'muscles.how': 'Een set telt één keer voor de hoofdspier en een halve keer voor elke hulpspier. Opwarmsets tellen niet mee.',
+  'muscles.worked': 'Getrainde spieren',
+  'muscles.open': 'Tot nu toe getrainde spieren tonen',
 } satisfies Record<string, Message>;

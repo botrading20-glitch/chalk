@@ -35,4 +35,16 @@ export default {
   'set.plateShortcut': 'Scheiben-Taste bei Langhantelübungen',
   'record.toast': 'Neuer Rekord! {exercise}: {record}',
   'record.setLabel': 'Satz {label} hat einen Rekord gebrochen',
+
+  // Muscle map
+  'muscles.title': 'Muskeln',
+  'muscles.label': 'Trainierte Muskeln: {list}',
+  'muscles.none': 'Noch keine Sätze gezählt.',
+  'muscles.front': 'Vorne',
+  'muscles.back': 'Hinten',
+  'muscles.colMuscle': 'Muskel',
+  'muscles.colSets': 'Sätze',
+  'muscles.how': 'Ein Satz zählt einmal für den Hauptmuskel und halb für jeden Hilfsmuskel. Aufwärmsätze zählen nicht.',
+  'muscles.worked': 'Trainierte Muskeln',
+  'muscles.open': 'Bisher trainierte Muskeln anzeigen',
 } satisfies Record<string, Message>;

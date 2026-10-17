@@ -36,4 +36,16 @@ export default {
   'set.plateShortcut': 'Plate button on barbell exercises',
   'record.toast': 'New record! {exercise}: {record}',
   'record.setLabel': 'Set {label} broke a record',
+
+  // Muscle map
+  'muscles.title': 'Muscles',
+  'muscles.label': 'Muscles worked: {list}',
+  'muscles.none': 'No sets counted yet.',
+  'muscles.front': 'Front',
+  'muscles.back': 'Back',
+  'muscles.colMuscle': 'Muscle',
+  'muscles.colSets': 'Sets',
+  'muscles.how': 'A set counts once for the main muscle and half for each helper muscle. Warm-ups are left out.',
+  'muscles.worked': 'Muscles worked',
+  'muscles.open': 'Show the muscles worked so far',
 } satisfies Record<string, Message>;

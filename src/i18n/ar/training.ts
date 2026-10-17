@@ -35,4 +35,16 @@ export default {
   'set.plateShortcut': 'زر الأقراص في تمارين البار',
   'record.toast': 'رقم قياسي جديد! {exercise}: {record}',
   'record.setLabel': 'المجموعة {label} حطمت رقمًا قياسيًا',
+
+  // Muscle map
+  'muscles.title': 'العضلات',
+  'muscles.label': 'العضلات المستخدمة: {list}',
+  'muscles.none': 'لم تُحتسب أي مجموعة بعد.',
+  'muscles.front': 'الأمام',
+  'muscles.back': 'الخلف',
+  'muscles.colMuscle': 'العضلة',
+  'muscles.colSets': 'المجموعات',
+  'muscles.how': 'تُحتسب المجموعة مرة واحدة للعضلة الرئيسية ونصف مرة لكل عضلة مساعدة. مجموعات الإحماء غير مشمولة.',
+  'muscles.worked': 'العضلات المستخدمة',
+  'muscles.open': 'عرض العضلات المستخدمة حتى الآن',
 } satisfies Record<string, Message>;

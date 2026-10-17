@@ -3,9 +3,11 @@ import { BodyWeightCard } from '../components/BodyWeight';
 import { BarChart, HBars } from '../components/Charts';
 import { useUsageCounts } from '../components/ExerciseList';
 import { IconSettings, IconTrophy } from '../components/Icons';
+import { MuscleMap } from '../components/MuscleMap';
 import { Empty, ExerciseAvatar, PageHeader, Segmented, Stat } from '../components/ui';
 import { useData } from '../lib/data';
 import { addDays, fmtDate, fmtDayMonth, fmtDuration, fmtMonthShort, fmtNum, fmtRelativeDay, fmtWeekdayDate, fmtWeekdayShort, isolate, kgTo, startOfDay, startOfWeek } from '../lib/format';
+import { mergeMuscleSets, muscleSets } from '../lib/muscles';
 import { recentRecords } from '../lib/records';
 import { recordFormat } from '../lib/recordFormat';
 import { MUSCLE_LABEL } from '../lib/meta';
@@ -44,6 +46,12 @@ export function Profile() {
     const rest = sorted.slice(8).reduce((n, [, v]) => n + v, 0);
     if (rest) rows.push({ label: t('progress.everythingElse'), value: rest });
     return rows;
+  }, [workouts, exerciseMap]);
+
+  // The same 30 days as the bars, for the figure: a helper muscle counts half a set.
+  const muscleTotals = useMemo(() => {
+    const since = Date.now() - 30 * 86_400_000;
+    return mergeMuscleSets(workouts.filter((w) => w.startTime >= since).map((w) => muscleSets(w.exercises, exerciseMap)));
   }, [workouts, exerciseMap]);
 
   const top = useMemo(
@@ -135,7 +143,10 @@ export function Profile() {
       <section className="card">
         <h2 className="card-title">{t('progress.muscles')}</h2>
         {muscleRows.length ? (
-          <HBars rows={muscleRows} format={(v) => fmtNum(v, 0)} />
+          <>
+            <MuscleMap totals={muscleTotals} table={false} />
+            <HBars rows={muscleRows} format={(v) => fmtNum(v, 0)} />
+          </>
         ) : (
           <p className="muted">{t('progress.noMuscles')}</p>
         )}

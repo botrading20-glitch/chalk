@@ -35,4 +35,16 @@ export default {
   'set.plateShortcut': 'Barbell egzersizlerinde plaka düğmesi',
   'record.toast': 'Yeni rekor! {exercise}: {record}',
   'record.setLabel': '{label} seti bir rekor kırdı',
+
+  // Muscle map
+  'muscles.title': 'Kaslar',
+  'muscles.label': 'Çalışan kaslar: {list}',
+  'muscles.none': 'Henüz sayılan set yok.',
+  'muscles.front': 'Ön',
+  'muscles.back': 'Arka',
+  'muscles.colMuscle': 'Kas',
+  'muscles.colSets': 'Set',
+  'muscles.how': 'Bir set ana kas için bir, her yardımcı kas için yarım sayılır. Isınma setleri sayılmaz.',
+  'muscles.worked': 'Çalışan kaslar',
+  'muscles.open': 'Şimdiye kadar çalışan kasları göster',
 } satisfies Record<string, Message>;

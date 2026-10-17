@@ -6,6 +6,7 @@ import {
   IconChevron,
   IconCloud,
   IconDatabase,
+  IconFlame,
   IconGlobe,
   IconInfo,
   IconPalette,
@@ -20,6 +21,7 @@ import { useNow } from '../../lib/data';
 import { fmtDate, fmtRest, startOfDay } from '../../lib/format';
 import { usePref } from '../../lib/prefs';
 import { Link } from '../../lib/router';
+import { warmupSummary } from './WarmupSection';
 import { useSettings } from '../../lib/settings';
 import { useSyncStatus } from '../../lib/sync';
 import { LOCALES } from '../../i18n/locales';
@@ -56,6 +58,7 @@ function useSummaries(s: Settings) {
 
   return {
     workout: s.defaultRest ? t('set.sum.rest', { rest: fmtRest(s.defaultRest) }) : t('set.sum.restOff'),
+    warmup: warmupSummary(s),
     timer: alert,
     plates: t('set.sum.plates', { n: (s.weightUnit === 'kg' ? s.platesKg : s.platesLbs).length }),
     goals: s.weeklyGoal ? t('set.sum.goal', { n: s.weeklyGoal }) : t('set.sum.noGoal'),
@@ -81,6 +84,7 @@ export function SettingsHome() {
       title: 'set.group.training',
       rows: [
         { id: 'workout', icon: <IconBarbell size={20} />, label: 'set.workout', value: sum.workout },
+        { id: 'warmup', icon: <IconFlame size={20} />, label: 'set.warmup', value: sum.warmup },
         { id: 'timer', icon: <IconTimer size={20} />, label: 'set.timer', value: sum.timer },
         { id: 'plates', icon: <IconPlate size={20} />, label: 'set.plates', value: sum.plates },
       ],

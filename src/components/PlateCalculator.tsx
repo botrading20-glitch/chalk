@@ -1,6 +1,6 @@
 import { useState, type CSSProperties } from 'react';
 import { fmtNum, isolate, kgTo, toKg } from '../lib/format';
-import { BAR_OPTIONS, calculatePlates, DEFAULT_PLATES, defaultBar, MAX_TARGET, type Load } from '../lib/plates';
+import { BAR_OPTIONS, barInUnit, calculatePlates, DEFAULT_PLATES, defaultBar, MAX_TARGET, type Load } from '../lib/plates';
 import { updateSettings, useSettings } from '../lib/settings';
 import type { Exercise, WeightUnit } from '../types';
 import { NumberField } from './fields';
@@ -32,12 +32,6 @@ const LOOK: Record<WeightUnit, { color: string; height: number; width: number }[
 
 const lookOf = (plate: number, unit: WeightUnit) => LOOK[unit][DEFAULT_PLATES[unit].indexOf(plate)] ?? LOOK[unit].at(-1)!;
 const round = (v: number) => Math.round(v * 100) / 100;
-
-/** A remembered bar (stored in kg) in the current unit, snapped to the standard bar it stands for: 20 kg ↔ 45 lb. */
-function barIn(kg: number, unit: WeightUnit) {
-  const v = kgTo(kg, unit);
-  return BAR_OPTIONS[unit].find((o) => Math.abs(o - v) <= Math.max(0.5, o * 0.05)) ?? Math.round(v * 2) / 2;
-}
 
 export interface PlateUse {
   /** Button text; {weight} is replaced with the loaded weight. */
@@ -73,7 +67,7 @@ function PlateCalculator({ exercise, initialKg, use, onDone }: { exercise?: Exer
   const owned = unit === 'kg' ? settings.platesKg : settings.platesLbs;
   const remembered = exercise ? settings.plateBars[exercise.id] : undefined;
   const [target, setTarget] = useState<number | undefined>(initialKg !== undefined ? round(kgTo(initialKg, unit)) : undefined);
-  const [bar, setBar] = useState(remembered !== undefined ? barIn(remembered, unit) : defaultBar(exercise?.equipment, unit));
+  const [bar, setBar] = useState(remembered !== undefined ? barInUnit(remembered, unit) : defaultBar(exercise?.equipment, unit));
 
   const barOptions = [...new Set([...BAR_OPTIONS[unit], bar])].sort((a, b) => b - a);
   const tooHeavy = target !== undefined && target > MAX_TARGET[unit];

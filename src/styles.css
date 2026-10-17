@@ -4275,3 +4275,40 @@ html[data-controls='large'] .rest-actions button {
     font-weight: 600;
   }
 }
+
+/* A trophy on the set badge while the workout in progress holds a record. */
+.badge-trophy {
+  position: absolute;
+  top: -7px;
+  inset-inline-start: -7px;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 0 2px var(--surface);
+}
+
+/* Warm-up sets page: one row per step, then a preview of what the steps make. */
+.warmup-step {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.warmup-preview {
+  display: grid;
+  gap: 2px;
+}
+
+.warmup-preview + .warmup-preview {
+  margin-top: 8px;
+}
+
+.warmup-step .chip-select {
+  width: 100%;
+  min-width: 0;
+}

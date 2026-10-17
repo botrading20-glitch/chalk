@@ -66,6 +66,16 @@ export function WorkoutSection() {
         <Toggle label={t('set.rpe')} checked={s.showRpe} onChange={(showRpe) => updateSettings({ showRpe })} />
         <Toggle label={t('set.keepAwake')} checked={s.keepAwake} onChange={(keepAwake) => updateSettings({ keepAwake })} />
       </Card>
+
+      <Card>
+        <div>
+          <Toggle label={t('set.liveRecords')} checked={s.liveRecords} onChange={(liveRecords) => updateSettings({ liveRecords })} />
+          <Note>{t('set.liveRecordsNote')}</Note>
+        </div>
+        <Toggle label={t('set.inlineStopwatch')} checked={s.inlineStopwatch} onChange={(inlineStopwatch) => updateSettings({ inlineStopwatch })} />
+        <Toggle label={t('set.supersetScroll')} checked={s.supersetScroll} onChange={(supersetScroll) => updateSettings({ supersetScroll })} />
+        <Toggle label={t('set.plateShortcut')} checked={s.plateShortcut} onChange={(plateShortcut) => updateSettings({ plateShortcut })} />
+      </Card>
     </>
   );
 }

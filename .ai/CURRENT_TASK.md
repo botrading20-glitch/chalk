@@ -1,9 +1,13 @@
 # Current task
 
 ## Task
-Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, not deployed). The owner-approved plan is `.ai/LAUNCH_PLAN.md`; milestone status is in the roadmap ("Setward 1.0 launch"). **Stopped after M5** (2026-10-17): M1 (Hevy retired, Strong import, Setward CSV), M2 (i18n layer, settings model, rem/logical CSS), M3 (the Forward look), M4 (grouped Settings, every new setting wired) and M5 (welcome, starter programs, log a past workout, recent records) are done and committed. M6 (the ten translations and Arabic right-to-left) is next. REL-101 to REL-103 are live and still wait on the owner's phone checks.
+Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, not deployed). The owner-approved plan is `.ai/LAUNCH_PLAN.md`; milestone status is in the roadmap ("Setward 1.0 launch"). **Stopped after M6** (2026-10-17): M1 (Hevy retired, Strong import, Setward CSV), M2 (i18n layer, settings model, rem/logical CSS), M3 (the Forward look), M4 (grouped Settings, every new setting wired), M5 (welcome, starter programs, log a past workout, recent records) and M6 (the ten translations and Arabic right-to-left) are done and committed. M7 (link previews, privacy page, licence, README, store groundwork, version 1.0.0) is next. REL-101 to REL-103 are live and still wait on the owner's phone checks.
 
-## This session (2026-10-17): M5
+## This session (2026-10-17): M6
+- Owner approved starting M6 and asked to see the Settings home in Arabic and in French (375 px) as soon as the first two languages existed: sent. Then wrote the other eight catalogs, the Arabic right-to-left pass and a per-language overflow sweep. Details and evidence: roadmap LAUNCH-M6 and `TEST_STATUS.md`.
+- **Lesson for sweeps:** when a page overflows sideways, a phone-sized browser widens `window.innerWidth` to match, so a check against `innerWidth` passes. Measure against `document.documentElement.clientWidth`. Earlier sweeps that used `innerWidth` could have missed page-level overflow; the M6 sweeps were redone with `clientWidth` and found (and fixed) real ones.
+
+## Earlier today (2026-10-17): M5
 - Owner approved starting M5 and asked to see the welcome screen first: sent dark and light 375 px screenshots as soon as it existed, then built the programs, the past-workout editor and the records list. Details and evidence: roadmap LAUNCH-M5 and `TEST_STATUS.md`.
 
 ## Earlier today (2026-10-17): M4
@@ -44,9 +48,9 @@ Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, 
 - ENV-002: deploy jobs are pinned to `ubuntu-24.04` (2026-10-05) because `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19. Revisit when GitHub retires that image.
 
 ## Next exact action (resume here)
-1. `git checkout launch` (HEAD should be the commit "Add the welcome screen, starter programs, past workouts and recent records"). Read the roadmap section LAUNCH-M5 and M6 in `.ai/LAUNCH_PLAN.md`.
-2. Start **M6**: translate the final English catalog (`src/i18n/en/*.ts`, including `settingsPages.ts` and `welcome.ts`) into French, Arabic, Spanish, German, Brazilian Portuguese, Italian, Turkish, Dutch, Polish and Indonesian with every plural form `Intl.PluralRules` needs; register loaders in `LOADERS` (`src/i18n/index.ts`); `src/i18n/i18n.test.ts` checks same keys, plural forms and placeholders. Arabic needs a right-to-left pass on every screen (directional icons through `.flip-rtl`, charts and numbers kept left to right), an Arabic font from Fontsource, and no uppercase styling; do a German pass at 320 px. The Language page says translations are machine-made. Starter program titles, summaries and session names are catalog keys (`prog.*`); exercise names stay English.
-3. Then M7 (Settings home and sub-pages, which also converts `src/pages/Settings.tsx`, the one screen still hard-coded in English), M5, M6, M7, M8 in order. Merge and push only with the owner's go-ahead (NN-15).
+1. `git checkout launch` (HEAD should be the commit "Translate into ten languages and add the Arabic right-to-left pass"). Read M7 and M8 in `.ai/LAUNCH_PLAN.md`.
+2. Start **M7**: Open Graph and Twitter tags with a 1200×630 `og-image.png` drawn in the dev browser, manifest `screenshots` / `shortcuts` / `categories` (`start_url` and `scope` unchanged, NN-12), `public/privacy.html` (same text as About → Privacy), a `LICENSE`, the README for users, a wide-screen side panel, version 1.0.0 with What's new shown once after updating, and the store groundwork (`.ai/PLAY_STORE.md`, `branding/store/`; nothing is submitted). The CSP stays unchanged: no new origins.
+3. Then M8 (verify everything, update the notes, ask the owner before merging `launch` into `main` and pushing, which deploys). Merge and push only with the owner's go-ahead (NN-15).
 
 ### M3 design brief (decided, not yet built)
 - Keep the violet-charcoal palette, purple accent, Big Shoulders Display and Archivo. Owner asked for refine + bolder together. Amend NN-16 in `DECISIONS.md` when it lands.
@@ -64,4 +68,4 @@ Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, 
 - The Hevy removal is final (owner decision); do not reintroduce Hevy wording.
 
 ## Last updated
-2026-10-17 (M5 done; M6 next)
+2026-10-17 (M6 done; M7 next)

@@ -8,7 +8,7 @@ import { db } from '../db';
 import { useData } from '../lib/data';
 import { exerciseUses, reassignExercise } from '../lib/exercises';
 import { recordFormat } from '../lib/recordFormat';
-import { fmtClock, fmtDate, fmtNum, kgTo, kmTo } from '../lib/format';
+import { fmtClock, fmtDate, fmtNum, isolate, kgTo, kmTo } from '../lib/format';
 import { COUNTS_VOLUME, EQUIPMENT_LABEL, MUSCLE_LABEL, TYPE_LABEL } from '../lib/meta';
 import { Link, navigate } from '../lib/router';
 import { fmtSet, setLabels } from '../lib/sets';
@@ -37,9 +37,9 @@ function toDisplay(metric: SessionMetric, raw: number, s: Settings) {
 }
 
 function metricFormatter(metric: SessionMetric, s: Settings) {
-  if (WEIGHT_METRICS.includes(metric)) return (v: number) => `${fmtNum(v, 1)} ${s.weightUnit}`;
+  if (WEIGHT_METRICS.includes(metric)) return (v: number) => isolate(`${fmtNum(v, 1)} ${s.weightUnit}`);
   if (metric === 'maxDuration') return (v: number) => fmtClock(v);
-  if (metric === 'maxDistance') return (v: number) => `${fmtNum(v, 2)} ${s.distanceUnit}`;
+  if (metric === 'maxDistance') return (v: number) => isolate(`${fmtNum(v, 2)} ${s.distanceUnit}`);
   return (v: number) => count('rep', v);
 }
 

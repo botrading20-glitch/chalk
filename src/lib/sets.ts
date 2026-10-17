@@ -1,10 +1,11 @@
 import type { ExerciseType, Settings, WorkoutSet } from '../types';
-import { fmtClock, fmtNum, kgTo, kmTo } from './format';
+import { fmtClock, fmtNum, isolate, kgTo, kmTo } from './format';
 import { FIELDS, type Field } from './meta';
 import { t } from '../i18n';
 
 type Units = Pick<Settings, 'weightUnit' | 'distanceUnit'>;
 
+/** "66 kg", with no isolate marks: it is only ever a piece of a longer summary. */
 export function fmtSetWeight(kg: number, units: Units) {
   return `${fmtNum(kgTo(kg, units.weightUnit), units.weightUnit === 'kg' ? 2 : 1)} ${units.weightUnit}`;
 }
@@ -27,32 +28,33 @@ export function fmtSet(s: WorkoutSet, type: ExerciseType, units: Units, bare = f
   const repsText = s.reps !== undefined ? t('count.rep', { n: Math.round(s.reps * 10) / 10 }) : '';
   // Bare values sit in a narrow column; when they wrap, the reps keep their ×.
   const x = bare ? ' ×\u00a0' : ' × ';
+  // Right-to-left text would reorder "66 kg × 15"; the translated reps text is the one part that must not be isolated.
   switch (type) {
     case 'weight_reps':
-      return w && reps ? `${w}${x}${reps}` : w ?? (reps ? repsText : '');
+      return w && reps ? isolate(`${w}${x}${reps}`) : w ? isolate(w) : reps ? repsText : '';
     case 'bodyweight_reps':
       return reps ? repsText : '';
     case 'weighted_bodyweight':
-      return reps ? (w && s.weight ? `+${w}${x}${reps}` : repsText) : '';
+      return reps ? (w && s.weight ? isolate(`+${w}${x}${reps}`) : repsText) : '';
     case 'assisted_bodyweight':
-      return reps ? (w && s.weight ? `−${w}${x}${reps}` : repsText) : '';
+      return reps ? (w && s.weight ? isolate(`−${w}${x}${reps}`) : repsText) : '';
     case 'duration':
       return time ?? '';
     case 'weight_duration':
-      return [w, time].filter(Boolean).join(' · ');
+      return isolate([w, time].filter(Boolean).join(' · '));
     case 'distance_duration':
-      return [dist, time].filter(Boolean).join(' · ');
+      return isolate([dist, time].filter(Boolean).join(' · '));
     case 'weight_distance':
-      return [w, dist].filter(Boolean).join(' · ');
+      return isolate([w, dist].filter(Boolean).join(' · '));
   }
 }
 
 export function fieldHeader(field: Field, type: ExerciseType, units: Units) {
   switch (field) {
     case 'weight':
-      return `${type === 'weighted_bodyweight' ? '+' : type === 'assisted_bodyweight' ? '−' : ''}${units.weightUnit}`;
+      return isolate(`${type === 'weighted_bodyweight' ? '+' : type === 'assisted_bodyweight' ? '−' : ''}${units.weightUnit}`);
     case 'reps':
-      return t('field.reps');
+      return t('head.reps');
     case 'distance':
       return units.distanceUnit;
     case 'duration':

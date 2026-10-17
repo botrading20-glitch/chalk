@@ -1,5 +1,5 @@
 import { useState, type CSSProperties } from 'react';
-import { fmtNum, kgTo, toKg } from '../lib/format';
+import { fmtNum, isolate, kgTo, toKg } from '../lib/format';
 import { BAR_OPTIONS, calculatePlates, DEFAULT_PLATES, defaultBar, MAX_TARGET, type Load } from '../lib/plates';
 import { updateSettings, useSettings } from '../lib/settings';
 import type { Exercise, WeightUnit } from '../types';
@@ -91,7 +91,7 @@ function PlateCalculator({ exercise, initialKg, use, onDone }: { exercise?: Exer
     void updateSettings(unit === 'kg' ? { platesKg: next } : { platesLbs: next });
   }
 
-  const fmt = (v: number) => `${fmtNum(v, 2)} ${unit}`;
+  const fmt = (v: number) => isolate(`${fmtNum(v, 2)} ${unit}`);
 
   return (
     <div className="plates">
@@ -124,7 +124,7 @@ function PlateCalculator({ exercise, initialKg, use, onDone }: { exercise?: Exer
             <p className="plates-side">
               {shown!.perSide.length ? (
                 <>
-                  <span className="muted">{t('plates.eachSide')}</span> {shown!.perSide.map((p) => fmtNum(p, 2)).join(' + ')} {unit}
+                  <span className="muted">{t('plates.eachSide')}</span> {isolate(`${shown!.perSide.map((p) => fmtNum(p, 2)).join(' + ')} ${unit}`)}
                 </>
               ) : (
                 t('plates.justBar')

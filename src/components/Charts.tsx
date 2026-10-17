@@ -1,4 +1,5 @@
 import { useId, useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
+import { plain } from '../lib/format';
 
 // Small hand-rolled SVG charts: one series each, so no legend (the card title
 // names the metric). Every chart has a hover/tap readout and a screen-reader table.
@@ -100,13 +101,16 @@ export function BarChart({
   const band = innerW / data.length;
   const barW = Math.min(24, Math.max(4, band - 6));
   const y = (v: number) => pad.top + innerH - (v / top) * innerH;
-  const every = Math.ceil(data.length / 6);
+  // Up to six date labels, fewer when a language's month names are long enough to touch.
+  const widest = Math.max(...data.map((d) => d.tick.length), 1);
+  const fit = Math.max(2, Math.floor(innerW / (widest * 6.4 + 12)));
+  const every = Math.ceil(data.length / Math.min(6, fit));
   const last = data.length - 1;
   const shown = active ?? null;
 
   // The latest bar carries a direct label, right-aligned to its edge. Lift it
   // above any neighbouring bar it would otherwise overlap.
-  const lastLabel = data[last]?.value > 0 ? format(data[last].value) : '';
+  const lastLabel = data[last]?.value > 0 ? plain(format(data[last].value)) : '';
   const labelRight = pad.left + band * last + band / 2 + barW / 2;
   const labelLeft = labelRight - lastLabel.length * 6.6;
   let labelY = y(data[last]?.value ?? 0) - 6;

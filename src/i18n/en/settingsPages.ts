@@ -216,7 +216,7 @@ export default {
   'about.credits': 'Credits and licences',
   'about.creditsApp': 'Setward is open source under the MIT licence.',
   'about.creditsExercises': 'Exercise library and photos: free-exercise-db (public domain).',
-  'about.creditsFonts': 'Fonts: Big Shoulders Display and Archivo, under the SIL Open Font Licence, through Fontsource.',
+  'about.creditsFonts': 'Fonts: Big Shoulders Display, Archivo and Noto Sans Arabic, under the SIL Open Font Licence, through Fontsource.',
   'about.creditsCode': 'Built with React, Dexie and Vite (MIT and Apache 2.0).',
   'about.source': 'Source code',
   'about.feedback': 'Send feedback',

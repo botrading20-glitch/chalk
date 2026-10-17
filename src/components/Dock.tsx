@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useNow } from '../lib/data';
-import { fmtClock } from '../lib/format';
+import { fmtClock, isolate } from '../lib/format';
 import { Link, useRoute } from '../lib/router';
 import { useSettings } from '../lib/settings';
 import { ringRest, startRestAlert, stopRestAlert } from '../lib/restAlert';
@@ -129,10 +129,10 @@ function RestTimer() {
       <span className="rest-time">{fmtClock(remaining)}</span>
       <div className="rest-actions">
         <button onClick={() => adjust(-15)} aria-label={t('rest.less')}>
-          −15
+          {isolate('−15')}
         </button>
         <button onClick={() => adjust(15)} aria-label={t('rest.more')}>
-          +15
+          {isolate('+15')}
         </button>
         <button className="rest-skip" onClick={skipRest}>
           {t('common.skip')}

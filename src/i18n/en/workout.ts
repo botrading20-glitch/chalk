@@ -6,6 +6,7 @@ export default {
   'field.reps': 'reps',
   'field.distance': 'distance',
   'field.time': 'time',
+  'head.reps': 'reps',
   'count.rep': { one: '{n} rep', other: '{n} reps' },
 
   'editor.emptyTitle': 'No exercises yet',

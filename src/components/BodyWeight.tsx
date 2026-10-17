@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { bodyWeightChange, deleteBodyWeight, fromDateInput, logBodyWeight, toDateInput, useBodyWeights } from '../lib/bodyweight';
 import { count, t } from '../i18n';
-import { addDays, fmtDate, fmtNum, kgTo, startOfDay, toKg } from '../lib/format';
+import { addDays, fmtDate, fmtDayMonth, fmtNum, isolate, kgTo, startOfDay, toKg } from '../lib/format';
 import { Link } from '../lib/router';
 import { useSettings } from '../lib/settings';
 import type { BodyWeight, WeightUnit } from '../types';
@@ -11,19 +11,17 @@ import { NumberField } from './fields';
 import { IconPlus } from './Icons';
 import { Sheet } from './Sheet';
 
-const tickFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' });
-
 export function fmtBodyWeight(kg: number, unit: WeightUnit) {
-  return `${fmtNum(kgTo(kg, unit), 1)} ${unit}`;
+  return isolate(`${fmtNum(kgTo(kg, unit), 1)} ${unit}`);
 }
 
 export function fmtChange(kg: number, unit: WeightUnit) {
   const v = Math.round(kgTo(kg, unit) * 10) / 10;
-  return v === 0 ? `±0 ${unit}` : `${v > 0 ? '+' : '−'}${fmtNum(Math.abs(v), 1)} ${unit}`;
+  return isolate(v === 0 ? `±0 ${unit}` : `${v > 0 ? '+' : '−'}${fmtNum(Math.abs(v), 1)} ${unit}`);
 }
 
 export function bodyWeightPoints(entries: BodyWeight[], unit: WeightUnit): LinePoint[] {
-  return entries.map((b) => ({ x: b.date, y: kgTo(b.weight, unit), label: tickFmt.format(b.date) }));
+  return entries.map((b) => ({ x: b.date, y: kgTo(b.weight, unit), label: fmtDayMonth(b.date) }));
 }
 
 /** Progress-tab card: latest weigh-in, 30-day change and the last 90 days. */
@@ -63,7 +61,7 @@ export function BodyWeightCard() {
           {recent.length > 1 && (
             <LineChart
               points={bodyWeightPoints(recent, weightUnit)}
-              format={(v) => `${fmtNum(v, 1)} ${weightUnit}`}
+              format={(v) => isolate(`${fmtNum(v, 1)} ${weightUnit}`)}
               caption={t('bw.captionRecent', { unit: weightUnit })}
               height={150}
             />

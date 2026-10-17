@@ -1,5 +1,27 @@
 # Test status
 
+## Ten translations and Arabic right-to-left (LAUNCH-M6): 2026-10-17, branch `launch`
+
+Environment: Windows 11, built-in Chromium, dev server on localhost:5173 (sample backup, an unfinished Chest day in progress), phone emulation at 375 and 320 px. Every language was switched on the Language page, then each route was visited.
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Types / tests | PASS | `tsc --noEmit` exit 0; 158 passed, 2 skipped (`i18n.test.ts` is now 38 tests: every non-English locale has a loader; for each of ten languages, same keys and no extras, same placeholders and tags, plain messages stay strings, every plural form `Intl.PluralRules` returns for 0 to 1000; `isolate()` / `plain()` in Arabic only) |
+| Contrast | PASS | 732 pairs, 0 failing (`node scripts/contrast.mjs`) |
+| Production build | PASS | `MSYS_NO_PATHCONV=1 BASE_PATH=/chalk/ npm run build`: main chunk 167.24 kB gzip (166.85 at M5); each language is its own lazy chunk of 13.9 to 16.9 kB gzip (id smallest, ar largest), all ten in the precache (36 entries, 2.1 MB); the 166 kB Arabic font file is not precached (service worker has an `arabic-font` CacheFirst route) |
+| Arabic first look | PASS | Settings home at 375 px sent to the owner next to French: mirrored layout, chevrons and back arrow flipped, tab pill slant mirrored, Noto Sans Arabic rendering |
+| Arabic screen pass | PASS after fixes | Home, live workout (rest bar, set table, exercise menu, plate calculator), History detail, exercise detail with chart, Progress (calendar, charts, horizontal bars, recent records), body weight. Found and fixed: clipped dots on display titles, "549.7 lbs" and "−0.7 lbs" reordered (now isolated), `.stat-value` forced left to right (wrong for "1 س 23 د"; removed), date labels on the weekly chart colliding, English month names on the body-weight chart, "Set" header touching "Previous", ±15 signs on the wrong side |
+| Overflow sweep, 320 px, default text | PASS | 27 routes (all pages, all settings pages, live workout, both editors, welcome, programs, body weight, exercise detail and new) in all ten languages: no page overflow, no clipped or spilling text, set-table headers fit their columns, rest bar fits (checked while a rest ran) |
+| Overflow sweep, 320 px, extra-large text + larger controls | PASS | German, French, Dutch, Polish, Turkish, Arabic over the same 27 routes |
+| Overflow sweep, 375 px | PASS | Live workout and both editors in all ten languages (headers, rest bar); all 27 routes in German, Arabic and Polish |
+| Measure bug in earlier sweeps | FOUND | A phone-sized browser widens `window.innerWidth` to fit an overflowing page, so checks against it pass. The first M6 pass with `innerWidth` reported clean; redone against `clientWidth` it found 8 real overflows (Settings → Your data buttons in six languages, a Polish record pill, German reps header on the editors, several wraps at extra-large text). All fixed. M3 to M5 sweeps may have used `innerWidth`: re-run in M8 |
+| Language switching | PASS | Language page: each of the ten switches `lang` and `dir`, lazy chunk loads in about a second, the app root redraws; switching back to English works |
+| Share card in Arabic | PASS after fix | The canvas drew every line left to right, which garbled "1 س 23 د"; each line now takes the direction of its script (`shareCard.ts`), the Arabic face is loaded for it, and the layout is unchanged. Read on screen at 375 px |
+| Production preview | PASS | `/chalk/` on :4173: service worker active and in control; all 10 language chunks in the precache cache, the Arabic font not; switching through all eleven languages sets `lang` and `dir` correctly (Turkish capitals keep the dotted İ); 0 CSP violations; on a fresh load in Arabic the font is requested once and stored in the `arabic-font` cache |
+| Offline start in a non-English language | NOT_RUN | No offline emulation in this browser; the chunk and font routes are checked through the cache contents only |
+| Native-speaker review | NOT_RUN | All ten are machine translations |
+| Phone / screen reader | NOT_RUN | Needs the owner's phone |
+
 ## Welcome, programs, past workouts, recent records (LAUNCH-M5): 2026-10-17, branch `launch`
 
 Environment: Windows 11, built-in Chromium, dev server on localhost:5173 (sample backup) and production preview on localhost:4173/chalk/ (storage wiped for the first-run tests), 375 and 320 px.

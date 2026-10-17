@@ -1,3 +1,14 @@
+/* Arabic script: only the Arabic subset of Noto Sans Arabic (OFL, from Fontsource), and the browser
+   downloads it only when a page actually shows Arabic letters, so other languages never pay for it. */
+@font-face {
+  font-family: 'Noto Sans Arabic Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('@fontsource-variable/noto-sans-arabic/files/noto-sans-arabic-arabic-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
 /* Setward — violet-tinted charcoal greys with a midnight-purple accent.
    Set badges: orange W (warm-up), and bumper-plate red F (failure) and blue D
    (drop); a checked set turns the row plate-green. */
@@ -81,8 +92,8 @@
 }
 
 :root {
-  --font-display: 'Big Shoulders Display Variable', 'Archivo Variable', system-ui, sans-serif;
-  --font-body: 'Archivo Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Big Shoulders Display Variable', 'Archivo Variable', 'Noto Sans Arabic Variable', system-ui, sans-serif;
+  --font-body: 'Archivo Variable', 'Noto Sans Arabic Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --radius: 16px;
   --radius-sm: 10px;
   --radius-lg: 22px;
@@ -276,9 +287,10 @@ p {
 
 .section-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px 12px;
 }
 
 .section-title,
@@ -413,6 +425,10 @@ p {
 
 .btn-block {
   width: 100%;
+  /* Full-width buttons carry the longest labels ("Rechercher des problèmes dans les données"): let them wrap. */
+  padding-block: 10px;
+  line-height: 1.25;
+  white-space: normal;
 }
 
 .btn-small {
@@ -609,11 +625,14 @@ p {
 
 .form {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
 }
 
 .field {
   display: grid;
+  /* A select is as wide as its longest option; the track must still be able to shrink below that. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 6px;
   min-width: 0;
   margin: 0;
@@ -666,6 +685,7 @@ p {
 
 .form-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 4px;
@@ -853,6 +873,31 @@ p {
   background: var(--accent);
   color: var(--on-accent);
   padding: 0 14px;
+}
+
+/* The smallest phones: the clock, ±15 and the skip word of any language have to share 300 px. */
+@media (max-width: 339px) {
+  .rest-bar {
+    gap: 8px;
+    padding: 8px;
+    padding-inline-start: 12px;
+  }
+
+  .rest-time {
+    font-size: 1.5rem;
+  }
+
+  .rest-actions {
+    gap: 4px;
+  }
+
+  .rest-actions button {
+    min-width: 42px;
+  }
+
+  .rest-actions .rest-skip {
+    padding: 0 10px;
+  }
 }
 
 /* ---------- Sheets & dialogs ---------- */
@@ -1127,6 +1172,7 @@ dialog.sheet-full {
 
 .resume-card {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -1776,6 +1822,14 @@ dialog.sheet-full {
   place-items: start;
 }
 
+/* Headers like "Poprz." or "Zuvor" have to fit the 38 px Previous column on the smallest phones. */
+@media (max-width: 339px) {
+  .set-head {
+    font-size: 0.625rem;
+    letter-spacing: 0.02em;
+  }
+}
+
 .set-row.done {
   background: var(--done-bg);
 }
@@ -2347,7 +2401,8 @@ dialog.sheet-full {
   color: var(--accent-ink);
   font-size: 0.75rem;
   font-weight: 700;
-  white-space: nowrap;
+  /* A long record name ("Najlepsze szacowane 1RM 549,7 lbs") wraps inside the pill instead of pushing the page sideways. */
+  max-width: 100%;
 }
 
 .workout-card-lines {
@@ -2586,6 +2641,7 @@ dialog.sheet-full {
 
 .chart-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
@@ -3101,6 +3157,7 @@ dialog.sheet-full {
 
 .sync-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
@@ -3362,6 +3419,46 @@ details summary {
 /* Arrows and chevrons that point along the reading direction. */
 [dir='rtl'] .flip-rtl {
   transform: scaleX(-1);
+}
+
+/* Time runs left to right on charts and the calendar, in every language. Their labels and the
+   tooltip text still read right to left. */
+[dir='rtl'] .chart,
+[dir='rtl'] .cal-months,
+[dir='rtl'] .cal-body {
+  direction: ltr;
+}
+
+[dir='rtl'] .chart .tooltip {
+  direction: rtl;
+}
+
+/* Arabic letters join, so any letter-spacing breaks the words apart. The script has no case
+   either, so uppercase styling does nothing; its taller letters want more line height. */
+html[lang='ar'] *,
+html[lang='ar'] *::before,
+html[lang='ar'] *::after {
+  letter-spacing: 0 !important;
+}
+
+html[lang='ar'] body {
+  line-height: 1.6;
+}
+
+/* Display type is set tight for Latin capitals. Arabic dots and marks sit above and below the
+   line, and titles that clip their overflow would cut them off. */
+html[lang='ar'] .page-head.large .page-title {
+  line-height: 1.5;
+}
+
+html[lang='ar'] .section-title,
+html[lang='ar'] .month-label,
+html[lang='ar'] .btn-hero,
+html[lang='ar'] .slant-chip,
+html[lang='ar'] .week-of,
+html[lang='ar'] .celebration-logged,
+html[lang='ar'] .welcome-title {
+  line-height: 1.4;
 }
 
 /* ---------- Appearance settings ---------- */

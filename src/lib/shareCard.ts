@@ -1,7 +1,7 @@
 // Draws a workout summary as a 1080×1350 PNG (the 4:5 portrait size most
 // apps show uncropped), in the app's own colours and fonts.
 import { BRAND_MARK_PATHS, BRAND_NAME } from './brand';
-import { intlLocale, t } from '../i18n';
+import { intlLocale, isRtl, t } from '../i18n';
 
 export interface CardData {
   title: string;
@@ -33,8 +33,11 @@ const SLANT = 22;
 /** Upper case by the rules of the current language (Turkish dotted İ, no case in Arabic). */
 const upper = (s: string) => s.toLocaleUpperCase(intlLocale());
 
-const DISPLAY = '"Big Shoulders Display Variable", "Archivo Variable", sans-serif';
-const BODY = '"Archivo Variable", system-ui, sans-serif';
+const ARABIC = /[֐-ࣿ]/;
+
+// Noto Sans Arabic only takes Arabic characters (its unicode-range), so it is safe to list after the Latin fonts.
+const DISPLAY = '"Big Shoulders Display Variable", "Archivo Variable", "Noto Sans Arabic Variable", sans-serif';
+const BODY = '"Archivo Variable", "Noto Sans Arabic Variable", system-ui, sans-serif';
 const TROPHY = new Path2D('M8 4h8v5a4 4 0 0 1-8 0V4ZM8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 20h7M10 17h4v3h-4z');
 
 /** Cuts text to fit `max` pixels, ending in an ellipsis. */
@@ -101,6 +104,8 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
     document.fonts.load(`800 120px ${DISPLAY}`),
     document.fonts.load(`600 36px ${BODY}`),
     document.fonts.load(`400 32px ${BODY}`),
+    // The Arabic face downloads only when asked for an Arabic character.
+    ...(isRtl() ? [document.fonts.load('800 72px "Noto Sans Arabic Variable"', 'ع'), document.fonts.load('500 30px "Noto Sans Arabic Variable"', 'ع')] : []),
   ]).catch(() => {});
 
   const canvas = document.createElement('canvas');
@@ -108,6 +113,16 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
   canvas.height = H;
   const ctx = canvas.getContext('2d')!;
   ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = 'left';
+  if (isRtl()) {
+    // The card keeps its layout, but a line in Arabic has to read right to left ("1 س 23 د") while the
+    // exercise names and "121.3 lbs × 10" stay left to right: each line takes the direction of its script.
+    const fill = ctx.fillText.bind(ctx);
+    ctx.fillText = (text: string, x: number, y: number, maxWidth?: number) => {
+      ctx.direction = ARABIC.test(text) ? 'rtl' : 'ltr';
+      fill(text, x, y, maxWidth);
+    };
+  }
   ctx.fillStyle = C.bg;
   ctx.fillRect(0, 0, W, H);
 

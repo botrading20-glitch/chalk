@@ -5,7 +5,7 @@ import { useUsageCounts } from '../components/ExerciseList';
 import { IconSettings, IconTrophy } from '../components/Icons';
 import { Empty, ExerciseAvatar, PageHeader, Segmented, Stat } from '../components/ui';
 import { useData } from '../lib/data';
-import { addDays, fmtDate, fmtDayMonth, fmtDuration, fmtMonthShort, fmtNum, fmtRelativeDay, fmtWeekdayDate, fmtWeekdayShort, kgTo, startOfDay, startOfWeek } from '../lib/format';
+import { addDays, fmtDate, fmtDayMonth, fmtDuration, fmtMonthShort, fmtNum, fmtRelativeDay, fmtWeekdayDate, fmtWeekdayShort, isolate, kgTo, startOfDay, startOfWeek } from '../lib/format';
 import { recentRecords } from '../lib/records';
 import { recordFormat } from '../lib/recordFormat';
 import { MUSCLE_LABEL } from '../lib/meta';
@@ -80,7 +80,7 @@ export function Profile() {
     metric === 'duration'
       ? fmtDuration(v * 3600)
       : metric === 'volume'
-        ? `${fmtNum(Math.round(v), 0)} ${settings.weightUnit}`
+        ? isolate(`${fmtNum(Math.round(v), 0)} ${settings.weightUnit}`)
         : count_('set', Math.round(v));
   const titles: Record<WeekMetric, string> = {
     duration: t('progress.titleTime'),

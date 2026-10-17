@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { downloadFile } from '../lib/csv';
 import { useData } from '../lib/data';
-import { fmtDateYear, fmtDuration, fmtTime, fmtVolume, fmtWeekdayDate } from '../lib/format';
+import { fmtDateYear, fmtDuration, fmtTime, fmtVolume, fmtWeekdayDate, plain } from '../lib/format';
 import { fmtSet } from '../lib/sets';
 import { useSettings } from '../lib/settings';
 import { renderWorkoutCard, type CardData } from '../lib/shareCard';
@@ -21,7 +21,7 @@ function useCardData(w: Workout): CardData {
     when: `${fmtWeekdayDate(w.startTime)} · ${fmtTime(w.startTime)}–${fmtTime(w.endTime)}`,
     stats: [
       { label: t('share.time'), value: fmtDuration((w.endTime - w.startTime) / 1000) },
-      { label: t('stat.volume'), value: fmtVolume(workoutVolume(w, typeOf), settings.weightUnit) },
+      { label: t('stat.volume'), value: plain(fmtVolume(workoutVolume(w, typeOf), settings.weightUnit)) },
       { label: t('stat.sets'), value: String(workoutSets(w)) },
     ],
     records: records.byWorkout.get(w.id) ?? 0,
@@ -31,7 +31,7 @@ function useCardData(w: Workout): CardData {
       return {
         name: exerciseMap.get(we.exerciseId)?.name ?? t('exercise.deleted'),
         sets: we.sets.length,
-        best: best ? fmtSet(best, type, settings) : '',
+        best: best ? plain(fmtSet(best, type, settings)) : '',
         record: we.sets.some((s) => (records.bySet.get(s.id)?.length ?? 0) > 0),
       };
     }),

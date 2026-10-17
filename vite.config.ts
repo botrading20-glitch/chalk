@@ -64,8 +64,19 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2,json}'],
+        // The Arabic font is 160 kB and only Arabic readers need it: it is cached the first time it is used.
+        globIgnores: ['**/noto-sans-arabic-*.woff2'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         runtimeCaching: [
+          {
+            urlPattern: /noto-sans-arabic-[\w-]*\.woff2$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'arabic-font',
+              expiration: { maxEntries: 2 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
           {
             // Exercise demo images from the open exercise database.
             urlPattern: /^https:\/\/raw\.githubusercontent\.com\/yuhonas\/free-exercise-db\//,

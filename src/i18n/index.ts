@@ -9,8 +9,19 @@ import type { Message, Vars } from './message';
 
 type Loader = () => Promise<{ default: Catalog }>;
 
-/** Filled in as the translations land; a language without a loader falls back to English. */
-const LOADERS: Partial<Record<Locale, Loader>> = {};
+/** One chunk per language, loaded when it is chosen; a language without a loader falls back to English. */
+export const LOADERS: Partial<Record<Locale, Loader>> = {
+  fr: () => import('./fr'),
+  ar: () => import('./ar'),
+  es: () => import('./es'),
+  de: () => import('./de'),
+  pt: () => import('./pt'),
+  it: () => import('./it'),
+  tr: () => import('./tr'),
+  nl: () => import('./nl'),
+  pl: () => import('./pl'),
+  id: () => import('./id'),
+};
 
 let locale: Locale = 'en';
 let catalog: Partial<Catalog> = en;
@@ -22,6 +33,9 @@ const subscribe = (l: () => void) => {
 };
 
 export const currentLocale = () => locale;
+
+/** True while the interface reads right to left (Arabic). */
+export const isRtl = () => LOCALES.find((l) => l.code === locale)!.dir === 'rtl';
 
 /** The BCP 47 tag for Intl.*: English uses en-GB (day first, 24 h) as the app always has; Arabic keeps Western digits. */
 export const intlLocale = () => LOCALES.find((l) => l.code === locale)!.intl;

@@ -1,4 +1,4 @@
-import { intlLocale, t } from '../i18n';
+import { intlLocale, isRtl, t } from '../i18n';
 import type { DistanceUnit, WeightUnit } from '../types';
 import { calcContext } from './context';
 
@@ -51,16 +51,29 @@ export function toKm(v: number, unit: DistanceUnit) {
   return unit === 'km' ? v : v / MI_PER_KM;
 }
 
+/**
+ * Keeps a run of numbers and Latin units in reading order inside right-to-left text, where
+ * "66 kg × 15" would otherwise come out as "15 × kg 66". Other languages get the text untouched.
+ */
+export function isolate(text: string) {
+  return text && isRtl() ? `⁦${text}⁩` : text;
+}
+
+/** `text` without the isolate marks, for canvas drawing and anything that parses it back. */
+export function plain(text: string) {
+  return text.replace(/[⁦⁩]/g, '');
+}
+
 export function fmtWeight(kg: number, unit: WeightUnit) {
-  return `${fmtNum(kgTo(kg, unit), unit === 'kg' ? 2 : 1)} ${unit}`;
+  return isolate(`${fmtNum(kgTo(kg, unit), unit === 'kg' ? 2 : 1)} ${unit}`);
 }
 
 export function fmtVolume(kg: number, unit: WeightUnit) {
-  return `${fmtNum(Math.round(kgTo(kg, unit)), 0)} ${unit}`;
+  return isolate(`${fmtNum(Math.round(kgTo(kg, unit)), 0)} ${unit}`);
 }
 
 export function fmtDistance(km: number, unit: DistanceUnit) {
-  return `${fmtNum(kmTo(km, unit), 2)} ${unit}`;
+  return isolate(`${fmtNum(kmTo(km, unit), 2)} ${unit}`);
 }
 
 /** 83 → "1:23", 3723 → "1:02:03" */

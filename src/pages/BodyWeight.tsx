@@ -4,7 +4,7 @@ import { LineChart } from '../components/Charts';
 import { IconPlus } from '../components/Icons';
 import { Empty, PageHeader, Segmented } from '../components/ui';
 import { useBodyWeights } from '../lib/bodyweight';
-import { addDays, fmtDate, fmtNum, fmtRelativeDay, startOfDay } from '../lib/format';
+import { addDays, fmtDate, fmtNum, fmtRelativeDay, isolate, startOfDay } from '../lib/format';
 import { useSettings } from '../lib/settings';
 import type { BodyWeight } from '../types';
 import { t } from '../i18n';
@@ -56,7 +56,7 @@ export function BodyWeightPage() {
           <section className="card chart-card">
             <h2 className="card-title">{t('bw.trend', { unit: weightUnit })}</h2>
             {shown.length > 1 ? (
-              <LineChart points={bodyWeightPoints(shown, weightUnit)} format={(v) => `${fmtNum(v, 1)} ${weightUnit}`} caption={t('bw.caption', { unit: weightUnit })} />
+              <LineChart points={bodyWeightPoints(shown, weightUnit)} format={(v) => isolate(`${fmtNum(v, 1)} ${weightUnit}`)} caption={t('bw.caption', { unit: weightUnit })} />
             ) : (
               <p className="muted chart-empty">{t('bw.needTwo')}</p>
             )}

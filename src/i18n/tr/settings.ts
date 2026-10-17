@@ -354,4 +354,27 @@ export default {
 
   'progress.recent': 'Son rekorlar',
   'progress.recentExtra': '+{n} daha',
+
+  'new.title': 'Setward {version} sürümünde yenilikler',
+  'new.lead': 'Kaydettiğin her şey olduğu gibi duruyor. Değişenler şunlar.',
+  'new.look.title': 'Yeni bir görünüm',
+  'new.look.text': 'Katmanlı kartlar, büyük sayılar ve logodan alınan eğik bir vurgu; koyu, açık ve saf siyah temada.',
+  'new.languages.title': 'On bir dil',
+  'new.languages.text': 'İngilizce, Fransızca, Arapça, İspanyolca, Almanca, Portekizce, İtalyanca, Türkçe, Felemenkçe, Lehçe ve Endonezce. Arapça sağdan sola okunur. Çeviriler makineyle yapıldı; ifadenin tuhaf kaldığı yerleri bize söyle.',
+  'new.settings.title': 'Daha fazla ayar',
+  'new.settings.text': 'Dinlenme sesleri, ısınma sonrası dinlenme, haftanın ilk günü, 1RM formülü, yazı boyutu, yüksek karşıtlık ve daha büyük denetimler, her biri kendi sayfasında.',
+  'new.start.title': 'Daha iyi bir ilk açılış',
+  'new.start.text': 'Bir karşılama ekranı, altı başlangıç programı ve Strong’dan içe aktarma.',
+  'new.past.title': 'Geçmiş bir antrenmanı kaydet',
+  'new.past.text': 'Unuttuğun bir seansı kendi tarihiyle Geçmiş’ten ekle.',
+  'new.records.title': 'Son rekorlar',
+  'new.records.text': 'İlerleme artık en son rekorlarını tek bakışta listeliyor.',
+
+  'about.whatsNew': 'Yenilikler',
+  'about.privacyPage': 'Gizlilik sayfası',
+
+  'panel.feature1': 'Setleri, rutinleri ve rekorları kaydet',
+  'panel.feature2': 'Ücretsiz, çevrimdışı, hesapsız',
+  'panel.feature3': 'On bir dilde 1.000’den fazla egzersiz',
+  'panel.phone': 'En iyisi telefonda: bu sayfayı orada aç ve ana ekranına ekle.',
 } satisfies Record<string, Message>;

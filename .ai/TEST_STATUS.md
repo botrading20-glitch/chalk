@@ -1,5 +1,24 @@
 # Test status
 
+## Public and store readiness (LAUNCH-M7): 2026-10-17, branch `launch`
+
+Environment: Windows 11, built-in Chromium, dev server on localhost:5173 (sample backup) and production preview on localhost:4173/chalk/ (a new, empty origin), phone emulation at 412 px, desktop at 1280 px.
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Types / tests | PASS | `tsc --noEmit` exit 0; 163 passed, 2 skipped (new: `whatsNew.test.ts`; `i18n.test.ts` covers the 20 new keys in all ten languages) |
+| Contrast | PASS | 732 pairs, 0 failing |
+| Production build | PASS | main chunk 168.55 kB gzip (167.24 at M6); 37 precache entries; `og-image.jpg` and `store/*` are not precached, `privacy.html` is; built `index.html` has absolute og and canonical URLs; the manifest has `categories`, 2 shortcuts, 5 screenshots; the service worker has `denylist:[/privacy\.html$/]` |
+| Link-preview image | PASS | `public/og-image.jpg` 1200 × 630, 69 kB, read on screen; text and week card clear, no overlap |
+| Privacy page under the service worker | PASS | Preview: `/chalk/privacy.html` opens the privacy page (title "Setward privacy policy"), not the app shell; readable at 375 px |
+| What's new | PASS | Dev, existing data and no recorded version: the sheet opens on Home once, Done records `1.0.0`, it does not return; preview, new empty install: no sheet, the version is recorded silently; About lists "What's new" (6 entries) and the privacy link |
+| Home-screen shortcuts | PASS | Preview, empty install: `#/?action=start` starts "Evening workout" and lands on `#/workout` (the welcome redirect did not steal it); `#/?action=weigh` lands on the body-weight screen with the "Log body weight" sheet open |
+| Wide-screen panel | PASS | 1280 px: the panel sits left of the column (LTR) and right of it in Arabic; below 1240 px it is hidden. The pane scaled the capture, so spacing was judged from positions, not pixels |
+| Console / CSP | PASS | No console errors in the preview; the CSP is unchanged |
+| Store assets | PARTIAL | Feature graphic 1024 × 500 and listing text done. Phone screenshots are 824 × 1830 (2.2:1): Play allows 2:1, so they must be retaken before submitting. Nothing submitted |
+| Real link previews, launcher long-press shortcuts | NOT_RUN | Need the deployed URL and a phone |
+| Phone / screen reader | NOT_RUN | Needs the owner's phone |
+
 ## Ten translations and Arabic right-to-left (LAUNCH-M6): 2026-10-17, branch `launch`
 
 Environment: Windows 11, built-in Chromium, dev server on localhost:5173 (sample backup, an unfinished Chest day in progress), phone emulation at 375 and 320 px. Every language was switched on the Language page, then each route was visited.

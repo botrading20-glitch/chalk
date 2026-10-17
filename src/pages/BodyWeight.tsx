@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { bodyWeightPoints, fmtBodyWeight, fmtChange, WeighInSheet } from '../components/BodyWeight';
 import { LineChart } from '../components/Charts';
 import { IconPlus } from '../components/Icons';
 import { Empty, PageHeader, Segmented } from '../components/ui';
 import { useBodyWeights } from '../lib/bodyweight';
 import { addDays, fmtDate, fmtNum, fmtRelativeDay, isolate, startOfDay } from '../lib/format';
+import { navigate, useRoute } from '../lib/router';
 import { useSettings } from '../lib/settings';
 import type { BodyWeight } from '../types';
 import { t } from '../i18n';
@@ -17,6 +18,13 @@ export function BodyWeightPage() {
   const { weightUnit } = useSettings();
   const [range, setRange] = useState<Range>('3m');
   const [editing, setEditing] = useState<BodyWeight | 'new' | null>(null);
+  // The "Log body weight" home-screen shortcut arrives with ?log=1: open the sheet, then drop the flag.
+  const wantsLog = useRoute().query.has('log');
+  useEffect(() => {
+    if (!wantsLog) return;
+    setEditing('new');
+    navigate('/profile/bodyweight', { replace: true });
+  }, [wantsLog]);
 
   const shown = useMemo(() => {
     if (!entries) return [];

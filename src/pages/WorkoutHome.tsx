@@ -13,7 +13,7 @@ import { db } from '../db';
 import { useData, useNow } from '../lib/data';
 import { groupRoutines, removeFolder, toggleFolder, useCollapsedFolders, type Folder } from '../lib/folders';
 import { fmtClock, fmtDate, startOfDay, uid } from '../lib/format';
-import { Link, navigate } from '../lib/router';
+import { Link, navigate, useRoute } from '../lib/router';
 import { useSettings } from '../lib/settings';
 import { useWelcomeGate } from '../lib/welcome';
 import { useSyncStatus } from '../lib/sync';
@@ -56,15 +56,17 @@ export function WorkoutHome() {
   const [reorder, setReorder] = useState<{ folder?: string } | null>(null);
   const collapsed = useCollapsedFolders();
   const welcome = useWelcomeGate();
+  // A home-screen shortcut (`#/?action=start`) is on its way somewhere else: let it go first.
+  const launching = useRoute().query.has('action');
   // A brand-new install opens on the welcome screen; anyone with data never sees it.
   useEffect(() => {
-    if (welcome) navigate('/welcome', { replace: true });
-  }, [welcome]);
+    if (welcome && !launching) navigate('/welcome', { replace: true });
+  }, [welcome, launching]);
   const { folders, loose } = groupRoutines(routines ?? []);
   const groupOf = (folder?: string) => (folder ? (folders.find((f) => f.name === folder)?.routines ?? []) : loose);
   const card = (r: Routine) => <RoutineCard key={r.id} routine={r} onMenu={() => setMenu(r)} />;
 
-  if (welcome === undefined || welcome) return null;
+  if (welcome === undefined || welcome || launching) return null;
 
   return (
     <div className="page">

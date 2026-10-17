@@ -2,7 +2,10 @@ import { lazy, Suspense } from 'react';
 import { DialogHost } from './components/dialogs';
 import { t } from './i18n';
 import { Dock } from './components/Dock';
+import { WhatsNewSheet } from './components/WhatsNew';
+import { WidePanel } from './components/WidePanel';
 import { useData } from './lib/data';
+import { useLaunchAction } from './lib/launch';
 import { useRoute } from './lib/router';
 import { useAppearance, useFormatKey } from './lib/appearance';
 import { ActiveWorkoutPage } from './pages/ActiveWorkout';
@@ -28,6 +31,7 @@ const ProgramsPage = lazy(() => import('./pages/Programs').then((m) => ({ defaul
 
 export function App() {
   useAppearance();
+  useLaunchAction();
   const formatKey = useFormatKey();
   const { ready } = useData();
   const { path, segments, query } = useRoute();
@@ -93,6 +97,8 @@ export function App() {
     <div className="app" key={formatKey}>
       <main key={path}>{ready ? <Suspense fallback={null}>{page}</Suspense> : null}</main>
       <Dock showTabs={!focused} showBanner={s0 !== 'workout'} />
+      <WidePanel />
+      <WhatsNewSheet />
       <DialogHost />
     </div>
   );

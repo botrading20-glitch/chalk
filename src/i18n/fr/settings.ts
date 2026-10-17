@@ -354,4 +354,27 @@ export default {
 
   'progress.recent': 'Records récents',
   'progress.recentExtra': '+{n} de plus',
+
+  'new.title': 'Nouveautés de Setward {version}',
+  'new.lead': 'Tout ce que vous avez noté est intact. Voici ce qui a changé.',
+  'new.look.title': 'Un nouveau look',
+  'new.look.text': 'Cartes en couches, grands chiffres et un accent oblique repris du logo, en thème sombre, clair et noir pur.',
+  'new.languages.title': 'Onze langues',
+  'new.languages.text': 'Anglais, français, arabe, espagnol, allemand, portugais, italien, turc, néerlandais, polonais et indonésien. L’arabe se lit de droite à gauche. Les traductions sont automatiques : dites-nous où la formulation est maladroite.',
+  'new.settings.title': 'Plus de réglages',
+  'new.settings.text': 'Sons de repos, repos après échauffement, premier jour de la semaine, formule du 1RM, taille du texte, contraste élevé et commandes plus grandes, chacun sur sa propre page.',
+  'new.start.title': 'Un meilleur premier lancement',
+  'new.start.text': 'Un écran d’accueil, six programmes de départ et l’import depuis Strong.',
+  'new.past.title': 'Noter une séance passée',
+  'new.past.text': 'Ajoutez une séance oubliée, à sa propre date, depuis l’historique.',
+  'new.records.title': 'Records récents',
+  'new.records.text': 'Progrès liste désormais vos derniers records d’un coup d’œil.',
+
+  'about.whatsNew': 'Nouveautés',
+  'about.privacyPage': 'Page de confidentialité',
+
+  'panel.feature1': 'Notez séries, routines et records',
+  'panel.feature2': 'Gratuit, hors ligne, sans compte',
+  'panel.feature3': 'Plus de 1 000 exercices en onze langues',
+  'panel.phone': 'Idéal sur votre téléphone : ouvrez cette page dessus et ajoutez-la à votre écran d’accueil.',
 } satisfies Record<string, Message>;

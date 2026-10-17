@@ -1,9 +1,13 @@
 # Current task
 
 ## Task
-Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, not deployed). The owner-approved plan is `.ai/LAUNCH_PLAN.md`; milestone status is in the roadmap ("Setward 1.0 launch"). **Stopped after M6** (2026-10-17): M1 (Hevy retired, Strong import, Setward CSV), M2 (i18n layer, settings model, rem/logical CSS), M3 (the Forward look), M4 (grouped Settings, every new setting wired), M5 (welcome, starter programs, log a past workout, recent records) and M6 (the ten translations and Arabic right-to-left) are done and committed. M7 (link previews, privacy page, licence, README, store groundwork, version 1.0.0) is next. REL-101 to REL-103 are live and still wait on the owner's phone checks.
+Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, not deployed). The owner-approved plan is `.ai/LAUNCH_PLAN.md`; milestone status is in the roadmap ("Setward 1.0 launch"). **Stopped after M7** (2026-10-17): M1 (Hevy retired, Strong import, Setward CSV), M2 (i18n layer, settings model, rem/logical CSS), M3 (the Forward look), M4 (grouped Settings, every new setting wired), M5 (welcome, starter programs, log a past workout, recent records), M6 (the ten translations and Arabic right-to-left) and M7 (link previews, privacy page, licence, README, wide-screen panel, version 1.0.0 with What's new, store groundwork) are done and committed. M8 (verify everything, record, ask before releasing) is next. REL-101 to REL-103 are live and still wait on the owner's phone checks.
 
-## This session (2026-10-17): M6
+## This session (2026-10-17): M7
+- Owner approved starting M7. Built the link previews, manifest shortcuts and screenshots, the home-screen actions, the privacy page, licence, user README, the wide-screen panel, version 1.0.0 with the What's new sheet and the store groundwork. Details and evidence: roadmap LAUNCH-M7 and `TEST_STATUS.md`.
+- Open for the owner from M7: the copyright holder in `LICENSE` (now "The Setward authors"), and the Play decisions in `.ai/PLAY_STORE.md` (account fee, closed test, package name, contact email). Phone screenshots for Play must be retaken.
+
+## Earlier today (2026-10-17): M6
 - Owner approved starting M6 and asked to see the Settings home in Arabic and in French (375 px) as soon as the first two languages existed: sent. Then wrote the other eight catalogs, the Arabic right-to-left pass and a per-language overflow sweep. Details and evidence: roadmap LAUNCH-M6 and `TEST_STATUS.md`.
 - **Lesson for sweeps:** when a page overflows sideways, a phone-sized browser widens `window.innerWidth` to match, so a check against `innerWidth` passes. Measure against `document.documentElement.clientWidth`. Earlier sweeps that used `innerWidth` could have missed page-level overflow; the M6 sweeps were redone with `clientWidth` and found (and fixed) real ones.
 
@@ -48,9 +52,9 @@ Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, 
 - ENV-002: deploy jobs are pinned to `ubuntu-24.04` (2026-10-05) because `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19. Revisit when GitHub retires that image.
 
 ## Next exact action (resume here)
-1. `git checkout launch` (HEAD should be the commit "Translate into ten languages and add the Arabic right-to-left pass"). Read M7 and M8 in `.ai/LAUNCH_PLAN.md`.
-2. Start **M7**: Open Graph and Twitter tags with a 1200×630 `og-image.png` drawn in the dev browser, manifest `screenshots` / `shortcuts` / `categories` (`start_url` and `scope` unchanged, NN-12), `public/privacy.html` (same text as About → Privacy), a `LICENSE`, the README for users, a wide-screen side panel, version 1.0.0 with What's new shown once after updating, and the store groundwork (`.ai/PLAY_STORE.md`, `branding/store/`; nothing is submitted). The CSP stays unchanged: no new origins.
-3. Then M8 (verify everything, update the notes, ask the owner before merging `launch` into `main` and pushing, which deploys). Merge and push only with the owner's go-ahead (NN-15).
+1. `git checkout launch` (HEAD should be the commit "Add link previews, privacy page, licence, README, wide-screen panel and What's new for 1.0.0"). Read M8 in `.ai/LAUNCH_PLAN.md`.
+2. Start **M8**: run the full verification (typecheck, tests, contrast, a `/chalk/` production build, the smoke tests S-01 to S-15 on dev and on the preview, overflow sweeps at 320, 360 and 375 px measured against `document.documentElement.clientWidth` over every route, including the M3 to M5 screens that earlier sweeps may have measured against `innerWidth`), update `.ai/` (PROJECT_STATE, CURRENT_TASK, roadmap, REQUIREMENTS, NON_NEGOTIABLES, DECISIONS, SMOKE_TESTS, TEST_STATUS, RELEASE_CHECKLIST with REL-104), and make sure CLAUDE.md and AGENTS.md describe the 1.0 architecture.
+3. **Ask the owner before merging `launch` into `main` and pushing: that deploys (NN-15).** Rollback is reverting the merge. After a release, check the live link previews (Facebook sharing debugger, a WhatsApp message to yourself), the privacy page at `/chalk/privacy.html` and the manifest in Chrome devtools → Application.
 
 ### M3 design brief (decided, not yet built)
 - Keep the violet-charcoal palette, purple accent, Big Shoulders Display and Archivo. Owner asked for refine + bolder together. Amend NN-16 in `DECISIONS.md` when it lands.
@@ -63,9 +67,9 @@ Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, 
 - **Bash tool limit:** a single command longer than about 6 KB fails with "unexpected EOF". Split big heredocs into several calls. Doubled backslashes in a command are collapsed to one, so build strings containing a backslash with `chr(92)` or raw strings.
 - **Handy helper pattern:** small python scripts that replace exact strings (each old string must exist once) were used for all the string extraction. `src/i18n/en/*.ts` holds the catalog parts, merged in `src/i18n/en.ts`; add a key there and use `t('key')`.
 - Dev server: `.claude/launch.json` → `chalk-dev` (:5173) and `chalk-preview` (:4173, built with `MSYS_NO_PATHCONV=1 BASE_PATH=/chalk/ npm run build`). The dev browser has the sample data and default settings. No server is left running.
-- Baseline at the stop: typecheck clean, 104 tests pass (2 skipped), contrast 0 of 732 failing, 125 tests, `/chalk/` build main chunk 166.85 kB gzip (Settings, Welcome and Programs are lazy chunks).
+- Baseline at the stop: typecheck clean, 163 tests pass (2 skipped), contrast 0 of 732 failing, `/chalk/` build main chunk 168.55 kB gzip (Settings, Welcome, Programs and each language are lazy chunks).
 - The dev browser has the sample data; its settings row was reset (theme System, no goal, no name). To see the week card with a goal: `(await import('/src/lib/settings.ts')).updateSettings({ weeklyGoal: 4, profileName: 'Name' })` in the page console.
 - The Hevy removal is final (owner decision); do not reintroduce Hevy wording.
 
 ## Last updated
-2026-10-17 (M6 done; M7 next)
+2026-10-17 (M7 done; M8 next)

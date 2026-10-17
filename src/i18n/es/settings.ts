@@ -354,4 +354,27 @@ export default {
 
   'progress.recent': 'Récords recientes',
   'progress.recentExtra': '+{n} más',
+
+  'new.title': 'Novedades de Setward {version}',
+  'new.lead': 'Todo lo que registraste sigue intacto. Esto es lo que cambió.',
+  'new.look.title': 'Un nuevo aspecto',
+  'new.look.text': 'Tarjetas en capas, números grandes y un acento inclinado tomado del logotipo, en oscuro, claro y negro puro.',
+  'new.languages.title': 'Once idiomas',
+  'new.languages.text': 'Inglés, francés, árabe, español, alemán, portugués, italiano, turco, neerlandés, polaco e indonesio. El árabe se lee de derecha a izquierda. Las traducciones son automáticas, así que dinos dónde suenan raras.',
+  'new.settings.title': 'Más ajustes',
+  'new.settings.text': 'Sonidos de descanso, descanso tras el calentamiento, primer día de la semana, fórmula del 1RM, tamaño del texto, alto contraste y controles más grandes, cada uno en su propia página.',
+  'new.start.title': 'Un mejor primer inicio',
+  'new.start.text': 'Una pantalla de bienvenida, seis programas iniciales e importación desde Strong.',
+  'new.past.title': 'Registrar un entrenamiento pasado',
+  'new.past.text': 'Añade una sesión que olvidaste, con su propia fecha, desde el historial.',
+  'new.records.title': 'Récords recientes',
+  'new.records.text': 'Progreso ahora muestra tus últimos récords de un vistazo.',
+
+  'about.whatsNew': 'Novedades',
+  'about.privacyPage': 'Página de privacidad',
+
+  'panel.feature1': 'Registra series, rutinas y récords',
+  'panel.feature2': 'Gratis, sin conexión y sin cuenta',
+  'panel.feature3': 'Más de 1000 ejercicios en once idiomas',
+  'panel.phone': 'Mejor en tu teléfono: abre esta página allí y añádela a la pantalla de inicio.',
 } satisfies Record<string, Message>;

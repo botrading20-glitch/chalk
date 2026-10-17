@@ -356,4 +356,27 @@ export default {
 
   'progress.recent': 'Rekor terbaru',
   'progress.recentExtra': '+{n} lagi',
+
+  'new.title': 'Yang baru di Setward {version}',
+  'new.lead': 'Semua yang kamu catat tetap utuh. Inilah yang berubah.',
+  'new.look.title': 'Tampilan baru',
+  'new.look.text': 'Kartu berlapis, angka besar, dan aksen miring dari logo, dalam tema gelap, terang, dan hitam pekat.',
+  'new.languages.title': 'Sebelas bahasa',
+  'new.languages.text': 'Inggris, Prancis, Arab, Spanyol, Jerman, Portugis, Italia, Turki, Belanda, Polandia, dan Indonesia. Bahasa Arab dibaca dari kanan ke kiri. Terjemahannya dibuat mesin, jadi beri tahu kami kalau ada kata yang janggal.',
+  'new.settings.title': 'Lebih banyak pengaturan',
+  'new.settings.text': 'Suara istirahat, istirahat setelah pemanasan, hari pertama minggu, rumus 1RM, ukuran teks, kontras tinggi, dan kontrol lebih besar, masing-masing di halamannya sendiri.',
+  'new.start.title': 'Pengalaman pertama yang lebih baik',
+  'new.start.text': 'Layar sambutan, enam program pemula, dan impor dari Strong.',
+  'new.past.title': 'Catat latihan yang sudah lewat',
+  'new.past.text': 'Tambahkan sesi yang terlupa, dengan tanggalnya sendiri, dari Riwayat.',
+  'new.records.title': 'Rekor terbaru',
+  'new.records.text': 'Kemajuan kini menampilkan rekor terbarumu sekilas.',
+
+  'about.whatsNew': 'Yang baru',
+  'about.privacyPage': 'Halaman privasi',
+
+  'panel.feature1': 'Catat set, rutinitas, dan rekor',
+  'panel.feature2': 'Gratis, offline, tanpa akun',
+  'panel.feature3': 'Lebih dari 1.000 gerakan dalam sebelas bahasa',
+  'panel.phone': 'Paling nyaman di ponsel: buka halaman ini di sana dan tambahkan ke layar utama.',
 } satisfies Record<string, Message>;

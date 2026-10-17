@@ -354,4 +354,27 @@ export default {
 
   'progress.recent': 'Ostatnie rekordy',
   'progress.recentExtra': '+{n} więcej',
+
+  'new.title': 'Nowości w Setwardzie {version}',
+  'new.lead': 'Wszystkie Twoje zapisy pozostały nietknięte. Oto, co się zmieniło.',
+  'new.look.title': 'Nowy wygląd',
+  'new.look.text': 'Warstwowe karty, duże liczby i ukośny akcent z logo, w ciemnym, jasnym i czarnym motywie.',
+  'new.languages.title': 'Jedenaście języków',
+  'new.languages.text': 'Angielski, francuski, arabski, hiszpański, niemiecki, portugalski, włoski, turecki, niderlandzki, polski i indonezyjski. Arabski czyta się od prawej do lewej. Tłumaczenia są maszynowe, więc daj nam znać, gdzie brzmią nienaturalnie.',
+  'new.settings.title': 'Więcej ustawień',
+  'new.settings.text': 'Dźwięki przerwy, przerwa po rozgrzewce, pierwszy dzień tygodnia, wzór na 1RM, rozmiar tekstu, wysoki kontrast i większe elementy sterujące, każde na własnej stronie.',
+  'new.start.title': 'Lepszy pierwszy start',
+  'new.start.text': 'Ekran powitalny, sześć programów startowych i import ze Strong.',
+  'new.past.title': 'Zapisz wcześniejszy trening',
+  'new.past.text': 'Dodaj zapomniany trening z jego własną datą z poziomu Historii.',
+  'new.records.title': 'Ostatnie rekordy',
+  'new.records.text': 'Postępy pokazują teraz najnowsze rekordy w jednym miejscu.',
+
+  'about.whatsNew': 'Nowości',
+  'about.privacyPage': 'Strona o prywatności',
+
+  'panel.feature1': 'Zapisuj serie, rutyny i rekordy',
+  'panel.feature2': 'Za darmo, offline, bez konta',
+  'panel.feature3': 'Ponad 1000 ćwiczeń w jedenastu językach',
+  'panel.phone': 'Najlepiej na telefonie: otwórz tę stronę tam i dodaj ją do ekranu głównego.',
 } satisfies Record<string, Message>;

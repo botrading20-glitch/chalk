@@ -354,4 +354,27 @@ export default {
 
   'progress.recent': 'Neueste Rekorde',
   'progress.recentExtra': '+{n} weitere',
+
+  'new.title': 'Neu in Setward {version}',
+  'new.lead': 'Alles, was du erfasst hast, ist unverändert. Das hat sich geändert.',
+  'new.look.title': 'Ein neuer Look',
+  'new.look.text': 'Geschichtete Karten, große Zahlen und ein schräger Akzent aus dem Logo, in Dunkel, Hell und reinem Schwarz.',
+  'new.languages.title': 'Elf Sprachen',
+  'new.languages.text': 'Englisch, Französisch, Arabisch, Spanisch, Deutsch, Portugiesisch, Italienisch, Türkisch, Niederländisch, Polnisch und Indonesisch. Arabisch wird von rechts nach links gelesen. Die Übersetzungen sind maschinell, sag uns also, wo es holprig klingt.',
+  'new.settings.title': 'Mehr Einstellungen',
+  'new.settings.text': 'Pausentöne, Pause nach Aufwärmsätzen, Wochenstart, 1RM-Formel, Textgröße, hoher Kontrast und größere Bedienelemente, jeweils auf einer eigenen Seite.',
+  'new.start.title': 'Ein besserer Start',
+  'new.start.text': 'Ein Willkommensbildschirm, sechs Starterprogramme und Import aus Strong.',
+  'new.past.title': 'Vergangenes Training eintragen',
+  'new.past.text': 'Trage ein vergessenes Training mit eigenem Datum über den Verlauf nach.',
+  'new.records.title': 'Neueste Rekorde',
+  'new.records.text': 'Unter Fortschritt siehst du jetzt deine neuesten Rekorde auf einen Blick.',
+
+  'about.whatsNew': 'Neuheiten',
+  'about.privacyPage': 'Datenschutzseite',
+
+  'panel.feature1': 'Sätze, Routinen und Rekorde erfassen',
+  'panel.feature2': 'Kostenlos, offline, ohne Konto',
+  'panel.feature3': 'Über 1.000 Übungen in elf Sprachen',
+  'panel.phone': 'Am besten auf dem Handy: Öffne diese Seite dort und füge sie deinem Home-Bildschirm hinzu.',
 } satisfies Record<string, Message>;

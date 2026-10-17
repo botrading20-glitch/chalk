@@ -3,12 +3,12 @@
 ## Project
 - **Name:** Setward (formerly Chalk), live since 2026-10-05.
 - **Purpose:** a free, offline-first workout logger with its own identity, being prepared for a public web launch (Play Store later)
-- **Version:** 0.1.0 (`package.json`). The live app at https://botrading20-glitch.github.io/chalk/ runs `main` @ e7ad7fe (adds the data check), deployed 2026-10-16 (Pages run 38953196792); the stopwatch, routine reordering and orange warm-up badge went live 2026-10-05 (c232c2d).
+- **Version:** 0.1.0 live; 1.0.0 in `package.json` on the `launch` branch (not released). The live app at https://botrading20-glitch.github.io/chalk/ runs `main` @ e7ad7fe (adds the data check), deployed 2026-10-16 (Pages run 38953196792); the stopwatch, routine reordering and orange warm-up badge went live 2026-10-05 (c232c2d).
 - **Stack:** React 19, TypeScript 7, Vite 8, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB), Vitest 5 (+ fake-indexeddb in tests). No backend.
 
 ## Current status
 - **Phase:** released. The quality pass (REL-100, 2026-10-04) and Setward with UX-002, UX-003, A11Y-002 and DOC-002 (REL-101, 2026-10-05) are live, as are REL-102 and the data check (REL-103, 2026-10-16). Waiting on the owner's phone checks.
-- **Branches:** `launch` = 1.0 launch work in progress (local, from `main` @ 2473881; M1 to M6 committed). `main` = live. `quality-pass`, `setward` and `features` are merged (kept locally). `google-sync` is parked (FEAT-001). `data-check` is merged too (REL-103).
+- **Branches:** `launch` = 1.0 launch work in progress (local, from `main` @ 2473881; M1 to M7 committed). `main` = live. `quality-pass`, `setward` and `features` are merged (kept locally). `google-sync` is parked (FEAT-001). `data-check` is merged too (REL-103).
 - **Completion:** all product requirements work. Quality requirements REQ-Q01–Q05 are done, apart from screen-reader and real-device checks.
 - **Release decision:** READY WITH DOCUMENTED LIMITATIONS, released 2026-10-16 (`RELEASE_CHECKLIST.md`, REL-103).
 
@@ -36,7 +36,7 @@ None known at medium or high severity. Low-severity items left in the roadmap "D
 - Sync is shipped but unused by the owner. A Google Drive replacement is parked on the local-only branch `google-sync`; merging it needs its origins added to the CSP `connect-src`.
 
 ## Immediate next steps
-0. Setward 1.0 launch work is on the local branch `launch` (M1 to M6 done, including the ten translations and Arabic right-to-left; M7, public and store readiness, is next). Resume with `CURRENT_TASK.md` and `LAUNCH_PLAN.md`. Nothing is merged or deployed.
+0. Setward 1.0 launch work is on the local branch `launch` (M1 to M7 done, including the ten translations, Arabic right-to-left, link previews, the privacy page and version 1.0.0; M8, verify and ask to release, is next). Resume with `CURRENT_TASK.md` and `LAUNCH_PLAN.md`. Nothing is merged or deployed.
 1. The owner runs the phone checks in `RELEASE_CHECKLIST.md` for REL-101, REL-102 and REL-103.
 
 ## Last verified

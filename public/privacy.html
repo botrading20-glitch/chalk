@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="description" content="Setward's privacy policy: no account, no ads, no analytics. Your workouts stay on your device." />
+    <meta name="robots" content="index, follow" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <title>Setward privacy policy</title>
+    <style>
+      :root {
+        color-scheme: dark light;
+        --bg: #131217;
+        --surface: #1b1a21;
+        --line: #2b2a33;
+        --text: #ecebf2;
+        --text-2: #a7a5b3;
+        --accent-ink: #b39dff;
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f6f5fa;
+          --surface: #ffffff;
+          --line: #dcd9e6;
+          --text: #1c1a24;
+          --text-2: #565364;
+          --accent-ink: #5b3cc4;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 400 1rem/1.6 'Archivo', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      }
+      main {
+        max-width: 42rem;
+        margin: 0 auto;
+        padding: 2.5rem 1.25rem 4rem;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+      header img {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        line-height: 1.15;
+      }
+      h2 {
+        margin: 2.2rem 0 0.4rem;
+        font-size: 1.15rem;
+      }
+      p,
+      li {
+        color: var(--text-2);
+      }
+      p {
+        margin: 0.5rem 0;
+      }
+      ul {
+        padding-inline-start: 1.25rem;
+      }
+      a {
+        color: var(--accent-ink);
+      }
+      .lead {
+        color: var(--text);
+        font-size: 1.1rem;
+      }
+      .card {
+        margin: 1.25rem 0;
+        padding: 1rem 1.15rem;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+      .updated {
+        margin-top: 2.5rem;
+        font-size: 0.875rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="icon-192.png" alt="" />
+        <h1>Setward privacy policy</h1>
+      </header>
+      <p><a href="./">← Open Setward</a></p>
+
+      <p class="lead">Setward has no account and no server of its own. Your workouts, routines and settings stay on your device. There are no ads, no analytics and no trackers.</p>
+
+      <div class="card">
+        <p>
+          Setward is a free, open-source workout log that runs in your browser or as an installed web app. This page says what it stores, what leaves your device and when, and how to remove everything. It is the same
+          text as <strong>Settings → About Setward → Privacy</strong> in the app, in more detail.
+        </p>
+      </div>
+
+      <h2>What stays on your device</h2>
+      <p>
+        Your workouts, routines, exercises you add, body-weight entries, settings and the workout in progress are stored in your browser's storage (IndexedDB) on the device you use. Setward cannot read them from anywhere
+        else, and nobody at Setward receives them. The app's own files are saved in the browser's cache so it works offline. Setward sets no cookies.
+      </p>
+
+      <h2>What leaves your device</h2>
+      <ul>
+        <li>
+          <strong>Opening the app.</strong> The app is a set of static files served by GitHub Pages. Like any website, GitHub's servers see a normal request (your IP address and browser details) when the page or an update is
+          downloaded, under <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>. Once installed, Setward works offline and only checks for
+          updates when it is online.
+        </li>
+        <li>
+          <strong>Exercise photos.</strong> When you open an exercise, its photos load from GitHub's servers (raw.githubusercontent.com), which tells GitHub that your device asked for them. They are then kept in the
+          browser's cache for offline use.
+        </li>
+        <li>
+          <strong>Cloud sync, only if you turn it on.</strong> You choose a private GitHub repository that you own and paste an access token you create. Setward then sends your data to that repository through GitHub's
+          API (api.github.com), and nowhere else. The token is stored on your device and is sent only to GitHub. Every sync is a commit in your repository, so you control the copy and its history.
+        </li>
+        <li><strong>Sharing a workout.</strong> The summary image is drawn on your device. It only leaves when you choose to share or save it.</li>
+      </ul>
+
+      <h2>What Setward does not do</h2>
+      <ul>
+        <li>It has no accounts, sign-in or profile on a server.</li>
+        <li>It has no advertising and no analytics, and it does not use trackers or third-party scripts.</li>
+        <li>It does not sell, share or send your data to anyone, because it never has your data.</li>
+        <li>It does not use your location, camera, microphone, contacts or any other device data. The optional rest alert plays a sound and, on Android, can vibrate.</li>
+      </ul>
+
+      <h2>Health information</h2>
+      <p>
+        Workouts and body weight are health-related, so Setward treats them as private: they live only on your device, plus the repository you choose if you turn on sync. Setward does not give medical advice. Talk to a
+        professional before starting a training programme if you have a health condition.
+      </p>
+
+      <h2>Your choices</h2>
+      <ul>
+        <li><strong>Keep a copy:</strong> Settings → Your data → Back up now saves a file you control; Restore backup brings it back.</li>
+        <li><strong>Remove everything from a device:</strong> Settings → Your data → Erase all data. Clearing the browser's site data for this address does the same, and uninstalling the app removes its storage.</li>
+        <li><strong>Stop syncing:</strong> Settings → Cloud sync → Turn off sync on this device. Delete the access token in GitHub and the repository whenever you like; the copy there is yours.</li>
+        <li><strong>Move data between devices:</strong> use cloud sync or a backup file. Setward does not move it any other way.</li>
+      </ul>
+
+      <h2>Children</h2>
+      <p>Setward does not ask for or collect personal information from anyone, including children, because it collects nothing.</p>
+
+      <h2>Languages</h2>
+      <p>The app is available in eleven languages. The translations other than English are machine-made. This policy is in English only.</p>
+
+      <h2>Changes and contact</h2>
+      <p>
+        If this policy changes, the new version replaces this page and the date below changes. The source code, including everything this policy describes, is public at
+        <a href="https://github.com/botrading20-glitch/chalk">github.com/botrading20-glitch/chalk</a>. Questions or corrections: <a href="https://github.com/botrading20-glitch/chalk/issues/new">open an issue</a>.
+      </p>
+
+      <p class="updated">Last updated: 17 October 2026.</p>
+    </main>
+  </body>
+</html>

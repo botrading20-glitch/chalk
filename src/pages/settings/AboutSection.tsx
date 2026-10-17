@@ -1,8 +1,10 @@
 import { BrandMark } from '../../components/Brand';
 import { toast } from '../../components/dialogs';
 import { IconExternal, IconShare } from '../../components/Icons';
+import { WhatsNewList } from '../../components/WhatsNew';
 import { t } from '../../i18n';
 import type { Key } from '../../i18n/catalog';
+import { WHATS_NEW } from '../../lib/whatsNew';
 import { Card, Note } from './controls';
 
 const REPO = 'https://github.com/botrading20-glitch/chalk';
@@ -40,9 +42,19 @@ export function AboutSection() {
 
       <Note>{t('about.free')}</Note>
 
+      {WHATS_NEW[__APP_VERSION__] && (
+        <details className="card about-item">
+          <summary>{t('about.whatsNew')}</summary>
+          <WhatsNewList />
+        </details>
+      )}
+
       <details className="card about-item">
         <summary>{t('about.privacy')}</summary>
         <p>{t('about.privacyText')}</p>
+        <a className="btn btn-ghost btn-block" href={`${import.meta.env.BASE_URL}privacy.html`} target="_blank" rel="noreferrer">
+          <IconExternal size={18} /> {t('about.privacyPage')}
+        </a>
       </details>
 
       <details className="card about-item">

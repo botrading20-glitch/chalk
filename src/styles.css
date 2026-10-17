@@ -4117,3 +4117,108 @@ html[data-controls='large'] .rest-actions button {
   flex-wrap: wrap;
   gap: 6px;
 }
+
+/* ---------- What's new ---------- */
+
+.whatsnew {
+  list-style: none;
+  margin: 14px 0 18px;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+/* The slanted tick that opens every section, smaller, in front of each entry. */
+.whatsnew li {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding-inline-start: 16px;
+}
+
+.whatsnew li::before {
+  content: '';
+  position: absolute;
+  inset-block: 0.2em 0.15em;
+  inset-inline-start: 0;
+  width: 5px;
+  background: var(--accent);
+  clip-path: polygon(2px 0, 100% 0, calc(100% - 2px) 100%, 0 100%);
+}
+
+.whatsnew strong {
+  font-weight: 650;
+}
+
+.whatsnew span {
+  color: var(--text-2);
+  font-size: 0.9375rem;
+}
+
+/* ---------- Wide screens ---------- */
+
+/* On a wide desktop window the app is a phone-width column. This panel sits beside it and says what Setward is
+   and where it works best. It needs 1240 px: the 560 px column, a 40 px gap and 300 px of panel, each side. */
+.wide-panel {
+  display: none;
+}
+
+@media (min-width: 1240px) {
+  .wide-panel {
+    position: fixed;
+    top: 50%;
+    inset-inline-start: calc(50% - 620px);
+    transform: translateY(-50%);
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 28px 24px;
+    background: linear-gradient(180deg, var(--surface-hi), var(--surface));
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--lift), var(--elev-1);
+  }
+
+  .wide-mark {
+    color: var(--accent-ink);
+    filter: drop-shadow(0 8px 24px color-mix(in srgb, var(--accent) 55%, transparent));
+  }
+
+  .wide-name {
+    margin: 0;
+    font: 800 2.5rem/1 var(--font-display);
+    letter-spacing: 0.01em;
+  }
+
+  .wide-tagline {
+    margin: -6px 0 0;
+    color: var(--text-2);
+  }
+
+  .wide-features {
+    margin: 4px 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+
+  .wide-features li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+  }
+
+  .wide-features svg {
+    flex: none;
+    color: var(--done);
+  }
+
+  .wide-link {
+    color: var(--accent-ink);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+}

@@ -354,4 +354,27 @@ export default {
 
   'progress.recent': 'Recente records',
   'progress.recentExtra': '+{n} meer',
+
+  'new.title': 'Nieuw in Setward {version}',
+  'new.lead': 'Alles wat je hebt gelogd is onaangeroerd. Dit is er veranderd.',
+  'new.look.title': 'Een nieuwe look',
+  'new.look.text': 'Gelaagde kaarten, grote cijfers en een schuin accent uit het logo, in donker, licht en zuiver zwart.',
+  'new.languages.title': 'Elf talen',
+  'new.languages.text': 'Engels, Frans, Arabisch, Spaans, Duits, Portugees, Italiaans, Turks, Nederlands, Pools en Indonesisch. Arabisch lees je van rechts naar links. De vertalingen zijn door een machine gemaakt, dus laat het ons weten waar de formulering vreemd klinkt.',
+  'new.settings.title': 'Meer instellingen',
+  'new.settings.text': 'Rustgeluiden, rust na warming-up, eerste dag van de week, 1RM-formule, tekstgrootte, hoog contrast en grotere knoppen, elk op een eigen pagina.',
+  'new.start.title': 'Een betere eerste start',
+  'new.start.text': 'Een welkomstscherm, zes startprogramma’s en import vanuit Strong.',
+  'new.past.title': 'Een eerdere training loggen',
+  'new.past.text': 'Voeg een vergeten training toe, op de juiste datum, via Geschiedenis.',
+  'new.records.title': 'Recente records',
+  'new.records.text': 'Voortgang toont nu in één oogopslag je nieuwste records.',
+
+  'about.whatsNew': 'Wat is er nieuw',
+  'about.privacyPage': 'Privacypagina',
+
+  'panel.feature1': 'Log sets, routines en records',
+  'panel.feature2': 'Gratis, offline, zonder account',
+  'panel.feature3': 'Ruim 1.000 oefeningen in elf talen',
+  'panel.phone': 'Het best op je telefoon: open deze pagina daar en zet hem op je beginscherm.',
 } satisfies Record<string, Message>;

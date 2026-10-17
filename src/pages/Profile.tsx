@@ -9,7 +9,7 @@ import { addDays, fmtDate, fmtDayMonth, fmtDuration, fmtMonthShort, fmtNum, fmtW
 import { MUSCLE_LABEL } from '../lib/meta';
 import { Link } from '../lib/router';
 import { useSettings } from '../lib/settings';
-import { weekStreak, weeklyBuckets, type WeekBucket } from '../lib/stats';
+import { weekStreak, weeklyBuckets, workoutSets, type WeekBucket } from '../lib/stats';
 import type { Muscle } from '../types';
 import { count as count_, t } from '../i18n';
 
@@ -165,13 +165,21 @@ function SettingsLink() {
 
 function Calendar() {
   const { workouts } = useData();
-  const days = useMemo(() => {
-    const map = new Map<number, string[]>();
+  const { days, levelOf } = useMemo(() => {
+    const map = new Map<number, { titles: string[]; sets: number }>();
     for (const w of workouts) {
       const d = startOfDay(w.startTime);
-      map.set(d, [...(map.get(d) ?? []), w.title]);
+      const day = map.get(d) ?? { titles: [], sets: 0 };
+      day.titles.push(w.title);
+      day.sets += workoutSets(w);
+      map.set(d, day);
     }
-    return map;
+    // Quartiles of the busy days, so the shades spread however much (or little) the user trains.
+    const sorted = [...map.values()].map((d) => d.sets).sort((a, b) => a - b);
+    const q = (p: number) => sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * p))] ?? 0;
+    const [q1, q2, q3] = [q(0.25), q(0.5), q(0.75)];
+    const levelOf = (sets: number) => (sets <= q1 ? 1 : sets <= q2 ? 2 : sets <= q3 ? 3 : 4);
+    return { days: map, levelOf };
   }, [workouts]);
 
   const today = startOfDay(Date.now());
@@ -198,13 +206,14 @@ function Calendar() {
             <div key={wk} className="cal-week">
               {Array.from({ length: 7 }, (_, d) => {
                 const day = addDays(wk, d);
-                const titles = days.get(day);
+                const info = days.get(day);
                 const future = day > today;
                 return (
                   <span
                     key={d}
-                    className={`cal-cell ${titles ? 'on' : ''} ${day === today ? 'today' : ''} ${future ? 'future' : ''}`}
-                    title={`${fmtWeekdayDate(day)}${titles ? ` — ${titles.join(t('common.comma'))}` : ''}`}
+                    className={`cal-cell ${day === today ? 'today' : ''} ${future ? 'future' : ''}`}
+                    data-level={info ? levelOf(info.sets) : undefined}
+                    title={`${fmtWeekdayDate(day)}${info ? ` — ${info.titles.join(t('common.comma'))} (${count_('set', info.sets)})` : ''}`}
                   />
                 );
               })}
@@ -213,6 +222,13 @@ function Calendar() {
         </div>
       </div>
       <p className="muted small cal-foot">{t('progress.calendarFoot', { days: count_('trainingDay', trained) })}</p>
+      <div className="cal-legend" aria-hidden="true">
+        <span>{t('progress.less')}</span>
+        {[0, 1, 2, 3, 4].map((l) => (
+          <i key={l} data-level={l || undefined} />
+        ))}
+        <span>{t('progress.more')}</span>
+      </div>
     </div>
   );
 }

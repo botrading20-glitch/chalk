@@ -252,7 +252,7 @@ export function WorkoutEditor({
         const fields = fieldsFor(type);
         const labels = setLabels(we.sets);
         const letter = we.supersetId !== undefined ? supersetLetters.get(we.supersetId) : undefined;
-        const cols = `2.5rem minmax(0,1fr) ${fields.map(() => 'var(--field-w)').join(' ')}${mode === 'live' ? ' 2.75rem' : ''}`;
+        const cols = `var(--badge-w) minmax(0,1fr) ${fields.map(() => 'var(--field-w)').join(' ')}${mode === 'live' ? ' var(--check-w)' : ''}`;
         const timedIndex = stopwatch ? we.sets.findIndex((s) => s.id === stopwatch.setId) : -1;
         const nextIndex = we.sets.findIndex((s) => !s.completed);
         const canTime = mode === 'live' && !!onStopwatch && fields.includes('duration') && !timing && nextIndex >= 0;

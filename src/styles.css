@@ -283,9 +283,23 @@ p {
 
 .section-title,
 .month-label {
+  position: relative;
+  padding-inline-start: 14px;
   font: 700 1.375rem/1.1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+/* A small slanted tick in the accent opens every section. */
+.section-title::before,
+.month-label::before {
+  content: '';
+  position: absolute;
+  inset-block: 0.1em 0.05em;
+  inset-inline-start: 0;
+  width: 6px;
+  background: var(--accent);
+  clip-path: polygon(2px 0, 100% 0, calc(100% - 2px) 100%, 0 100%);
 }
 
 .month-label {
@@ -1670,6 +1684,8 @@ dialog.sheet-full {
 
 .set-table {
   --field-w: 4.25rem;
+  --badge-w: 2.5rem;
+  --check-w: 2.75rem;
   display: grid;
   gap: 3px;
 }
@@ -1708,6 +1724,19 @@ dialog.sheet-full {
 
   .set-head .prev-short {
     display: inline;
+  }
+
+  /* Larger text on the smallest phones: slimmer inputs keep room for Previous. */
+  html[data-text='large'] .set-table,
+  html[data-text='xlarge'] .set-table {
+    --field-w: 2.75rem;
+    --badge-w: 2.2rem;
+    --check-w: 2.5rem;
+  }
+
+  html[data-text='large'] .set-table .set-input,
+  html[data-text='xlarge'] .set-table .set-input {
+    font-size: 0.9375rem;
   }
 }
 
@@ -2184,10 +2213,14 @@ dialog.sheet-full {
 }
 
 .ex-row-count {
-  font-size: 0.8125rem;
-  font-weight: 600;
+  font: 700 1.0625rem/1 var(--font-display);
+  letter-spacing: 0.02em;
   color: var(--text-2);
   font-variant-numeric: tabular-nums;
+}
+
+.ex-row:active {
+  background: var(--surface-2);
 }
 
 .ex-row-check {
@@ -2269,8 +2302,9 @@ dialog.sheet-full {
 }
 
 .workout-card-head h3 {
-  font-size: 1.0625rem;
-  font-weight: 650;
+  font: 700 1.5rem/1.1 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .workout-card-head .muted {
@@ -2287,14 +2321,22 @@ dialog.sheet-full {
   font-variant-numeric: tabular-nums;
 }
 
+/* The two headline numbers of a session read in the display face. */
+.workout-card-stats > span:not(.pr-pill) {
+  color: var(--text);
+  font: 700 1.25rem/1 var(--font-display);
+  letter-spacing: 0.02em;
+}
+
 .pr-pill,
 .pr-tags {
+  --slant: 5px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 9px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  padding: 3px calc(var(--slant) + 7px);
+  clip-path: var(--slant-clip);
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
   color: var(--accent-ink);
   font-size: 0.75rem;
   font-weight: 700;
@@ -2342,38 +2384,118 @@ dialog.sheet-full {
   white-space: pre-wrap;
 }
 
-.saved-banner {
+.celebration {
+  position: relative;
+  overflow: hidden;
   display: grid;
+  justify-items: start;
   gap: 4px;
-  padding: 18px 18px 16px;
-  border-radius: var(--radius);
-  background: var(--accent);
+  padding: 20px 20px 18px;
+  border-radius: var(--radius-lg);
+  background: var(--hero-grad);
   color: var(--on-accent);
-  animation: stamp 0.45s cubic-bezier(0.2, 1.4, 0.4, 1);
+  box-shadow: var(--glow), inset 0 1px 0 rgb(255 255 255 / 0.2);
+  animation: stamp 0.5s var(--ease-out);
 }
 
-.saved-banner .eyebrow {
-  color: inherit;
-  opacity: 0.75;
+/* One slanted sheen crosses the card as it lands. */
+.celebration::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 38%, rgb(255 255 255 / 0.16) 50%, transparent 62%);
+  background-size: 250% 100%;
+  background-position: 120% 0;
+  animation: sheen 1.1s var(--ease-out) 0.15s both;
+  pointer-events: none;
 }
 
-.saved-banner .muted {
-  color: inherit;
-  opacity: 0.75;
-  font-size: 0.875rem;
+.celebration > * {
+  position: relative;
+  z-index: 1;
 }
 
-.saved-headline {
-  font: 800 2.875rem/0.95 var(--font-display);
+.celebration .eyebrow {
+  color: var(--on-accent);
+}
+
+.celebration-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 12px;
+  margin: 2px 0 4px;
+}
+
+.celebration-num {
+  font: 800 6.5rem/0.82 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 4px 24px rgb(13 6 24 / 0.35);
+}
+
+.celebration-label,
+.celebration-logged {
+  font: 800 2.5rem/0.95 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.01em;
 }
 
-.saved-share {
-  justify-self: start;
-  margin-top: 8px;
+.celebration-logged {
+  font-size: 3.5rem;
+}
+
+.celebration-note {
+  font-size: 0.875rem;
+}
+
+.celebration-share {
+  margin-top: 10px;
   background: var(--on-accent);
   color: var(--accent);
+}
+
+.burst {
+  position: absolute;
+  inset-block-start: 5.4rem;
+  inset-inline-start: 4.2rem;
+  width: 0;
+  height: 0;
+  z-index: 0;
+}
+
+.burst i {
+  position: absolute;
+  inset-block-start: -9px;
+  inset-inline-start: -2px;
+  width: 5px;
+  height: 18px;
+  border-radius: 1px;
+  background: rgb(255 255 255 / 0.9);
+  clip-path: polygon(0 0, 100% 0, 60% 100%, 0 100%);
+  opacity: 0;
+  animation: shard 0.95s var(--ease-out) var(--w) both;
+}
+
+.burst i.long {
+  height: 28px;
+  background: rgb(255 255 255 / 0.6);
+}
+
+@keyframes shard {
+  0% {
+    opacity: 1;
+    transform: rotate(var(--a)) translateY(-14px) scaleY(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--a)) translateY(calc(var(--d) * -1)) scaleY(1);
+  }
+}
+
+@keyframes sheen {
+  to {
+    background-position: -40% 0;
+  }
 }
 
 .share-preview {
@@ -2471,33 +2593,41 @@ dialog.sheet-full {
   text-align: center;
 }
 
+/* Records are numbers first: two tiles across, the value in the display face. */
 .records {
   margin: 0;
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .records > div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.records > div:last-child {
-  border-bottom: 0;
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
 }
 
 .records dt {
   color: var(--text-2);
+  font-size: 0.8125rem;
+  font-weight: 500;
 }
 
 .records dd {
   margin: 0;
   display: grid;
-  justify-items: end;
-  text-align: end;
+  gap: 1px;
+  min-width: 0;
+}
+
+.records dd strong {
+  font: 700 1.75rem/1.05 var(--font-display);
+  letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
 }
 
 .records dd a {
@@ -2517,6 +2647,7 @@ dialog.sheet-full {
   border-radius: var(--radius);
   overflow: hidden;
   background: #fff;
+  box-shadow: var(--elev-2);
 }
 
 .demo img {
@@ -2618,7 +2749,6 @@ dialog.sheet-full {
 }
 
 .chart .bar {
-  fill: var(--viz);
   transition: opacity 0.12s ease;
 }
 
@@ -2643,10 +2773,6 @@ dialog.sheet-full {
   stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: round;
-}
-
-.chart .area {
-  fill: var(--viz-wash);
 }
 
 .chart .dot {
@@ -2718,8 +2844,13 @@ dialog.sheet-full {
   height: 12px;
   min-width: 2px;
   width: calc((100% - 2.5rem) * var(--p));
-  border-radius: 0 4px 4px 0;
-  background: var(--viz);
+  --slant: 5px;
+  clip-path: var(--slant-end);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--viz) 50%, transparent), var(--viz));
+}
+
+[dir='rtl'] .hbar-fill {
+  background: linear-gradient(270deg, color-mix(in srgb, var(--viz) 50%, transparent), var(--viz));
 }
 
 .hbar-value {
@@ -2775,8 +2906,29 @@ dialog.sheet-full {
   background: var(--surface-2);
 }
 
-.cal-cell.on {
+/* Heat: the busier the day (sets done), the deeper the purple. */
+.cal-cell[data-level='1'],
+.cal-legend i[data-level='1'] {
+  background: color-mix(in srgb, var(--viz) 52%, var(--surface-2));
+}
+
+.cal-cell[data-level='2'],
+.cal-legend i[data-level='2'] {
+  background: color-mix(in srgb, var(--viz) 68%, var(--surface-2));
+}
+
+.cal-cell[data-level='3'],
+.cal-legend i[data-level='3'] {
+  background: color-mix(in srgb, var(--viz) 80%, var(--surface-2));
+}
+
+.cal-cell[data-level='4'],
+.cal-legend i[data-level='4'] {
   background: var(--viz);
+}
+
+.cal-cell[data-level='4'] {
+  box-shadow: 0 0 8px -1px color-mix(in srgb, var(--viz) 70%, transparent);
 }
 
 .cal-cell.today {
@@ -2789,6 +2941,31 @@ dialog.sheet-full {
 
 .cal-foot {
   margin-top: 6px;
+}
+
+.cal-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: 0.6875rem;
+}
+
+.cal-legend i {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: var(--surface-2);
+}
+
+.cal-legend span:first-child {
+  margin-inline-end: 2px;
+}
+
+.cal-legend span:last-child {
+  margin-inline-start: 2px;
 }
 
 .top-list {
@@ -2829,7 +3006,8 @@ dialog.sheet-full {
 }
 
 .bw-value {
-  font: 700 2.125rem/1 var(--font-display);
+  font: 800 3rem/0.95 var(--font-display);
+  letter-spacing: 0.01em;
 }
 
 .bw-more {
@@ -2873,7 +3051,12 @@ dialog.sheet-full {
 .bw-row-value {
   min-width: 5.5rem;
   text-align: end;
-  font-weight: 650;
+  font: 700 1.375rem/1 var(--font-display);
+  letter-spacing: 0.01em;
+}
+
+.bw-row:active {
+  background: var(--surface-2);
 }
 
 .form-actions .spacer {

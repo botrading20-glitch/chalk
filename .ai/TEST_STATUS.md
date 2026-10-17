@@ -1,5 +1,22 @@
 # Test status
 
+## Visual refresh, checkpoint 2 and M3 checks (LAUNCH-M3): 2026-10-17, branch `launch`
+
+Environment: Windows 11, built-in Chromium, dev server on localhost:5173 and production preview on localhost:4173/chalk/, both with the sample backup; 320, 360, 375 and a 1280 emulation.
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Types / tests | PASS | `tsc --noEmit` exit 0; 104 passed, 2 skipped (unchanged) |
+| Production build | PASS | `/chalk/` build; main chunk 165.73 kB gzip |
+| Contrast | PASS | `node scripts/contrast.mjs`: 732 pairs, 0 failing (adds the record pill) |
+| Overflow sweep | PASS | 13 routes (Home, live workout with 4 checked sets, History, a workout detail, the saved celebration, workout edit, Exercises, an exercise, Progress, Body weight, Settings, new routine, routine edit) checked for page width and every element's right edge: dark default, light + high contrast + extra-large, pure black + large; at 375, 320, 360 and 1280 |
+| Celebration | PASS | `?saved=1` on a workout with 8 records: the number counts up to 8, shards play once, Share opens the sheet; a workout with none shows "Logged" |
+| Large text, 320 px | PASS | Live set table at 125 % text: Previous values readable ("35 × 10" on two lines), headers no longer touch (found by the sweep's screenshot, not by its overflow check) |
+| Share card | PASS | Preview renders at 1080×1350 with the new banner; the stat values were reduced to 72 px after "17,320 kg" crowded the next column |
+| CSP / production | PASS | Preview with data restored through IndexedDB: 0 violations across Progress, Body weight, an exercise, the celebration and Home; gradients applied (computed stop colour rgb(139, 108, 240) at 0.38) |
+| Reduced motion | NOT_RUN | Covered by the existing global rules; the count-up checks the media query and `data-motion` itself. Not exercised in the browser |
+| Phone / screen reader | NOT_RUN | Needs the owner's phone; the celebration's status line is untested with a screen reader |
+
 ## Visual refresh, checkpoint 1 (LAUNCH-M3): 2026-10-17, branch `launch`
 
 Environment: Windows 11, built-in Chromium, dev server on localhost:5173 with the sample backup restored, 375 and 320 px emulation.

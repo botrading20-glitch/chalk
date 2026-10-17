@@ -153,6 +153,9 @@ for (const theme of THEMES) {
         check('text-2 on week wash', 'text', c('--text-2'), wash, tag);
         check('accent-ink on week wash', 'text', c('--accent-ink'), wash, tag);
         check('text on streak chip', 'text', c('--text'), mixSrgb(accentC, 24, surface2), tag);
+        check('accent-ink on record pill', 'text', c('--accent-ink'), mixSrgb(accentC, 16, surface), tag);
+        // The celebration is plain white on the hero gradient (covered by the on-accent pairs above);
+        // 90% white failed by a hair on the dark accent, so it stays fully opaque.
 
         // Indicators.
         check('accent ring on surface', 'ui', accentC, surface, tag);

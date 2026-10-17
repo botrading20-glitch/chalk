@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { confirmDialog, toast } from '../components/dialogs';
+import { SavedCelebration } from '../components/Celebration';
 import { IconCopy, IconEdit, IconMore, IconPlay, IconShare, IconTrash, IconTrophy } from '../components/Icons';
 import { ShareWorkoutSheet } from '../components/ShareWorkout';
 import { ActionSheet } from '../components/Sheet';
@@ -13,7 +14,7 @@ import { useSettings } from '../lib/settings';
 import { RECORD_LABEL, workoutSets, workoutVolume, type RecordKind } from '../lib/stats';
 import { routineFromWorkout, templateFrom } from '../lib/workouts';
 import { beginWorkout } from './WorkoutHome';
-import { count, t } from '../i18n';
+import { t } from '../i18n';
 import { labelMap } from '../i18n/labels';
 
 const RECORD_SHORT = labelMap<RecordKind>('recordShort', ['weight', 'e1rm', 'volume', 'reps', 'duration', 'distance']);
@@ -49,16 +50,7 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
         }
       />
 
-      {justSaved && (
-        <div className="saved-banner" role="status">
-          <span className="eyebrow">{t('detail.saved', { n: number })}</span>
-          <strong className="saved-headline">{prs ? count('newRecord', prs) : t('detail.logged')}</strong>
-          {prs > 0 && <span className="muted">{t('detail.trophy')}</span>}
-          <button className="btn btn-small saved-share" onClick={() => setSharing(true)}>
-            <IconShare size={16} /> {t('detail.share')}
-          </button>
-        </div>
-      )}
+      {justSaved && <SavedCelebration number={number} records={prs} onShare={() => setSharing(true)} />}
 
       <h1 className="detail-title">{w.title}</h1>
       <p className="muted">

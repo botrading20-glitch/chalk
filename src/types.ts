@@ -208,4 +208,30 @@ export interface Settings {
   largeControls: boolean;
 
   backupReminder: BackupReminder;
+
+  /** The warm-up calculator: each step is a share of the working weight and the reps to do. */
+  warmupSteps: WarmupStep[];
+  /** Start the warm-up with the empty bar (barbell, EZ bar and Smith machine only). */
+  warmupEmptyBar: boolean;
+  /** Round warm-up loads down to this step, in each unit (loads the plates can't make use the plates). */
+  warmupRoundKg: number;
+  warmupRoundLbs: number;
+  /** Toast and trophy when a checked set beats an earlier record. */
+  liveRecords: boolean;
+  /** Show the stopwatch button on timed sets. */
+  inlineStopwatch: boolean;
+  /** After a set in a superset, scroll to the next exercise of the group. */
+  supersetScroll: boolean;
+  /** A plate button in the header of barbell exercises. */
+  plateShortcut: boolean;
+  /** Offer to attach a video to a set. Videos already saved stay visible when off. */
+  setVideos: boolean;
+  /** Home offers last month's report at the start of a month. */
+  monthlyReport: boolean;
+}
+
+export interface WarmupStep {
+  /** Share of the working weight, 5 to 95. */
+  percent: number;
+  reps: number;
 }

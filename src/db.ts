@@ -65,6 +65,20 @@ export const DEFAULT_SETTINGS: Settings = {
   reduceMotion: 'system',
   largeControls: false,
   backupReminder: 'weekly',
+  warmupSteps: [
+    { percent: 50, reps: 10 },
+    { percent: 70, reps: 5 },
+    { percent: 85, reps: 3 },
+  ],
+  warmupEmptyBar: true,
+  warmupRoundKg: 2.5,
+  warmupRoundLbs: 5,
+  liveRecords: true,
+  inlineStopwatch: true,
+  supersetScroll: false,
+  plateShortcut: true,
+  setVideos: true,
+  monthlyReport: true,
 };
 
 export async function getKV<T>(key: string): Promise<T | undefined> {

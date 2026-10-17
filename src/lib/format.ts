@@ -4,7 +4,8 @@ import { calcContext } from './context';
 
 export { listJoin } from '../i18n';
 
-const LB_PER_KG = 2.20462262;
+/** The international pound, exactly. */
+export const KG_PER_LB = 0.45359237;
 const MI_PER_KM = 0.621371192;
 
 export function uid() {
@@ -36,11 +37,11 @@ export function parseNum(s: string): number | undefined {
 }
 
 export function kgTo(kg: number, unit: WeightUnit) {
-  return unit === 'kg' ? kg : kg * LB_PER_KG;
+  return unit === 'kg' ? kg : kg / KG_PER_LB;
 }
 
 export function toKg(v: number, unit: WeightUnit) {
-  return unit === 'kg' ? v : v / LB_PER_KG;
+  return unit === 'kg' ? v : v * KG_PER_LB;
 }
 
 export function kmTo(km: number, unit: DistanceUnit) {

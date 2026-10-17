@@ -34,7 +34,7 @@ import type { Key } from '../i18n/catalog';
 export type EditorMode = 'live' | 'edit' | 'routine';
 
 const REST_OPTIONS = [0, 30, 45, 60, 75, 90, 120, 150, 180, 240, 300];
-const RPE_OPTIONS = [6, 7, 7.5, 8, 8.5, 9, 9.5, 10];
+const RPE_OPTIONS = [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10];
 const SET_TYPES: SetType[] = ['warmup', 'normal', 'failure', 'dropset'];
 
 type Update = (fn: (list: WorkoutExercise[]) => WorkoutExercise[]) => void;
@@ -511,6 +511,7 @@ export function WorkoutEditor({
                     </button>
                   ))}
                 </div>
+                <p className="muted small">{t('editor.rpeGuide')}</p>
               </>
             )}
             <button

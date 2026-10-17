@@ -7,6 +7,7 @@ import pages from './en/pages';
 import settings from './en/settings';
 import settingsPages from './en/settingsPages';
 import launch from './en/launch';
+import training from './en/training';
 import welcome from './en/welcome';
 import workout from './en/workout';
 import labels from './en/labels';
@@ -27,4 +28,5 @@ export const en = {
   ...settingsPages,
   ...welcome,
   ...launch,
+  ...training,
 };

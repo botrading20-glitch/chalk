@@ -150,6 +150,11 @@ export function fmtWeekdayShort(ts: number) {
   return dateFormat('weekdayShort', { weekday: 'short' }).format(ts);
 }
 
+/** "W" */
+export function fmtWeekdayNarrow(ts: number) {
+  return dateFormat('weekdayNarrow', { weekday: 'narrow' }).format(ts);
+}
+
 export function fmtMonth(ts: number) {
   return dateFormat('month', { month: 'long', year: 'numeric' }).format(ts);
 }

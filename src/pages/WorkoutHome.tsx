@@ -7,6 +7,7 @@ import { InstallBanner } from '../components/InstallPrompt';
 import { FolderSheet, MoveToFolderSheet, ReorderSheet } from '../components/RoutineFolders';
 import { ActionSheet } from '../components/Sheet';
 import { Empty, PageHeader } from '../components/ui';
+import { WeekCard } from '../components/WeekCard';
 import { db } from '../db';
 import { useData, useNow } from '../lib/data';
 import { groupRoutines, removeFolder, toggleFolder, useCollapsedFolders, type Folder } from '../lib/folders';
@@ -61,9 +62,10 @@ export function WorkoutHome() {
 
       <SyncWarning />
       {active ? <ResumeCard /> : null}
+      <WeekCard />
       <InstallBanner />
 
-      <button className="btn btn-primary btn-block btn-hero" onClick={() => beginWorkout()}>
+      <button className="btn btn-glow btn-block btn-hero" onClick={() => beginWorkout()}>
         <IconPlus /> {t('live.startEmpty')}
       </button>
 

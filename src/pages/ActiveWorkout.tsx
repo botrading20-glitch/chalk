@@ -5,6 +5,7 @@ import { BufferedText } from '../components/fields';
 import { IconDown } from '../components/Icons';
 import { Sheet } from '../components/Sheet';
 import { Empty, Stat, Toggle } from '../components/ui';
+import { SlantBar } from '../components/WeekCard';
 import { WorkoutEditor } from '../components/WorkoutEditor';
 import { db } from '../db';
 import { useData, useNow } from '../lib/data';
@@ -57,6 +58,7 @@ export function ActiveWorkoutPage() {
 
   const completed = workoutSets(active, true);
   const volume = workoutVolume(active, typeOf, true);
+  const planned = active.exercises.reduce((n, we) => n + we.sets.length, 0);
 
   async function onFinish() {
     const withValues = active!.exercises.some((we) => we.sets.some((s) => s.completed || hasValues(s)));
@@ -83,12 +85,23 @@ export function ActiveWorkoutPage() {
         <button className="icon-btn" onClick={() => goBack('/')} aria-label={t('live.minimise')}>
           <IconDown />
         </button>
-        <div className="workout-clock" aria-label={t('live.elapsed')}>
-          {fmtClock((now - active.startTime) / 1000)}
+        <div className="workout-clock-cell">
+          <div className="workout-clock" aria-label={t('live.elapsed')}>
+            {fmtClock((now - active.startTime) / 1000)}
+          </div>
+          {planned > 0 && <span className="workout-sets">{t('live.setsProgress', { done: completed, total: planned })}</span>}
         </div>
-        <button className="btn btn-primary btn-small" onClick={onFinish}>
+        <button className="btn btn-glow btn-small" onClick={onFinish}>
           {t('live.finish')}
         </button>
+        {planned > 0 && (
+          <SlantBar
+            className="workout-progress"
+            value={completed}
+            max={planned}
+            label={t('live.setsProgressLabel', { done: completed, total: planned })}
+          />
+        )}
       </header>
 
       <BufferedText

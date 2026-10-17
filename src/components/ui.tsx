@@ -2,6 +2,7 @@ import { useState, type KeyboardEvent, type ReactNode } from 'react';
 import { IMAGE_BASE } from '../lib/meta';
 import { goBack } from '../lib/router';
 import type { Exercise } from '../types';
+import { BrandMark } from './Brand';
 import { IconBack } from './Icons';
 import { t } from '../i18n';
 
@@ -131,6 +132,7 @@ export function Stat({ label, value }: { label: string; value: ReactNode }) {
 export function Empty({ title, children, action }: { title: string; children?: ReactNode; action?: ReactNode }) {
   return (
     <div className="empty">
+      <BrandMark className="empty-mark" width={72} height={80} />
       <h3>{title}</h3>
       {children && <p className="muted">{children}</p>}
       {action}

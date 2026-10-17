@@ -71,6 +71,8 @@ export function WorkoutEditor({
   const [setMenu, setSetMenu] = useState<{ ex: string; set: string } | null>(null);
   const [restFor, setRestFor] = useState<string | null>(null);
   const [platesFor, setPlatesFor] = useState<string | null>(null);
+  /** The set that was just checked off, so only it plays the pop. */
+  const [popId, setPopId] = useState<string | null>(null);
 
   const supersetLetters = useMemo(() => {
     const map = new Map<number, string>();
@@ -169,6 +171,8 @@ export function WorkoutEditor({
       return;
     }
     unlockAudio();
+    setPopId(s.id);
+    if (settings.vibrateOnCheck) navigator.vibrate?.(12);
     updateSet(we.id, s.id, { ...filled, completed: true });
     onRest?.(restAfter(we));
   }
@@ -339,7 +343,7 @@ export function WorkoutEditor({
                     ))}
                     {mode === 'live' && (
                       <button
-                        className={`check ${s.completed ? 'on' : ''}`}
+                        className={`check ${s.completed ? 'on' : ''} ${s.completed && popId === s.id ? 'pop' : ''}`}
                         onClick={() => toggleDone(we, i)}
                         aria-pressed={s.completed}
                         aria-label={t('editor.markDone', { label: labels[i] })}

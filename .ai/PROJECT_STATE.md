@@ -8,7 +8,7 @@
 
 ## Current status
 - **Phase:** released. The quality pass (REL-100, 2026-10-04) and Setward with UX-002, UX-003, A11Y-002 and DOC-002 (REL-101, 2026-10-05) are live, as are REL-102 and the data check (REL-103, 2026-10-16). Waiting on the owner's phone checks.
-- **Branches:** `launch` = 1.0 launch work in progress (local, from `main` @ 2473881). `main` = live. `quality-pass`, `setward` and `features` are merged (kept locally). `google-sync` is parked (FEAT-001). `data-check` is merged too (REL-103).
+- **Branches:** `launch` = 1.0 launch work in progress (local, from `main` @ 2473881; M1, M2 and M3 checkpoint 1 committed). `main` = live. `quality-pass`, `setward` and `features` are merged (kept locally). `google-sync` is parked (FEAT-001). `data-check` is merged too (REL-103).
 - **Completion:** all product requirements work. Quality requirements REQ-Q01–Q05 are done, apart from screen-reader and real-device checks.
 - **Release decision:** READY WITH DOCUMENTED LIMITATIONS, released 2026-10-16 (`RELEASE_CHECKLIST.md`, REL-103).
 
@@ -36,7 +36,7 @@ None known at medium or high severity. Low-severity items left in the roadmap "D
 - Sync is shipped but unused by the owner. A Google Drive replacement is parked on the local-only branch `google-sync`; merging it needs its origins added to the CSP `connect-src`.
 
 ## Immediate next steps
-0. Setward 1.0 launch work is on the local branch `launch` (M1 and M2 done, M3 next). Resume with `CURRENT_TASK.md` and `LAUNCH_PLAN.md`. Nothing is merged or deployed.
+0. Setward 1.0 launch work is on the local branch `launch` (M1 and M2 done, M3 checkpoint 1 done: tokens, shared components, Home, live workout). Resume with `CURRENT_TASK.md` and `LAUNCH_PLAN.md`. Nothing is merged or deployed.
 1. The owner runs the phone checks in `RELEASE_CHECKLIST.md` for REL-101, REL-102 and REL-103.
 
 ## Last verified

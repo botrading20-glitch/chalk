@@ -1,5 +1,20 @@
 # Test status
 
+## Visual refresh, checkpoint 1 (LAUNCH-M3): 2026-10-17, branch `launch`
+
+Environment: Windows 11, built-in Chromium, dev server on localhost:5173 with the sample backup restored, 375 and 320 px emulation.
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Types / tests | PASS | `tsc --noEmit` exit 0; 104 passed, 2 skipped (unchanged) |
+| Production build | PASS | `/chalk/` build; main chunk 164.55 kB gzip (was 163.56) |
+| Contrast | PASS | `node scripts/contrast.mjs`: 708 pairs (dark, pure black, light × normal, high contrast × purple, indigo, teal, pink), 0 failing. Before the fixes it reported 48 failing: F and D badge text and the dark high-contrast line |
+| Home, live workout | PASS | 375 px dark and light: week card (name, goal 4, 3 done, streak 17), glowing Start button, slanted tab pill, live header `5 of 12 sets` with the bar, checked sets, rest bar |
+| Overflow | PASS | `scrollWidth` equals `clientWidth` (320) on `/`, `/workout`, `/history`, `/exercises`, `/profile`, `/settings`, `/routines/new` at 320 px |
+| Console | PASS | Only "Blocked call to navigator.vibrate": the browser refuses it for clicks made by a script rather than a finger. Not a defect, but not verified on a phone |
+| Reduced motion | NOT_RUN | The rules are the existing ones (`prefers-reduced-motion` and `data-motion`); the new animations are covered by them but were not checked in the browser |
+| Phone / screen reader | NOT_RUN | Needs the owner's phone |
+
 ## Data check (DATA-002): 2026-10-16, branch `data-check` (@ ce3daae, off `main` @ 663cb56)
 
 Environment: Windows 11, Node 24.19.0, npm 11.17.0; the desktop app's built-in Chromium (dev server on localhost:5173, preview on localhost:4173/chalk/), 375 and 320 px emulation. Baseline before the change: typecheck clean, 67 passed, 2 skipped.

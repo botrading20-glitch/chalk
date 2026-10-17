@@ -1,5 +1,38 @@
 # Current task
 
+## RESUME HERE: Setward 1.1 "training tools", paused in the middle of M4 (2026-10-17)
+
+**Branch `training-tools`** (cut from `main` @ 032513f; `main` is untouched, nothing pushed or merged, NN-15). Plan (owner-approved, read it first): `~/.claude/plans/c-users-ousse-downloads-fitness-app-imp-iridescent-hickey.md`. Decisions: `DECISIONS.md` top two rows. Per-milestone notes: `DEVELOPMENT_ROADMAP.md` section "Training tools" (TT-M1 to TT-M4).
+
+**Done and committed:** M1 foundations (c6e8ba3, notes e55f6ce), M2 warm-ups and workout toggles (2c85ed2), M3 muscle map (ecfa27e; dark and light screenshots were sent to the owner, no reply yet). **Committed as WIP at the stop:** the M4 pieces below.
+
+**Baseline at the stop:** typecheck clean; 199 tests pass (2 skipped); contrast 0 of 732 failing (last run at M2, M3 and M4 added no tokens); last production build main chunk 170.86 kB gzip (M2). No dev server running. The dev browser origin (localhost:5173) holds sample data and a running "QA muscles" workout; throw it away or reload the sample backup (`node scripts/sample-backup.mjs`, then in the page console: `await (await import('/src/lib/backup.ts')).importBackup(await (await fetch('/tmp-import/chalk-sample-backup.json')).text())`).
+
+### M4 monthly report and weekly chart: what exists
+- `src/lib/report.ts` + `report.test.ts` (8 tests): `monthStart`, `addMonths`, `monthKey`/`parseMonthKey` ("yyyy-mm"), `monthReport` (totals, top exercises, muscle sets, previous month), `monthGrid(start, firstDay)`, `change`.
+- `src/components/RecordList.tsx` extracted from Progress (`RecentRecords` in `src/pages/Profile.tsx` now uses it); `MuscleMap`, `recentRecords` and `mergeMuscleSets` are ready to reuse.
+- All 25 M4 strings are already in all eleven languages (`src/i18n/<code>/training.ts`): `report.*`, `reportCard.*`, `set.monthlyReport`, `set.monthlyReportNote`, `progress.metricReps`, `progress.titleReps`, `progress.range3/6/12`, `progress.rangeLabel`. Some are unused until the UI below exists.
+
+### M4 still to do (in this order)
+1. **Page** `src/pages/Report.tsx`, lazy like Settings: route in `src/App.tsx` under `case 'profile'`: `s1 === 'report'` gives `<ReportPage month={s2} />`, address `#/profile/report/<yyyy-mm>` (the Progress tab is `/profile`, so the plan's `/progress/report` is `/profile/report`). Invalid or missing key: current month; clamp to between the first workout's month and now. Content: month navigator (`report.prev/next/navLabel`, `fmtMonth`), hero Workouts number in Big Shoulders, 2-column stat grid (Duration, Volume, Sets, Reps, Records, Training days) with the change against last month only when `previous.workouts > 0` (`report.vsLast` with `{change}` such as `+2` or `−1` through `isolate()`, `report.same` when 0), a month calendar from `monthGrid(start, firstDayOfWeek())` with weekday narrow headers and `report.calendarLabel`, `MuscleMap` card (`muscles.worked`), "Most trained" (`report.top`, avatar, name, `count('set', n)`, link to the exercise), records card (`report.recordsTitle`, `recentRecords(report.list, records, 10)` into `RecordList`), and `Empty` (`report.emptyTitle/Text`) for a month with no workouts.
+2. **Entry points:** a "Monthly report" card on Progress linking to the current month; a Home `ReportCard` (after `WeekCard` in `src/pages/WorkoutHome.tsx`) shown only in the first 7 days of a month, when `settings.monthlyReport`, last month had workouts and the new pref `reportSeenMonth` (add to `Prefs` and `PREF_DEFAULTS` in `src/lib/prefs.ts`, default `''`) is not last month's key; "See report" and "Not now" both set the pref.
+3. **Goals page** (`GoalsSection` in `src/pages/settings/sections.tsx`): a Toggle for `monthlyReport` with `set.monthlyReport` and the note.
+4. **Weekly chart** (`src/pages/Profile.tsx`): add a Reps metric (`weeklyBuckets` already returns `reps`) and a range Segmented 3, 6, 12 months = 13, 26, 52 weeks (default 3 months). Check 52 bars at 320 px (`BarChart` has `min barW 4`) and that four segments fit in German and Arabic.
+5. **Checks:** `npx tsc --noEmit`, `npm test`, `npm run build`; browser at 320 px dark and light, German and Arabic, overflow against `document.documentElement.clientWidth` on the report page, Progress and Home. Then record TT-M4 as done in the roadmap and commit.
+
+### After M4 (plan unchanged)
+M5 Help guides and questions; M6 local set videos (Dexie `db.version(3)` adds `media`, `src/lib/media.ts`, lifecycle rules, Data page Videos card, About/privacy wording, CSP already allows `blob:` media); M7 release prep (version 1.1.0, What's new in eleven languages, REQUIREMENTS REQ-024+, TEST_STATUS ledgers, SMOKE_TESTS, RELEASE_CHECKLIST REL-105, CLAUDE.md architecture notes, fix the stale "keep Hevy CSV compatibility" line in memory `chalk-workout-app.md`, an all-routes overflow sweep in ten languages). Ask the owner before merging `training-tools` into `main`. FEAT-007 (Contact page) stays deferred until Google sign-in.
+
+### Working notes for the next session
+- **New strings:** add to `src/i18n/<code>/training.ts` for all eleven languages in the same change (NN-17). Helpers saved in `.ai/tools/` (`lang.py`, `add_i18n.py`): write `mN.py` next to them (a `lang('en', """key=text""")` block per language, then `T = build()`), run `python .ai/tools/add_i18n.py path/to/mN.py "Section name"`; it appends to every language and refuses duplicate keys. Avoid plural messages (reuse `count()` keys); Indonesian has no plural forms.
+- **Shell limits:** one Bash command over about 6 KB fails with "unexpected EOF" (split it); doubled backslashes are collapsed, so inside Python write `chr(92)` for a backslash and never type `\t` or `\r` in a Python string meant for TypeScript.
+- **Vite sometimes serves a stale file** after an edit (seen once with `WorkoutDetail.tsx`): `touch` the file and reload.
+- The working tree is CRLF (autocrlf); new files are LF, which is fine.
+
+---
+
+(Earlier handoff, Setward 1.0, below.)
+
 ## Task
 Setward 1.0 is **released** (2026-10-17): `launch` was merged into `main` as c3da695 (`--no-ff`), pushed at the owner's request, deployed by Pages run 39056196923, and the live page was checked (`RELEASE_CHECKLIST.md` REL-104). The launch plan (`.ai/LAUNCH_PLAN.md`) is complete: M1 to M8. REL-101 to REL-103 are live and still wait on the owner's phone checks.
 

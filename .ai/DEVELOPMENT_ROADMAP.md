@@ -386,3 +386,7 @@ Plan: `~/.claude/plans/c-users-ousse-downloads-fitness-app-imp-iridescent-hickey
 - **Checkpoint:** dark and light 375 px screenshots of the live workout sheet were sent to the owner.
 - **Evidence:** typecheck clean; 191 tests pass (2 skipped; new: `muscles.test.ts` 6); browser: sheet, detail page and Progress at 320 px in dark and light with no overflow against `clientWidth`.
 - **Limits:** the panels are a stylised figure, not anatomy; no panel for the neck on its own beyond a small one, and abductors and adductors are thin strips. Arabic and German were checked for overflow only on the pages built earlier; the all-routes sweep is in M7.
+
+### TT-M4: Monthly report and the weekly chart (FEAT-011), IN PROGRESS
+- **Done so far (2026-10-17, committed as WIP):** `src/lib/report.ts` with 8 tests (month boundaries in local time, keys, month grid, totals, top exercises, muscles, comparison with the month before); `RecordList` extracted from Progress for reuse; all 25 strings in eleven languages.
+- **Still to build:** the report page and its route (`#/profile/report/<yyyy-mm>`), the Progress and Home entry points with the `reportSeenMonth` pref, the Goals toggle, the Reps metric and 3/6/12-month range on the weekly chart, then the 320 px, German and Arabic checks. Step-by-step list: top of `CURRENT_TASK.md`.

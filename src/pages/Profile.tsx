@@ -2,18 +2,18 @@ import { useMemo, useState } from 'react';
 import { BodyWeightCard } from '../components/BodyWeight';
 import { BarChart, HBars } from '../components/Charts';
 import { useUsageCounts } from '../components/ExerciseList';
-import { IconSettings, IconTrophy } from '../components/Icons';
+import { IconSettings } from '../components/Icons';
 import { MuscleMap } from '../components/MuscleMap';
+import { RecordList } from '../components/RecordList';
 import { Empty, ExerciseAvatar, PageHeader, Segmented, Stat } from '../components/ui';
 import { useData } from '../lib/data';
-import { addDays, fmtDate, fmtDayMonth, fmtDuration, fmtMonthShort, fmtNum, fmtRelativeDay, fmtWeekdayDate, fmtWeekdayShort, isolate, kgTo, startOfDay, startOfWeek } from '../lib/format';
+import { addDays, fmtDate, fmtDayMonth, fmtDuration, fmtMonthShort, fmtNum, fmtWeekdayDate, fmtWeekdayShort, isolate, kgTo, startOfDay, startOfWeek } from '../lib/format';
 import { mergeMuscleSets, muscleSets } from '../lib/muscles';
 import { recentRecords } from '../lib/records';
-import { recordFormat } from '../lib/recordFormat';
 import { MUSCLE_LABEL } from '../lib/meta';
 import { Link } from '../lib/router';
 import { useSettings } from '../lib/settings';
-import { RECORD_LABEL, weekStreak, weeklyBuckets, workoutSets, type WeekBucket } from '../lib/stats';
+import { weekStreak, weeklyBuckets, workoutSets, type WeekBucket } from '../lib/stats';
 import type { Muscle } from '../types';
 import { count as count_, t } from '../i18n';
 
@@ -172,38 +172,14 @@ export function Profile() {
 
 /** The latest personal records, each linking to the workout that set it. */
 function RecentRecords() {
-  const { workouts, records, exerciseMap } = useData();
-  const settings = useSettings();
+  const { workouts, records } = useData();
   const list = useMemo(() => recentRecords(workouts, records), [workouts, records]);
   if (!list.length) return null;
 
   return (
     <section className="card">
       <h2 className="card-title">{t('progress.recent')}</h2>
-      <ul className="top-list">
-        {list.map((r) => {
-          const exercise = exerciseMap.get(r.exerciseId);
-          return (
-            <li key={`${r.workoutId}:${r.exerciseId}`}>
-              <Link to={`/history/${r.workoutId}`} className="rec-row">
-                <ExerciseAvatar exercise={exercise} size={36} />
-                <span className="rec-text">
-                  <span className="rec-head">
-                    <span className="ex-row-name">{exercise?.name ?? t('exercise.deleted')}</span>
-                    <span className="muted small">{fmtRelativeDay(r.time)}</span>
-                  </span>
-                  <span className="rec-items">
-                    <span className="pr-pill">
-                      <IconTrophy size={13} /> {RECORD_LABEL[r.items[0].kind]} {recordFormat(r.items[0].kind, r.items[0].value, settings)}
-                    </span>
-                    {r.items.length > 1 && <span className="muted small">{t('progress.recentExtra', { n: r.items.length - 1 })}</span>}
-                  </span>
-                </span>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+      <RecordList list={list} />
     </section>
   );
 }

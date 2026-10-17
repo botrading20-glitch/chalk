@@ -7,6 +7,7 @@
 - **Stack:** React 19, TypeScript 7, Vite 8, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB), Vitest 5 (+ fake-indexeddb in tests). No backend.
 
 ## Current status
+- **In progress (2026-10-17):** branch `training-tools` (Setward 1.1, local only, not merged): M1 to M3 done and committed (settings model, CSV formula escaping, exact pound, half-point RPE, warm-up calculator and page, live record alerts, plate button, superset scroll, muscle map), M4 (monthly report) half built. Exact resume steps are at the top of `CURRENT_TASK.md`. `main` and the live app are still 1.0.0 (c3da695).
 - **Phase:** released. Setward 1.0 (REL-104, 2026-10-17) is live, on top of the quality pass (REL-100), Setward with UX-002, UX-003, A11Y-002 and DOC-002 (REL-101), REL-102 and the data check (REL-103). Waiting on the owner's phone checks.
 - **Branches:** `main` = live (c3da695). `launch` is merged (kept locally, with `quality-pass`, `setward`, `features` and `data-check`). `google-sync` is parked (FEAT-001).
 - **Completion:** all product requirements work. Quality requirements REQ-Q01–Q05 are done, apart from screen-reader and real-device checks.

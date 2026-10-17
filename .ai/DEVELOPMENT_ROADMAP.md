@@ -350,3 +350,20 @@ Plan: `C:\Users\ousse\.claude\plans\c-users-ousse-downloads-ultimate-projec-stea
 - **Release:** the owner approved; `launch` was merged into `main` as c3da695 and pushed, Pages run 39056196923 succeeded and the live page was checked (`TEST_STATUS.md`). Rollback: `git revert -m 1 c3da695` and push.
 - **Limits:** see REL-104. Not run: a real phone, an iPhone, a screen reader, a native speaker for any translation, real link previews, launcher shortcuts.
 
+## Training tools (session 2026-10-17, branch `training-tools`)
+
+Plan: `~/.claude/plans/c-users-ousse-downloads-fitness-app-imp-iridescent-hickey.md` (owner-approved). Inspiration: Hevy's settings screens (screenshots) and `FITNESS_APP_IMPLEMENTATION_SPEC_HARDENED.md`; choices in `DECISIONS.md`. Merging to `main` deploys (NN-15): ask the owner first.
+
+| ID | Item | Status |
+|----|------|--------|
+| FEAT-007 | Contact page (feature request, bug report, help) | Deferred by the owner until Google sign-in (FEAT-001) exists |
+
+### TT-M1: Foundations and spec hardening
+- **Done (2026-10-17):**
+  - **Settings model:** `Settings` gains `warmupSteps`, `warmupEmptyBar`, `warmupRoundKg`, `warmupRoundLbs`, `liveRecords`, `inlineStopwatch`, `supersetScroll`, `plateShortcut`, `setVideos`, `monthlyReport` (`src/types.ts`, `DEFAULT_SETTINGS` in `src/db.ts`). `cleanSettings` checks the steps as a whole list (`cleanWarmupSteps`: 1 to 6 steps, whole percent 5 to 95, whole reps 1 to 30) and the rounding steps as fractions in a range, so a zero or a typo can't reach the calculator.
+  - **SEC-002:** `escapeCell` / `unescapeCell` in `src/lib/csv.ts`; `toCsv` escapes text cells, `parseSetwardCsv` reads them back (title, notes, exercise, exercise notes).
+  - **DATA-003:** `KG_PER_LB = 0.45359237` in `src/lib/format.ts` replaces the 8-digit factor in `kgTo`/`toKg` and in the Strong importer.
+  - **UX-005:** the RPE chips now run 6, 6.5 ... 10 and a one-line guide sits under them (`editor.rpeGuide`).
+  - **i18n:** new catalog part `src/i18n/<code>/training.ts` for all eleven languages, merged in each `<code>.ts`; every training key is added to all eleven in the same change (NN-17).
+- **Evidence:** typecheck clean; 166 tests pass (2 skipped; new: CSV escaping round trip, exact pound, settings checks).
+- **Limits:** none known. The new settings have no screen yet (they arrive with the features that use them).

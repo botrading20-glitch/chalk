@@ -4,6 +4,7 @@ import { Empty, PageHeader } from '../components/ui';
 import { useData } from '../lib/data';
 import { reassignExercise } from '../lib/exercises';
 import { goBack, navigate } from '../lib/router';
+import { t } from '../i18n';
 
 export function ExerciseEdit({ id }: { id?: string }) {
   const { exerciseMap, exercises } = useData();
@@ -13,8 +14,8 @@ export function ExerciseEdit({ id }: { id?: string }) {
   if (id && !ex) {
     return (
       <div className="page">
-        <PageHeader back="/exercises" title="Edit exercise" />
-        <Empty title="This exercise doesn't exist">It may have been deleted.</Empty>
+        <PageHeader back="/exercises" title={t('exerciseEdit.title')} />
+        <Empty title={t('missing.exercise')}>{t('missing.hint')}</Empty>
       </div>
     );
   }
@@ -25,20 +26,19 @@ export function ExerciseEdit({ id }: { id?: string }) {
     const mine = exercises.find((e) => e.replaces === ex.id);
     return (
       <div className="page">
-        <PageHeader back={back} title="Edit exercise" />
+        <PageHeader back={back} title={t('exerciseEdit.title')} />
         {mine ? (
-          <Empty title="You already have your own version" action={<button className="btn btn-primary" onClick={() => navigate(`/exercises/${mine.id}/edit`, { replace: true })}>Edit {mine.name}</button>} />
+          <Empty title={t('exerciseEdit.haveMine')} action={<button className="btn btn-primary" onClick={() => navigate(`/exercises/${mine.id}/edit`, { replace: true })}>{t('exerciseEdit.editMine', { name: mine.name })}</button>} />
         ) : (
           <>
             <p className="muted small">
-              Setward saves this as your own version. Your past workouts and routines switch to it, and the original leaves the exercise
-              list. You can go back to the original at any time.
+              {t('exerciseEdit.copyNote')}
             </p>
             <ExerciseForm
               copyOf={ex}
               onSaved={async (mineNow) => {
                 await reassignExercise(ex.id, mineNow.id);
-                toast('Saved as your own version');
+                toast(t('exerciseEdit.saved'));
                 navigate(`/exercises/${mineNow.id}`, { replace: true });
               }}
               onCancel={() => goBack(back)}
@@ -51,7 +51,7 @@ export function ExerciseEdit({ id }: { id?: string }) {
 
   return (
     <div className="page">
-      <PageHeader back={back} title={id ? 'Edit exercise' : 'New exercise'} />
+      <PageHeader back={back} title={id ? t('exerciseEdit.title') : t('exerciseEdit.new')} />
       <ExerciseForm initial={ex} onSaved={(e) => navigate(`/exercises/${e.id}`, { replace: true })} onCancel={() => goBack(back)} />
     </div>
   );

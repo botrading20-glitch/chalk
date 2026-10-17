@@ -6,7 +6,8 @@ import { wipeAllData } from './backup';
 import { logBodyWeight } from './bodyweight';
 import { checkData, deleteIssue, describeRecord, inspectRecord, inspectSettings, repairIssue } from './dataCheck';
 import { toCsv } from './csv';
-import { applyImport, parseHevyCsv, planHevyImport } from './hevy';
+import { applyImport, planImport } from './importer';
+import { parseStrongCsv } from './strong';
 import { computeRecords, typeLookup } from './stats';
 import { saveRoutine, templateFrom, workoutFromDraft } from './workouts';
 
@@ -80,14 +81,14 @@ describe('records the app writes itself are healthy', () => {
     expect(counts.routines).toBe(2);
   });
 
-  it('a custom exercise, a Hevy import and a weigh-in', async () => {
+  it('a custom exercise, an import and a weigh-in', async () => {
     await db.exercises.put(exercise());
     const csv = toCsv([
-      ['title', 'start_time', 'end_time', 'description', 'exercise_title', 'superset_id', 'exercise_notes', 'set_index', 'set_type', 'weight_kg', 'reps', 'distance_km', 'duration_seconds', 'rpe'],
-      ['Chest day', '24 Sep 2026, 21:30', '24 Sep 2026, 22:40', '', 'Rope Pushdown', undefined, '', 0, 'normal', 25, 12, undefined, undefined, undefined],
-      ['Leg day', '26 Sep 2026, 21:30', '26 Sep 2026, 22:30', '', 'Treadmill Walk', undefined, '', 0, 'normal', undefined, undefined, 2.1, 900, undefined],
+      ['Date', 'Workout Name', 'Duration', 'Exercise Name', 'Set Order', 'Weight', 'Reps', 'Distance', 'Seconds'],
+      ['2026-09-24 21:30:00', 'Chest day', '1h 10m', 'Rope Pushdown', 1, 25, 12, 0, 0],
+      ['2026-09-26 21:30:00', 'Leg day', '1h', 'Treadmill Walk', 1, 0, 0, 2100, 900],
     ]);
-    await applyImport(await planHevyImport(parseHevyCsv(csv)));
+    await applyImport(await planImport(parseStrongCsv(csv, { weightUnit: 'kg' }).workouts));
     await logBodyWeight(T0, 81.4);
     const { counts, issues } = await checkData();
     expect(issues).toEqual([]);

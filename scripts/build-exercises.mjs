@@ -120,7 +120,7 @@ const EXTRA = [
   ['Cycling', 'distance_duration', 'machine', 'cardio', []],
   ['Stair Climber', 'duration', 'machine', 'cardio', []],
   ['Treadmill Incline Walk', 'distance_duration', 'machine', 'cardio', []],
-  // Free-weight staples under the "Name (Equipment)" naming Hevy users know.
+  // Free-weight staples under the "Name (Equipment)" naming that most workout apps use.
   ['Bench Press (Barbell)', 'weight_reps', 'barbell', 'chest', ['triceps', 'shoulders']],
   ['Bench Press (Dumbbell)', 'weight_reps', 'dumbbell', 'chest', ['triceps', 'shoulders']],
   ['Incline Bench Press (Barbell)', 'weight_reps', 'barbell', 'chest', ['triceps', 'shoulders']],

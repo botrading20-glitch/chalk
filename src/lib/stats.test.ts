@@ -36,6 +36,16 @@ describe('e1rm', () => {
   });
 });
 
+describe('e1rm formulas', () => {
+  it('Brzycki gives its own estimate and falls back to Epley where it is undefined', () => {
+    expect(e1rm(100, 10, 'brzycki')).toBeCloseTo(133.33, 2);
+    expect(e1rm(100, 5, 'brzycki')).toBeCloseTo(112.5, 2);
+    expect(e1rm(100, 5, 'epley')).toBeCloseTo(116.67, 2);
+    expect(e1rm(100, 1, 'brzycki')).toBe(100);
+    expect(e1rm(50, 40, 'brzycki')).toBeCloseTo(50 * (1 + 40 / 30), 2);
+  });
+});
+
 describe('computeRecords', () => {
   it('treats the first session as the baseline', () => {
     const r = computeRecords([workout('a', T0, [['press', [set(60, 10)]]])], typeOf);

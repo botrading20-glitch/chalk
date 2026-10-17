@@ -1,18 +1,20 @@
 import { useEffect, useRef } from 'react';
 import { useNow } from '../lib/data';
-import { fmtClock } from '../lib/format';
+import { fmtClock, isolate } from '../lib/format';
 import { Link, useRoute } from '../lib/router';
 import { useSettings } from '../lib/settings';
 import { ringRest, startRestAlert, stopRestAlert } from '../lib/restAlert';
-import { beep, buzz } from '../lib/timer';
+import { beep, buzz, tick } from '../lib/timer';
 import { updateActive, useActiveWorkout } from '../lib/workouts';
 import { IconBarbell, IconChart, IconHistory, IconList, IconTimer } from './Icons';
+import { t } from '../i18n';
+import type { Key } from '../i18n/catalog';
 
-const TABS = [
-  { to: '/', key: '', label: 'Workout', icon: IconBarbell },
-  { to: '/history', key: 'history', label: 'History', icon: IconHistory },
-  { to: '/exercises', key: 'exercises', label: 'Exercises', icon: IconList },
-  { to: '/profile', key: 'profile', label: 'Progress', icon: IconChart },
+const TABS: { to: string; key: string; label: Key; icon: typeof IconBarbell }[] = [
+  { to: '/', key: '', label: 'tab.workout', icon: IconBarbell },
+  { to: '/history', key: 'history', label: 'tab.history', icon: IconHistory },
+  { to: '/exercises', key: 'exercises', label: 'tab.exercises', icon: IconList },
+  { to: '/profile', key: 'profile', label: 'tab.progress', icon: IconChart },
 ];
 
 /** Fixed bottom stack: rest timer, "workout in progress" bar and tab bar. */
@@ -39,11 +41,11 @@ function TabBar() {
   const { segments } = useRoute();
   const current = segments[0] ?? '';
   return (
-    <nav className="tabbar" aria-label="Main">
+    <nav className="tabbar" aria-label={t('nav.main')}>
       {TABS.map(({ to, key, label, icon: Icon }) => (
         <Link key={key} to={to} className={`tab ${current === key || (key === 'profile' && current === 'settings') ? 'on' : ''}`} aria-current={current === key ? 'page' : undefined}>
           <Icon size={22} />
-          <span>{label}</span>
+          <span>{t(label)}</span>
         </Link>
       ))}
     </nav>
@@ -59,9 +61,9 @@ function ActiveBanner() {
       <span className="pulse" aria-hidden="true" />
       <span className="active-banner-text">
         <strong>{active.title}</strong>
-        <span>In progress · {fmtClock((now - active.startTime) / 1000)}</span>
+        <span>{t('banner.inProgress', { time: fmtClock((now - active.startTime) / 1000) })}</span>
       </span>
-      <span className="active-banner-cta">Resume</span>
+      <span className="active-banner-cta">{t('banner.resume')}</span>
     </Link>
   );
 }
@@ -81,7 +83,18 @@ function RestTimer() {
   const endsAt = active?.restEndsAt;
   const now = useNow(250, !!endsAt);
   const fired = useRef<number | undefined>(undefined);
+  const ticked = useRef('');
   const lockScreen = settings.timerSound && settings.timerLockScreen;
+  const left = endsAt ? Math.max(0, Math.ceil((endsAt - now) / 1000)) : 0;
+
+  // The 3-2-1 countdown: one short tick as each of the last three seconds starts.
+  useEffect(() => {
+    if (!endsAt || !settings.restCountdown || !settings.timerSound || left < 1 || left > 3) return;
+    const key = `${endsAt}:${left}`;
+    if (ticked.current === key) return;
+    ticked.current = key;
+    tick();
+  }, [endsAt, left, settings.restCountdown, settings.timerSound]);
 
   useEffect(() => {
     if (endsAt && lockScreen) startRestAlert(endsAt, { skip: skipRest, adjust: adjustRest });
@@ -110,19 +123,19 @@ function RestTimer() {
   const adjust = adjustRest;
 
   return (
-    <div className="rest-bar" role="timer" aria-label={`Rest: ${fmtClock(remaining)} left`}>
+    <div className="rest-bar" role="timer" aria-label={t('rest.timer', { time: fmtClock(remaining) })}>
       <div className="rest-progress" style={{ transform: `scaleX(${remaining / total})` }} />
       <IconTimer size={18} />
       <span className="rest-time">{fmtClock(remaining)}</span>
       <div className="rest-actions">
-        <button onClick={() => adjust(-15)} aria-label="15 seconds less">
-          −15
+        <button onClick={() => adjust(-15)} aria-label={t('rest.less')}>
+          {isolate('−15')}
         </button>
-        <button onClick={() => adjust(15)} aria-label="15 seconds more">
-          +15
+        <button onClick={() => adjust(15)} aria-label={t('rest.more')}>
+          {isolate('+15')}
         </button>
         <button className="rest-skip" onClick={skipRest}>
-          Skip
+          {t('common.skip')}
         </button>
       </div>
     </div>

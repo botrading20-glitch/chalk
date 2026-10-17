@@ -72,7 +72,7 @@ describe('backup', () => {
 
   it('rejects files that aren’t Setward backups without writing anything', async () => {
     await expect(importBackup('{oops')).rejects.toThrow(/valid JSON/);
-    await expect(importBackup(JSON.stringify({ app: 'hevy', workouts: [] }))).rejects.toThrow(/isn't a Setward backup/);
+    await expect(importBackup(JSON.stringify({ app: 'other-app', workouts: [] }))).rejects.toThrow(/isn't a Setward backup/);
     expect(await db.workouts.count()).toBe(0);
   });
 
@@ -155,5 +155,43 @@ describe('backup', () => {
     expect((await db.exercises.toArray()).map((e) => e.id)).toEqual(['lib-x']);
     expect(await getKV('libraryVersion')).toBe(2);
     expect(await getKV('active')).toBeUndefined();
+  });
+});
+
+describe('new settings in a backup', () => {
+  it('keeps valid values, drops invalid ones and clamps nothing silently', async () => {
+    const { cleanSettings } = await import('./validate');
+    const cleaned = cleanSettings({
+      language: 'fr',
+      timeFormat: '12h',
+      weekStart: 'sun',
+      oneRmFormula: 'brzycki',
+      weeklyGoal: 4,
+      warmupRest: -1,
+      profileName: 'Sam',
+      accent: 'teal',
+      textSize: 'xlarge',
+      reduceMotion: 'always',
+      backupReminder: 'monthly',
+      showRpe: false,
+    });
+    expect(cleaned).toEqual({
+      language: 'fr',
+      timeFormat: '12h',
+      weekStart: 'sun',
+      oneRmFormula: 'brzycki',
+      weeklyGoal: 4,
+      warmupRest: -1,
+      profileName: 'Sam',
+      accent: 'teal',
+      textSize: 'xlarge',
+      reduceMotion: 'always',
+      backupReminder: 'monthly',
+      showRpe: false,
+    });
+    expect(
+      cleanSettings({ language: 'klingon', weeklyGoal: 12, newExerciseSets: 2.5, accent: 'red', profileName: 7, showRpe: 'yes', textSize: 'huge' }),
+    ).toEqual({});
+    expect(cleanSettings({ profileName: 'x'.repeat(100) })?.profileName).toHaveLength(40);
   });
 });

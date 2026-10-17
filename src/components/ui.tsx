@@ -2,7 +2,9 @@ import { useState, type KeyboardEvent, type ReactNode } from 'react';
 import { IMAGE_BASE } from '../lib/meta';
 import { goBack } from '../lib/router';
 import type { Exercise } from '../types';
+import { BrandMark } from './Brand';
 import { IconBack } from './Icons';
+import { t } from '../i18n';
 
 export function PageHeader({
   title,
@@ -22,7 +24,7 @@ export function PageHeader({
   return (
     <header className={`page-head ${large ? 'large' : ''}`}>
       {back !== undefined && (
-        <button className="icon-btn" onClick={onBack ?? (() => goBack(back))} aria-label="Back">
+        <button className="icon-btn" onClick={onBack ?? (() => goBack(back))} aria-label={t('common.back')}>
           <IconBack />
         </button>
       )}
@@ -81,6 +83,45 @@ export function Segmented<T extends string>({
   );
 }
 
+/** A radio group of free-form options: one tab stop, arrow keys move and select (the Segmented pattern). */
+export function RadioGroup<T extends string>({
+  options,
+  value,
+  onChange,
+  label,
+  className = '',
+  render,
+}: {
+  options: T[];
+  value: T;
+  onChange: (v: T) => void;
+  label: string;
+  className?: string;
+  render: (option: T, selected: boolean) => ReactNode;
+}) {
+  const current = Math.max(0, options.indexOf(value));
+
+  function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    const n = options.length;
+    const step = ARROW_STEP.get(e.key);
+    const next = e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : step ? (current + step + n) % n : -1;
+    if (next < 0) return;
+    e.preventDefault();
+    onChange(options[next]);
+    (e.currentTarget.children[next] as HTMLElement | undefined)?.focus();
+  }
+
+  return (
+    <div className={className} role="radiogroup" aria-label={label} onKeyDown={onKeyDown}>
+      {options.map((o, i) => (
+        <button key={o} type="button" role="radio" aria-checked={o === value} tabIndex={i === current ? 0 : -1} onClick={() => onChange(o)}>
+          {render(o, o === value)}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
   return (
     <label className="toggle">
@@ -130,6 +171,7 @@ export function Stat({ label, value }: { label: string; value: ReactNode }) {
 export function Empty({ title, children, action }: { title: string; children?: ReactNode; action?: ReactNode }) {
   return (
     <div className="empty">
+      <BrandMark className="empty-mark" width={72} height={80} />
       <h3>{title}</h3>
       {children && <p className="muted">{children}</p>}
       {action}

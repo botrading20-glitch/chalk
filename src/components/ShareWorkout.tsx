@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { downloadFile } from '../lib/csv';
 import { useData } from '../lib/data';
-import { fmtDateLong, fmtDuration, fmtTime, fmtVolume } from '../lib/format';
+import { fmtDateYear, fmtDuration, fmtTime, fmtVolume, fmtWeekdayDate, plain } from '../lib/format';
 import { fmtSet } from '../lib/sets';
 import { useSettings } from '../lib/settings';
 import { renderWorkoutCard, type CardData } from '../lib/shareCard';
@@ -10,29 +10,28 @@ import type { Workout } from '../types';
 import { toast } from './dialogs';
 import { IconDownload, IconShare } from './Icons';
 import { Sheet } from './Sheet';
-
-const cardDate = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+import { t } from '../i18n';
 
 function useCardData(w: Workout): CardData {
   const { exerciseMap, typeOf, records } = useData();
   const settings = useSettings();
   return {
     title: w.title,
-    date: cardDate.format(w.startTime),
-    when: `${fmtDateLong(w.startTime).replace(/ \d{4}$/, '')} · ${fmtTime(w.startTime)}–${fmtTime(w.endTime)}`,
+    date: fmtDateYear(w.startTime),
+    when: `${fmtWeekdayDate(w.startTime)} · ${fmtTime(w.startTime)}–${fmtTime(w.endTime)}`,
     stats: [
-      { label: 'Time', value: fmtDuration((w.endTime - w.startTime) / 1000) },
-      { label: 'Volume', value: fmtVolume(workoutVolume(w, typeOf), settings.weightUnit) },
-      { label: 'Sets', value: String(workoutSets(w)) },
+      { label: t('share.time'), value: fmtDuration((w.endTime - w.startTime) / 1000) },
+      { label: t('stat.volume'), value: plain(fmtVolume(workoutVolume(w, typeOf), settings.weightUnit)) },
+      { label: t('stat.sets'), value: String(workoutSets(w)) },
     ],
     records: records.byWorkout.get(w.id) ?? 0,
     exercises: w.exercises.map((we) => {
       const type = typeOf(we.exerciseId);
       const best = bestSet(we.sets, type);
       return {
-        name: exerciseMap.get(we.exerciseId)?.name ?? 'Deleted exercise',
+        name: exerciseMap.get(we.exerciseId)?.name ?? t('exercise.deleted'),
         sets: we.sets.length,
-        best: best ? fmtSet(best, type, settings) : '',
+        best: best ? plain(fmtSet(best, type, settings)) : '',
         record: we.sets.some((s) => (records.bySet.get(s.id)?.length ?? 0) > 0),
       };
     }),
@@ -42,7 +41,7 @@ function useCardData(w: Workout): CardData {
 /** Preview of the summary image, to save or hand to the share sheet. */
 export function ShareWorkoutSheet({ workout, open, onClose }: { workout: Workout; open: boolean; onClose: () => void }) {
   return (
-    <Sheet open={open} onClose={onClose} title="Share workout">
+    <Sheet open={open} onClose={onClose} title={t('share.title')}>
       {open && <SharePreview workout={workout} />}
     </Sheet>
   );
@@ -80,13 +79,13 @@ function SharePreview({ workout }: { workout: Workout }) {
       {error ? (
         <p className="form-error">{error}</p>
       ) : image ? (
-        <img src={image.url} alt={`Summary image of ${workout.title}`} width={1080} height={1350} />
+        <img src={image.url} alt={t('share.alt', { title: workout.title })} width={1080} height={1350} />
       ) : (
         <div className="share-placeholder" aria-busy="true" />
       )}
       <div className="button-pair">
         <button className="btn btn-ghost" disabled={!file} onClick={() => file && downloadFile(file)}>
-          <IconDownload size={18} /> Save image
+          <IconDownload size={18} /> {t('share.save')}
         </button>
         <button
           className="btn btn-primary"
@@ -95,11 +94,11 @@ function SharePreview({ workout }: { workout: Workout }) {
             try {
               await navigator.share({ files: [file!], title: workout.title });
             } catch (e) {
-              if ((e as DOMException).name !== 'AbortError') toast('Sharing didn’t work here. Save the image instead.');
+              if ((e as DOMException).name !== 'AbortError') toast(t('share.failed'));
             }
           }}
         >
-          <IconShare size={18} /> Share
+          <IconShare size={18} /> {t('detail.share')}
         </button>
       </div>
     </div>

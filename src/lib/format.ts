@@ -1,4 +1,8 @@
+import { intlLocale, isRtl, t } from '../i18n';
 import type { DistanceUnit, WeightUnit } from '../types';
+import { calcContext } from './context';
+
+export { listJoin } from '../i18n';
 
 const LB_PER_KG = 2.20462262;
 const MI_PER_KM = 0.621371192;
@@ -9,12 +13,13 @@ export function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 12);
 }
 
-const numberFormats = new Map<number, Intl.NumberFormat>();
+const numberFormats = new Map<string, Intl.NumberFormat>();
 export function fmtNum(n: number, maxDecimals = 2) {
-  let f = numberFormats.get(maxDecimals);
+  const key = `${intlLocale()}|${maxDecimals}`;
+  let f = numberFormats.get(key);
   if (!f) {
-    f = new Intl.NumberFormat('en-GB', { maximumFractionDigits: maxDecimals });
-    numberFormats.set(maxDecimals, f);
+    f = new Intl.NumberFormat(intlLocale(), { maximumFractionDigits: maxDecimals });
+    numberFormats.set(key, f);
   }
   return f.format(n);
 }
@@ -46,16 +51,29 @@ export function toKm(v: number, unit: DistanceUnit) {
   return unit === 'km' ? v : v / MI_PER_KM;
 }
 
+/**
+ * Keeps a run of numbers and Latin units in reading order inside right-to-left text, where
+ * "66 kg × 15" would otherwise come out as "15 × kg 66". Other languages get the text untouched.
+ */
+export function isolate(text: string) {
+  return text && isRtl() ? `⁦${text}⁩` : text;
+}
+
+/** `text` without the isolate marks, for canvas drawing and anything that parses it back. */
+export function plain(text: string) {
+  return text.replace(/[⁦⁩]/g, '');
+}
+
 export function fmtWeight(kg: number, unit: WeightUnit) {
-  return `${fmtNum(kgTo(kg, unit), unit === 'kg' ? 2 : 1)} ${unit}`;
+  return isolate(`${fmtNum(kgTo(kg, unit), unit === 'kg' ? 2 : 1)} ${unit}`);
 }
 
 export function fmtVolume(kg: number, unit: WeightUnit) {
-  return `${fmtNum(Math.round(kgTo(kg, unit)), 0)} ${unit}`;
+  return isolate(`${fmtNum(Math.round(kgTo(kg, unit)), 0)} ${unit}`);
 }
 
 export function fmtDistance(km: number, unit: DistanceUnit) {
-  return `${fmtNum(kmTo(km, unit), 2)} ${unit}`;
+  return isolate(`${fmtNum(kmTo(km, unit), 2)} ${unit}`);
 }
 
 /** 83 → "1:23", 3723 → "1:02:03" */
@@ -71,8 +89,8 @@ export function fmtClock(totalSeconds: number) {
 export function fmtDuration(totalSeconds: number) {
   const m = Math.round(totalSeconds / 60);
   const h = Math.floor(m / 60);
-  if (!h) return `${m}min`;
-  return m % 60 ? `${h}h ${m % 60}min` : `${h}h`;
+  if (!h) return t('time.minutes', { n: m });
+  return m % 60 ? `${t('time.hours', { n: h })} ${t('time.minutes', { n: m % 60 })}` : t('time.hours', { n: h });
 }
 
 /** "1:30" → 90, "90" → 90, "1:02:03" → 3723 */
@@ -83,34 +101,75 @@ export function parseClock(s: string): number | undefined {
 }
 
 export function fmtRest(seconds: number) {
-  if (!seconds) return 'Off';
+  if (!seconds) return t('common.off');
   const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  if (!m) return `${s}s`;
-  return s ? `${m}min ${s}s` : `${m}min`;
+  const sec = seconds % 60;
+  if (!m) return t('time.seconds', { n: sec });
+  return sec ? t('time.minutesSeconds', { m, s: sec }) : t('time.minutes', { n: m });
 }
 
-const dateShort = new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
-const dateShortYear = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-const dateLong = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-const timeFmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit' });
-const monthFmt = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' });
+const dateFormats = new Map<string, Intl.DateTimeFormat>();
+
+function dateFormat(id: string, options: Intl.DateTimeFormatOptions) {
+  const time = calcContext().timeFormat;
+  const key = `${intlLocale()}|${time}|${id}`;
+  let f = dateFormats.get(key);
+  if (!f) {
+    const hour: Intl.DateTimeFormatOptions =
+      time === '24h' ? { hourCycle: 'h23' } : time === '12h' ? { hour12: true } : {};
+    f = new Intl.DateTimeFormat(intlLocale(), { ...options, ...(options.hour ? hour : {}) });
+    dateFormats.set(key, f);
+  }
+  return f;
+}
 
 export function fmtDate(ts: number) {
   const d = new Date(ts);
-  return d.getFullYear() === new Date().getFullYear() ? dateShort.format(d) : dateShortYear.format(d);
+  return d.getFullYear() === new Date().getFullYear()
+    ? dateFormat('short', { weekday: 'short', day: 'numeric', month: 'short' }).format(d)
+    : dateFormat('shortYear', { day: 'numeric', month: 'short', year: 'numeric' }).format(d);
 }
 
 export function fmtDateLong(ts: number) {
-  return dateLong.format(ts);
+  return dateFormat('long', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(ts);
 }
 
 export function fmtTime(ts: number) {
-  return timeFmt.format(ts);
+  return dateFormat('time', { hour: calcContext().timeFormat === '12h' ? 'numeric' : '2-digit', minute: '2-digit' }).format(ts);
+}
+
+/** "24 Sep 2026" */
+export function fmtDateYear(ts: number) {
+  return dateFormat('shortYear', { day: 'numeric', month: 'short', year: 'numeric' }).format(ts);
+}
+
+/** "14 Oct" */
+export function fmtDayMonth(ts: number) {
+  return dateFormat('dayMonth', { day: 'numeric', month: 'short' }).format(ts);
+}
+
+/** "Oct" */
+export function fmtMonthShort(ts: number) {
+  return dateFormat('monthShort', { month: 'short' }).format(ts);
+}
+
+/** "Wednesday 14 October" */
+export function fmtWeekdayDate(ts: number) {
+  return dateFormat('weekdayDate', { weekday: 'long', day: 'numeric', month: 'long' }).format(ts);
+}
+
+/** "Wed" */
+export function fmtWeekdayShort(ts: number) {
+  return dateFormat('weekdayShort', { weekday: 'short' }).format(ts);
+}
+
+/** "W" */
+export function fmtWeekdayNarrow(ts: number) {
+  return dateFormat('weekdayNarrow', { weekday: 'narrow' }).format(ts);
 }
 
 export function fmtMonth(ts: number) {
-  return monthFmt.format(ts);
+  return dateFormat('month', { month: 'long', year: 'numeric' }).format(ts);
 }
 
 export function startOfDay(ts: number) {
@@ -119,10 +178,30 @@ export function startOfDay(ts: number) {
   return d.getTime();
 }
 
-/** Monday 00:00 of the week containing ts. */
+/** The first day of the week as Date.getDay() counts it (0 is Sunday): the setting, else the language's custom. */
+export function firstDayOfWeek(): number {
+  switch (calcContext().weekStart) {
+    case 'mon':
+      return 1;
+    case 'sun':
+      return 0;
+    case 'sat':
+      return 6;
+  }
+  try {
+    const locale = new Intl.Locale(intlLocale()) as Intl.Locale & { getWeekInfo?: () => { firstDay: number }; weekInfo?: { firstDay: number } };
+    const info = locale.getWeekInfo?.() ?? locale.weekInfo;
+    if (info) return info.firstDay % 7;
+  } catch {
+    // Older browsers: Monday, as the app always had.
+  }
+  return 1;
+}
+
+/** 00:00 of the first day of the week containing ts. */
 export function startOfWeek(ts: number) {
   const d = new Date(startOfDay(ts));
-  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  d.setDate(d.getDate() - ((d.getDay() - firstDayOfWeek() + 7) % 7));
   return d.getTime();
 }
 
@@ -134,35 +213,30 @@ export function addDays(ts: number, days: number) {
 
 export function fmtRelativeDay(ts: number) {
   const days = Math.round((startOfDay(Date.now()) - startOfDay(ts)) / 86_400_000);
-  if (days === 0) return 'Today';
-  if (days === 1) return 'Yesterday';
-  if (days < 7) return `${days} days ago`;
+  if (days === 0) return t('date.today');
+  if (days === 1) return t('date.yesterday');
+  if (days < 7) return t('date.daysAgo', { n: days });
   return fmtDate(ts);
 }
 
 /** "just now", "5 min ago", "3 h ago", then a date. */
 export function fmtAgo(ts: number, now = Date.now()) {
   const min = Math.round((now - ts) / 60_000);
-  if (min < 1) return 'just now';
-  if (min < 60) return `${min} min ago`;
-  if (min < 24 * 60) return `${Math.round(min / 60)} h ago`;
-  return `on ${fmtDate(ts)} at ${fmtTime(ts)}`;
+  if (min < 1) return t('date.justNow');
+  if (min < 60) return t('date.minutesAgo', { n: min });
+  if (min < 24 * 60) return t('date.hoursAgo', { n: Math.round(min / 60) });
+  return t('date.onAt', { date: fmtDate(ts), time: fmtTime(ts) });
 }
 
 export function defaultWorkoutTitle(ts = Date.now()) {
   const h = new Date(ts).getHours();
-  if (h < 5) return 'Night workout';
-  if (h < 12) return 'Morning workout';
-  if (h < 17) return 'Afternoon workout';
-  if (h < 21) return 'Evening workout';
-  return 'Night workout';
+  if (h < 5) return t('workout.default.night');
+  if (h < 12) return t('workout.default.morning');
+  if (h < 17) return t('workout.default.afternoon');
+  if (h < 21) return t('workout.default.evening');
+  return t('workout.default.night');
 }
 
 export function plural(n: number, word: string, pluralWord = `${word}s`) {
   return `${fmtNum(n, 0)} ${n === 1 ? word : pluralWord}`;
-}
-
-/** "a", "a and b", "a, b and c" */
-export function listJoin(items: string[]) {
-  return items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
 }

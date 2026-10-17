@@ -1,12 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { bodyWeightPoints, fmtBodyWeight, fmtChange, WeighInSheet } from '../components/BodyWeight';
 import { LineChart } from '../components/Charts';
 import { IconPlus } from '../components/Icons';
 import { Empty, PageHeader, Segmented } from '../components/ui';
 import { useBodyWeights } from '../lib/bodyweight';
-import { addDays, fmtDate, fmtNum, fmtRelativeDay, startOfDay } from '../lib/format';
+import { addDays, fmtDate, fmtNum, fmtRelativeDay, isolate, startOfDay } from '../lib/format';
+import { navigate, useRoute } from '../lib/router';
 import { useSettings } from '../lib/settings';
 import type { BodyWeight } from '../types';
+import { t } from '../i18n';
 
 type Range = '3m' | '1y' | 'all';
 const RANGE_DAYS: Record<Range, number> = { '3m': 91, '1y': 365, all: Infinity };
@@ -16,6 +18,13 @@ export function BodyWeightPage() {
   const { weightUnit } = useSettings();
   const [range, setRange] = useState<Range>('3m');
   const [editing, setEditing] = useState<BodyWeight | 'new' | null>(null);
+  // The "Log body weight" home-screen shortcut arrives with ?log=1: open the sheet, then drop the flag.
+  const wantsLog = useRoute().query.has('log');
+  useEffect(() => {
+    if (!wantsLog) return;
+    setEditing('new');
+    navigate('/profile/bodyweight', { replace: true });
+  }, [wantsLog]);
 
   const shown = useMemo(() => {
     if (!entries) return [];
@@ -31,42 +40,42 @@ export function BodyWeightPage() {
     <div className="page">
       <PageHeader
         back="/profile"
-        title="Body weight"
+        title={t('bw.title')}
         actions={
           <button className="btn btn-secondary btn-small" onClick={() => setEditing('new')}>
-            <IconPlus size={16} /> Log
+            <IconPlus size={16} /> {t('bw.log')}
           </button>
         }
       />
 
       {entries.length === 0 ? (
         <Empty
-          title="No weigh-ins yet"
+          title={t('bw.none')}
           action={
             <button className="btn btn-primary" onClick={() => setEditing('new')}>
-              Log body weight
+              {t('bw.logBodyWeight')}
             </button>
           }
         >
-          Weigh yourself now and then, ideally at the same time of day, and the trend shows up here.
+          {t('bw.noneText')}
         </Empty>
       ) : (
         <>
           <section className="card chart-card">
-            <h2 className="card-title">Trend ({weightUnit})</h2>
+            <h2 className="card-title">{t('bw.trend', { unit: weightUnit })}</h2>
             {shown.length > 1 ? (
-              <LineChart points={bodyWeightPoints(shown, weightUnit)} format={(v) => `${fmtNum(v, 1)} ${weightUnit}`} caption={`Body weight (${weightUnit})`} />
+              <LineChart points={bodyWeightPoints(shown, weightUnit)} format={(v) => isolate(`${fmtNum(v, 1)} ${weightUnit}`)} caption={t('bw.caption', { unit: weightUnit })} />
             ) : (
-              <p className="muted chart-empty">Log at least two weigh-ins in this period to see a trend.</p>
+              <p className="muted chart-empty">{t('bw.needTwo')}</p>
             )}
             <Segmented
-              label="Period"
+              label={t('bw.period')}
               value={range}
               onChange={setRange}
               options={[
-                { value: '3m', label: '3 months' },
-                { value: '1y', label: 'Year' },
-                { value: 'all', label: 'All' },
+                { value: '3m', label: t('bw.range3m') },
+                { value: '1y', label: t('bw.range1y') },
+                { value: 'all', label: t('bw.rangeAll') },
               ]}
             />
           </section>

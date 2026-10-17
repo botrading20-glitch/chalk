@@ -5,10 +5,11 @@ import { BufferedText } from '../components/fields';
 import { IconDown } from '../components/Icons';
 import { Sheet } from '../components/Sheet';
 import { Empty, Stat, Toggle } from '../components/ui';
+import { SlantBar } from '../components/WeekCard';
 import { WorkoutEditor } from '../components/WorkoutEditor';
 import { db } from '../db';
 import { useData, useNow } from '../lib/data';
-import { fmtClock, fmtDuration, fmtTime, fmtVolume, plural } from '../lib/format';
+import { fmtClock, fmtDuration, fmtTime, fmtVolume } from '../lib/format';
 import { goBack, navigate } from '../lib/router';
 import { useSettings } from '../lib/settings';
 import { hasValues, workoutSets, workoutVolume } from '../lib/stats';
@@ -16,6 +17,7 @@ import { keepAwake } from '../lib/timer';
 import { discardActive, finishActive, updateActive, useActiveWorkout } from '../lib/workouts';
 import type { ActiveWorkout } from '../types';
 import { beginWorkout } from './WorkoutHome';
+import { t } from '../i18n';
 
 export function ActiveWorkoutPage() {
   const active = useActiveWorkout();
@@ -41,14 +43,14 @@ export function ActiveWorkoutPage() {
     return (
       <div className="page">
         <Empty
-          title="No workout in progress"
+          title={t('live.noneTitle')}
           action={
             <button className="btn btn-primary" onClick={() => beginWorkout()}>
-              Start empty workout
+              {t('live.startEmpty')}
             </button>
           }
         >
-          Start one from the Workout tab, or from any routine.
+          {t('live.noneText')}
         </Empty>
       </div>
     );
@@ -56,15 +58,16 @@ export function ActiveWorkoutPage() {
 
   const completed = workoutSets(active, true);
   const volume = workoutVolume(active, typeOf, true);
+  const planned = active.exercises.reduce((n, we) => n + we.sets.length, 0);
 
   async function onFinish() {
     const withValues = active!.exercises.some((we) => we.sets.some((s) => s.completed || hasValues(s)));
     if (!withValues) {
       const discard = await confirmDialog({
-        title: 'Nothing logged yet',
-        message: 'Enter and check off at least one set to save this workout.',
-        confirmLabel: 'Discard workout',
-        cancelLabel: 'Keep logging',
+        title: t('live.nothingTitle'),
+        message: t('live.nothingText'),
+        confirmLabel: t('live.discardWorkout'),
+        cancelLabel: t('live.keepLogging'),
         danger: true,
       });
       if (discard) {
@@ -79,34 +82,46 @@ export function ActiveWorkoutPage() {
   return (
     <div className="page workout-page">
       <header className="workout-head">
-        <button className="icon-btn" onClick={() => goBack('/')} aria-label="Minimise workout">
+        <button className="icon-btn" onClick={() => goBack('/')} aria-label={t('live.minimise')}>
           <IconDown />
         </button>
-        <div className="workout-clock" aria-label="Elapsed time">
-          {fmtClock((now - active.startTime) / 1000)}
+        <div className="workout-clock-cell">
+          <div className="workout-clock" aria-label={t('live.elapsed')}>
+            {fmtClock((now - active.startTime) / 1000)}
+          </div>
+          {planned > 0 && <span className="workout-sets">{t('live.setsProgress', { done: completed, total: planned })}</span>}
         </div>
-        <button className="btn btn-primary btn-small" onClick={onFinish}>
-          Finish
+        <button className="btn btn-glow btn-small" onClick={onFinish}>
+          {t('live.finish')}
         </button>
+        {planned > 0 && (
+          <SlantBar
+            className="workout-progress"
+            value={completed}
+            max={planned}
+            label={t('live.setsProgressLabel', { done: completed, total: planned })}
+          />
+        )}
       </header>
 
       <BufferedText
         className="title-input"
         value={active.title}
         onChange={(title) => updateActive((a) => ({ ...a, title }))}
-        aria-label="Workout name"
+        aria-label={t('live.nameLabel')}
       />
 
       <div className="stat-row">
-        <Stat label="Volume" value={fmtVolume(volume, settings.weightUnit)} />
-        <Stat label="Sets done" value={completed} />
-        <Stat label="Started" value={fmtTime(active.startTime)} />
+        <Stat label={t('stat.volume')} value={fmtVolume(volume, settings.weightUnit)} />
+        <Stat label={t('stat.setsDone')} value={completed} />
+        <Stat label={t('stat.started')} value={fmtTime(active.startTime)} />
       </div>
 
       <WorkoutEditor
         exercises={active.exercises}
         onChange={(fn) => updateActive((a) => ({ ...a, exercises: fn(a.exercises) }))}
         mode="live"
+        routineId={active.routineId}
         onRest={(seconds) => {
           if (seconds > 0) void updateActive((a) => ({ ...a, restEndsAt: Date.now() + seconds * 1000, restTotal: seconds }));
         }}
@@ -121,9 +136,9 @@ export function ActiveWorkoutPage() {
         className="btn btn-danger-ghost btn-block discard"
         onClick={async () => {
           const ok = await confirmDialog({
-            title: 'Discard this workout?',
-            message: 'Everything logged in it will be lost.',
-            confirmLabel: 'Discard workout',
+            title: t('live.discardTitle'),
+            message: t('live.discardText'),
+            confirmLabel: t('live.discardWorkout'),
             danger: true,
           });
           if (ok) {
@@ -132,10 +147,10 @@ export function ActiveWorkoutPage() {
           }
         }}
       >
-        Discard workout
+        {t('live.discardWorkout')}
       </button>
 
-      <Sheet open={finishing} onClose={() => setFinishing(false)} title="Save workout">
+      <Sheet open={finishing} onClose={() => setFinishing(false)} title={t('live.saveTitle')}>
         <FinishForm active={active} onCancel={() => setFinishing(false)} />
       </Sheet>
     </div>
@@ -168,38 +183,38 @@ function FinishForm({ active, onCancel }: { active: ActiveWorkout; onCancel: () 
           navigate(`/history/${w.id}?saved=1`, { replace: true });
         } catch (err) {
           setSaving(false);
-          toast(`Couldn't save the workout: ${(err as Error).message}. It's still here; try again.`);
+          toast(t('live.saveFailed', { message: (err as Error).message }));
         }
       }}
     >
       <div className="stat-row">
-        <Stat label="Duration" value={fmtDuration((Date.now() - active.startTime) / 1000)} />
-        <Stat label="Volume" value={fmtVolume(workoutVolume(active, typeOf, !keepUnchecked), settings.weightUnit)} />
-        <Stat label="Sets" value={savedSets} />
+        <Stat label={t('stat.duration')} value={fmtDuration((Date.now() - active.startTime) / 1000)} />
+        <Stat label={t('stat.volume')} value={fmtVolume(workoutVolume(active, typeOf, !keepUnchecked), settings.weightUnit)} />
+        <Stat label={t('stat.sets')} value={savedSets} />
       </div>
       <label className="field">
-        <span>Name</span>
+        <span>{t('form.name')}</span>
         <input value={title} onChange={(e) => setTitle(e.target.value)} />
       </label>
       <label className="field">
-        <span>Notes</span>
-        <textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="How did it go?" />
+        <span>{t('common.notes')}</span>
+        <textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('live.notesPlaceholder')} />
       </label>
       {unchecked > 0 && (
         <Toggle
           checked={keepUnchecked}
           onChange={setKeepUnchecked}
-          label={`Also save ${plural(unchecked, 'set')} you didn't check off`}
+          label={t('live.alsoSave', { n: unchecked })}
         />
       )}
-      {routine && <Toggle checked={updateRoutine} onChange={setUpdateRoutine} label={`Update "${routine.title}" with today's sets`} />}
-      {!savedSets && <p className="form-error">Check off at least one set, or turn on saving unchecked sets.</p>}
+      {routine && <Toggle checked={updateRoutine} onChange={setUpdateRoutine} label={t('live.updateRoutine', { title: routine.title })} />}
+      {!savedSets && <p className="form-error">{t('live.needSet')}</p>}
       <div className="form-actions">
         <button type="button" className="btn btn-ghost" onClick={onCancel}>
-          Keep logging
+          {t('live.keepLogging')}
         </button>
         <button type="submit" className="btn btn-primary" disabled={!savedSets || saving}>
-          Save workout
+          {t('live.saveTitle')}
         </button>
       </div>
     </form>

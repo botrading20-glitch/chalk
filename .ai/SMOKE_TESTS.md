@@ -9,7 +9,7 @@ npm run dev            # http://localhost:5173 (launch config: chalk-dev)
 node scripts/sample-backup.mjs   # writes tmp-import/chalk-sample-backup.json
 ```
 
-The data in the dev browser belongs to `localhost:5173` only. Restore the sample through **Progress → ⚙ Settings → Restore backup**. To start clean, use **Settings → Erase all data** (dev browser only, never the owner's phone).
+The data in the dev browser belongs to `localhost:5173` only. Restore the sample through **Progress → ⚙ Settings → Your data → Restore backup**. To start clean, use **Settings → Your data → Erase all data** (dev browser only, never the owner's phone).
 
 ## Automated
 
@@ -31,7 +31,11 @@ The data in the dev browser belongs to `localhost:5173` only. Restore the sample
 | S-06 | Finish and history | Finish the workout: the detail page shows "Workout N saved"; it appears in History; edit it and save. |
 | S-07 | Offline | On the preview build (S-08), load once, go offline in devtools, reload: the app works. |
 | S-08 | Sub-path build | `npm run build` with `BASE_PATH=/chalk/` (in Git Bash prefix `MSYS_NO_PATHCONV=1`, or it rewrites the path to `/Program Files/Git/chalk/` and the page loads blank), then `npx vite preview --base /chalk/ --port 4173` (launch config `chalk-preview`); open `/chalk/`: loads with no CSP violations in the console. |
-| S-09 | Backup round trip | Settings → Back up data; Erase all data; Restore the file: counts match. |
-| S-10 | Hevy import | Import a Hevy `workout_data.csv`; the preview shows workouts and exercises; import; records appear. |
+| S-09 | Backup round trip | Settings → Your data → Back up now (the page then says "Backed up today"); Erase all data; Restore the file: counts match. |
+| S-10 | CSV import | Import a Strong CSV (or an export from Setward itself); the preview shows workouts and exercises, and asks for kg or lbs when the file has no unit; import; records appear. |
 | S-11 | Crash screen | (dev only) throw inside a page render: the recovery screen shows, and *Download backup* works. |
+| S-13 | First run | On the preview build with the site's data cleared: the app opens on the welcome page (no tab bar). Pick a starter program, open one, Add: Home shows its folder; reload stays on Home. Clear the data again and tap Skip for now: Home is empty and reload stays on Home. A browser that already has workouts or routines never shows the welcome page. |
+| S-14 | Past workout and records | History → + → add an exercise and a set, Save: the saved celebration shows and the workout sits at its date in History; Progress → *Recent records* lists exercises that set records. |
+| S-15 | Languages | Settings → Language: pick each language in turn. The title bar, tabs and Settings change at once, `<html lang>` follows, and Arabic flips the layout (`dir="rtl"`). At 320 px, open Home, the live workout with a running rest, a routine editor and Settings → Your data in German and Arabic: nothing runs off the edge. Measure with `document.documentElement.clientWidth`, not `window.innerWidth` (a phone-sized browser widens `innerWidth` to fit an overflowing page). |
+| S-16 | Update, shortcuts, privacy | On a device that has data and no recorded version (or after clearing the `pref:lastSeenVersion` row in `kv`), the What's new sheet opens once on Home and does not return; on a new empty install it never opens. On the preview build, `#/?action=start` starts a workout and opens it, `#/?action=weigh` opens the weigh-in sheet, and `/chalk/privacy.html` shows the privacy page (not the app) even after the service worker is in control. At 1280 px or wider a side panel sits beside the column. |
 | S-12 | Data check | Settings → Your data → *Check data for problems* reads "No problems found" on healthy data. (dev only) Put a workout with `exercises: null` into IndexedDB and reload: the crash screen shows; *Check for damaged data* lists it; *Download a backup* works; Delete then Keep leaves it; Delete then Delete removes it; *Reload Setward* opens the app. |

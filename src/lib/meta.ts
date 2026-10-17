@@ -1,59 +1,15 @@
+import { labelMap } from '../i18n/labels';
 import type { Equipment, ExerciseType, Muscle, SetType } from '../types';
 
-export const MUSCLE_LABEL: Record<Muscle, string> = {
-  chest: 'Chest',
-  shoulders: 'Shoulders',
-  biceps: 'Biceps',
-  triceps: 'Triceps',
-  forearms: 'Forearms',
-  lats: 'Lats',
-  upper_back: 'Upper back',
-  traps: 'Traps',
-  lower_back: 'Lower back',
-  abdominals: 'Abs',
-  quadriceps: 'Quads',
-  hamstrings: 'Hamstrings',
-  glutes: 'Glutes',
-  calves: 'Calves',
-  adductors: 'Adductors',
-  abductors: 'Abductors',
-  neck: 'Neck',
-  cardio: 'Cardio',
-  full_body: 'Full body',
-  other: 'Other',
-};
+export const MUSCLE_LABEL = labelMap<Muscle>('muscle', ['chest', 'shoulders', 'biceps', 'triceps', 'forearms', 'lats', 'upper_back', 'traps', 'lower_back', 'abdominals', 'quadriceps', 'hamstrings', 'glutes', 'calves', 'adductors', 'abductors', 'neck', 'cardio', 'full_body', 'other']);
 
 export const MUSCLES = Object.keys(MUSCLE_LABEL) as Muscle[];
 
-export const EQUIPMENT_LABEL: Record<Equipment, string> = {
-  barbell: 'Barbell',
-  dumbbell: 'Dumbbell',
-  machine: 'Machine',
-  cable: 'Cable',
-  smith_machine: 'Smith machine',
-  kettlebell: 'Kettlebell',
-  ez_bar: 'EZ bar',
-  bodyweight: 'Bodyweight',
-  band: 'Band',
-  medicine_ball: 'Medicine ball',
-  exercise_ball: 'Exercise ball',
-  foam_roll: 'Foam roller',
-  other: 'Other',
-  none: 'None',
-};
+export const EQUIPMENT_LABEL = labelMap<Equipment>('equipment', ['barbell', 'dumbbell', 'machine', 'cable', 'smith_machine', 'kettlebell', 'ez_bar', 'bodyweight', 'band', 'medicine_ball', 'exercise_ball', 'foam_roll', 'other', 'none']);
 
 export const EQUIPMENT = Object.keys(EQUIPMENT_LABEL) as Equipment[];
 
-export const TYPE_LABEL: Record<ExerciseType, string> = {
-  weight_reps: 'Weight & reps',
-  bodyweight_reps: 'Bodyweight reps',
-  weighted_bodyweight: 'Weighted bodyweight',
-  assisted_bodyweight: 'Assisted bodyweight',
-  duration: 'Duration',
-  weight_duration: 'Weight & duration',
-  distance_duration: 'Distance & duration',
-  weight_distance: 'Weight & distance',
-};
+export const TYPE_LABEL = labelMap<ExerciseType>('type', ['weight_reps', 'bodyweight_reps', 'weighted_bodyweight', 'assisted_bodyweight', 'duration', 'weight_duration', 'distance_duration', 'weight_distance']);
 
 export const EXERCISE_TYPES = Object.keys(TYPE_LABEL) as ExerciseType[];
 
@@ -82,12 +38,7 @@ export const COUNTS_VOLUME: Record<ExerciseType, boolean> = {
   weight_distance: false,
 };
 
-export const SET_TYPE_LABEL: Record<SetType, string> = {
-  normal: 'Normal set',
-  warmup: 'Warm-up',
-  failure: 'Failure',
-  dropset: 'Drop set',
-};
+export const SET_TYPE_LABEL = labelMap<SetType>('setType', ['normal', 'warmup', 'failure', 'dropset']);
 
 export const SET_TYPE_SHORT: Record<SetType, string> = {
   normal: '',

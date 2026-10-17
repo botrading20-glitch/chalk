@@ -1,4 +1,5 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
+import { useId, useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
+import { plain } from '../lib/format';
 
 // Small hand-rolled SVG charts: one series each, so no legend (the card title
 // names the metric). Every chart has a hover/tap readout and a screen-reader table.
@@ -40,6 +41,18 @@ function compact(v: number) {
   return String(Number(v.toFixed(1)));
 }
 
+/** A vertical fade of the chart colour: strong at the top, `to` at the bottom. */
+function Fade({ id, from, to }: { id: string; from: number; to: number }) {
+  return (
+    <defs>
+      <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" style={{ stopColor: 'var(--viz)', stopOpacity: from }} />
+        <stop offset="1" style={{ stopColor: 'var(--viz)', stopOpacity: to }} />
+      </linearGradient>
+    </defs>
+  );
+}
+
 function SrTable({ caption, rows }: { caption: string; rows: [string, string][] }) {
   // A table ignores the 1px width of .sr-only and grows to its longest row,
   // which widened the page on phones; the wrapper does the clipping.
@@ -78,6 +91,7 @@ export function BarChart({
   height?: number;
 }) {
   const [ref, width] = useWidth<HTMLDivElement>();
+  const fade = `${useId().replace(/:/g, '')}-bar`;
   const [active, setActive] = useState<number | null>(null);
   const pad = { top: 22, right: 4, bottom: 24, left: 40 };
   const innerW = width - pad.left - pad.right;
@@ -87,13 +101,16 @@ export function BarChart({
   const band = innerW / data.length;
   const barW = Math.min(24, Math.max(4, band - 6));
   const y = (v: number) => pad.top + innerH - (v / top) * innerH;
-  const every = Math.ceil(data.length / 6);
+  // Up to six date labels, fewer when a language's month names are long enough to touch.
+  const widest = Math.max(...data.map((d) => d.tick.length), 1);
+  const fit = Math.max(2, Math.floor(innerW / (widest * 6.4 + 12)));
+  const every = Math.ceil(data.length / Math.min(6, fit));
   const last = data.length - 1;
   const shown = active ?? null;
 
   // The latest bar carries a direct label, right-aligned to its edge. Lift it
   // above any neighbouring bar it would otherwise overlap.
-  const lastLabel = data[last]?.value > 0 ? format(data[last].value) : '';
+  const lastLabel = data[last]?.value > 0 ? plain(format(data[last].value)) : '';
   const labelRight = pad.left + band * last + band / 2 + barW / 2;
   const labelLeft = labelRight - lastLabel.length * 6.6;
   let labelY = y(data[last]?.value ?? 0) - 6;
@@ -105,6 +122,7 @@ export function BarChart({
   return (
     <div className="chart" ref={ref} onPointerLeave={() => setActive(null)}>
       <svg width={width} height={height} role="img" aria-label={caption}>
+        <Fade id={fade} from={1} to={0.5} />
         {ticks.map((t) => (
           <g key={t}>
             <line className="grid" x1={pad.left} x2={width - pad.right} y1={y(t)} y2={y(t)} />
@@ -125,7 +143,7 @@ export function BarChart({
               : '';
           return (
             <g key={i}>
-              {path && <path className={`bar ${shown !== null && shown !== i ? 'dim' : ''}`} d={path} />}
+              {path && <path className={`bar ${shown !== null && shown !== i ? 'dim' : ''}`} d={path} fill={`url(#${fade})`} />}
               {i % every === (last % every) && (
                 <text className="axis" x={cx} y={height - 6} textAnchor="middle">
                   {d.tick}
@@ -189,6 +207,7 @@ export function LineChart({
   height?: number;
 }) {
   const [ref, width] = useWidth<HTMLDivElement>();
+  const fade = `${useId().replace(/:/g, '')}-area`;
   const [active, setActive] = useState<number | null>(null);
   const pad = { top: 16, right: 14, bottom: 26, left: 44 };
   const innerW = width - pad.left - pad.right;
@@ -235,6 +254,7 @@ export function LineChart({
         }}
         onBlur={() => setActive(null)}
       >
+        <Fade id={fade} from={0.38} to={0} />
         {ticks.map((t) => (
           <g key={t}>
             <line className="grid" x1={pad.left} x2={width - pad.right} y1={y(t)} y2={y(t)} />
@@ -254,7 +274,7 @@ export function LineChart({
             {p.label}
           </text>
         ))}
-        {area && <path className="area" d={area} />}
+        {area && <path className="area" d={area} fill={`url(#${fade})`} />}
         <path className="line" d={line} />
         {showDots && points.map((p, i) => <circle key={i} className="dot" cx={x(p.x)} cy={y(p.y)} r={4} />)}
         {!showDots && <circle className="dot" cx={x(points[last].x)} cy={y(points[last].y)} r={4} />}

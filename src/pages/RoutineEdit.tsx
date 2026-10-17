@@ -10,6 +10,7 @@ import { uid } from '../lib/format';
 import { goBack, navigate } from '../lib/router';
 import { saveRoutine } from '../lib/workouts';
 import type { Routine, WorkoutExercise } from '../types';
+import { t } from '../i18n';
 
 interface RoutineDraft {
   title: string;
@@ -26,8 +27,8 @@ export function RoutineEdit({ id, folder }: { id?: string; folder?: string }) {
   if (id && !existing) {
     return (
       <div className="page">
-        <PageHeader back="/" title="Routine" />
-        <Empty title="This routine doesn't exist">It may have been deleted.</Empty>
+        <PageHeader back="/" title={t('routineEdit.title')} />
+        <Empty title={t('missing.routine')}>{t('missing.hint')}</Empty>
       </div>
     );
   }
@@ -46,7 +47,7 @@ function Editor({ draftKey, existing, stored, folder }: { draftKey: string; exis
 
   async function save() {
     if (!title.trim()) {
-      setError('Name the routine, e.g. "Push day".');
+      setError(t('routineEdit.nameRequired'));
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -58,7 +59,7 @@ function Editor({ draftKey, existing, stored, folder }: { draftKey: string; exis
       ...(!existing && folder ? { folder } : {}),
     });
     await draft.clear();
-    toast(existing ? 'Routine saved' : 'Routine created');
+    toast(existing ? t('routineEdit.saved') : t('routineEdit.created'));
     goBack('/');
   }
 
@@ -71,20 +72,20 @@ function Editor({ draftKey, existing, stored, folder }: { draftKey: string; exis
           await clearDraft(draftKey);
           goBack('/');
         }}
-        title={existing ? 'Edit routine' : 'New routine'}
+        title={existing ? t('routineEdit.title') : t('routineEdit.new')}
         actions={
           <button className="btn btn-primary btn-small" onClick={save}>
-            Save
+            {t('common.save')}
           </button>
         }
       />
       {stored && draft.dirty && <DraftBar onDiscard={draft.discard} />}
       <div className="form">
         <label className="field">
-          <span>Name</span>
+          <span>{t('form.name')}</span>
           <input
             value={title}
-            placeholder="e.g. Push day"
+            placeholder={t('routineEdit.namePlaceholder')}
             onChange={(e) => {
               set({ title: e.target.value });
               setError('');
@@ -94,20 +95,20 @@ function Editor({ draftKey, existing, stored, folder }: { draftKey: string; exis
         </label>
         {error && <p className="form-error">{error}</p>}
         <label className="field">
-          <span>Notes</span>
-          <textarea rows={2} value={notes} onChange={(e) => set({ notes: e.target.value })} placeholder="Optional" />
+          <span>{t('common.notes')}</span>
+          <textarea rows={2} value={notes} onChange={(e) => set({ notes: e.target.value })} placeholder={t('routineEdit.notesPlaceholder')} />
         </label>
       </div>
-      <p className="muted small editor-hint">Numbers you enter here are pre-filled when you start the routine.</p>
-      <WorkoutEditor exercises={exercises} onChange={(fn) => draft.update((d) => ({ ...d, exercises: fn(d.exercises) }))} mode="routine" />
+      <p className="muted small editor-hint">{t('routineEdit.hint')}</p>
+      <WorkoutEditor exercises={exercises} onChange={(fn) => draft.update((d) => ({ ...d, exercises: fn(d.exercises) }))} mode="routine" routineId={existing?.id} />
       {existing && (
         <button
           className="btn btn-danger-ghost btn-block"
           onClick={async () => {
             const ok = await confirmDialog({
-              title: `Delete "${existing.title}"?`,
-              message: 'Workouts you logged with it stay in your history.',
-              confirmLabel: 'Delete routine',
+              title: t('home.deleteTitle', { title: existing.title }),
+              message: t('home.deleteText'),
+              confirmLabel: t('home.deleteRoutine'),
               danger: true,
             });
             if (!ok) return;
@@ -116,7 +117,7 @@ function Editor({ draftKey, existing, stored, folder }: { draftKey: string; exis
             navigate('/', { replace: true });
           }}
         >
-          Delete routine
+          {t('home.deleteRoutine')}
         </button>
       )}
     </div>

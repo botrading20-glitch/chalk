@@ -9,6 +9,7 @@ import { toast } from './components/dialogs';
 import { ErrorBoundary, RecoveryScreen } from './components/ErrorBoundary';
 import { ensureLibrary, requestPersistentStorage } from './db';
 import { DataProvider } from './lib/data';
+import { loadSettings } from './lib/settings';
 import { startAutoSync } from './lib/sync';
 
 registerSW({ immediate: true });
@@ -30,6 +31,7 @@ const root = createRoot(document.getElementById('root')!);
 
 async function boot() {
   await ensureLibrary();
+  await loadSettings();
   void requestPersistentStorage();
   root.render(
     <StrictMode>

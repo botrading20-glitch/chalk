@@ -144,9 +144,21 @@ export interface BodyWeight {
   updatedAt: number;
 }
 
+import type { LanguagePreference } from './i18n/locales';
+
 export type WeightUnit = 'kg' | 'lbs';
 export type DistanceUnit = 'km' | 'mi';
 export type Theme = 'dark' | 'light' | 'system';
+export type TimeFormat = 'auto' | '24h' | '12h';
+export type WeekStart = 'auto' | 'mon' | 'sun' | 'sat';
+export type OneRmFormula = 'epley' | 'brzycki';
+export type RestSound = 'classic' | 'chime' | 'bell' | 'pulse';
+export type SoundVolume = 'low' | 'medium' | 'high';
+export type PreviousFrom = 'any' | 'routine';
+export type AccentName = 'purple' | 'indigo' | 'teal' | 'pink';
+export type TextSize = 'small' | 'default' | 'large' | 'xlarge';
+export type ReduceMotion = 'system' | 'always';
+export type BackupReminder = 'off' | 'weekly' | 'monthly';
 
 export interface Settings {
   weightUnit: WeightUnit;
@@ -163,4 +175,37 @@ export interface Settings {
   platesLbs: number[];
   /** Bar weight in kg remembered per exercise id (plate calculator). */
   plateBars: Record<string, number>;
+
+  language: LanguagePreference;
+  timeFormat: TimeFormat;
+  weekStart: WeekStart;
+  oneRmFormula: OneRmFormula;
+  /** Shown in the Home greeting; empty for none. */
+  profileName: string;
+  /** Workouts per week to aim for; 0 for no goal. */
+  weeklyGoal: number;
+
+  /** Rest after a warm-up set in seconds; -1 uses the exercise's own rest. */
+  warmupRest: number;
+  /** Start the rest timer when a set is checked. */
+  autoRest: boolean;
+  previousFrom: PreviousFrom;
+  /** Sets a newly added exercise starts with; 0 is automatic (1 in a workout, 3 in a routine). */
+  newExerciseSets: number;
+  showRpe: boolean;
+
+  restSound: RestSound;
+  soundVolume: SoundVolume;
+  restCountdown: boolean;
+  vibrateOnCheck: boolean;
+
+  blackTheme: boolean;
+  accent: AccentName;
+  compactRoutines: boolean;
+  textSize: TextSize;
+  highContrast: boolean;
+  reduceMotion: ReduceMotion;
+  largeControls: boolean;
+
+  backupReminder: BackupReminder;
 }

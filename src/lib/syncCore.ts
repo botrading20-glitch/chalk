@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 // Storage-agnostic sync engine. Records are merged three ways against the
 // snapshot taken at the last successful sync ("base"), so deletions need no
 // tombstones: a record missing on one side that was present in the base was
@@ -64,7 +65,7 @@ export function serializeShard(records: Rec[]) {
 export function parseShard(text: string): Rec[] {
   const data = JSON.parse(text);
   if (data?.format !== FORMAT || !Array.isArray(data.records)) {
-    throw new Error('The sync repository contains a file Setward does not recognise.');
+    throw new Error(t('error.syncUnknownFile'));
   }
   return data.records.filter((r: Rec) => r && typeof r.id === 'string');
 }
@@ -122,7 +123,7 @@ const normName = (s: unknown) => String(s ?? '').trim().toLowerCase().replace(/\
 
 /**
  * First sync on a device that already has data while the cloud has data too,
- * typically because the same Hevy export was imported on both. Workouts that
+ * typically because the same CSV export was imported on both. Workouts that
  * match by start time and title keep the cloud copy, and custom exercises
  * with the same name are merged onto the cloud id.
  */
@@ -209,7 +210,7 @@ export interface SyncState {
 
 export class SyncConflict extends Error {
   constructor() {
-    super('The cloud copy changed during sync.');
+    super(t('error.syncConflict'));
   }
 }
 

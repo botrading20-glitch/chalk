@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { IconClose } from './Icons';
+import { t } from '../i18n';
 
 /** Bottom sheet on phones, centred panel on wide screens. Built on <dialog> for focus trapping and Esc. */
 export function Sheet({
@@ -42,7 +43,7 @@ export function Sheet({
           {title !== undefined && (
             <div className="sheet-head">
               <h2>{title}</h2>
-              <button className="icon-btn" onClick={onClose} aria-label="Close">
+              <button className="icon-btn" onClick={onClose} aria-label={t('common.close')}>
                 <IconClose />
               </button>
             </div>

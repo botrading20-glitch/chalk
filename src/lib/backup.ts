@@ -1,6 +1,9 @@
 import { db, getKV, setKV } from '../db';
+import { saveFile } from './csv';
+import { setPref } from './prefs';
 import type { BodyWeight, Exercise, Routine, Settings, Workout } from '../types';
 import { cleanAll, cleanBodyWeight, cleanExercise, cleanRoutine, cleanSettings, cleanWorkout } from './validate';
+import { t } from '../i18n';
 
 interface Backup {
   app: 'chalk';
@@ -25,6 +28,19 @@ export interface ParsedBackup {
   skipped: number;
 }
 
+/** Name for a file the user saves: setward-backup-2026-10-17.json. */
+export const exportFileName = (kind: string, ext: string) => `setward-${kind}-${new Date().toISOString().slice(0, 10)}.${ext}`;
+
+/** Saves a backup file and remembers when; false when the user backed out of the share sheet. */
+export async function saveBackupFile() {
+  const saved = await saveFile(exportFileName('backup', 'json'), await exportBackup(), 'application/json');
+  if (saved) {
+    await setPref('lastBackupAt', Date.now());
+    await setPref('backupSnoozedUntil', 0);
+  }
+  return saved;
+}
+
 export async function exportBackup() {
   const backup: Backup = {
     app: 'chalk',
@@ -46,10 +62,10 @@ export function parseBackup(text: string): ParsedBackup {
   try {
     data = JSON.parse(text);
   } catch {
-    throw new Error("This file isn't valid JSON. Pick a backup exported from Setward.");
+    throw new Error(t('error.backupJson'));
   }
   if (data?.app !== 'chalk' || !Array.isArray(data.workouts)) {
-    throw new Error("This file isn't a Setward backup. Pick a file exported from Settings → Back up data.");
+    throw new Error(t('error.backupApp'));
   }
   const workouts = cleanAll(data.workouts, cleanWorkout);
   const routines = cleanAll(data.routines, cleanRoutine);

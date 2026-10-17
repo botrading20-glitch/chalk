@@ -3,6 +3,7 @@ import { db, getKV, setKV } from '../db';
 import type { ActiveWorkout, Routine, Workout, WorkoutExercise, WorkoutSet } from '../types';
 import { defaultWorkoutTitle, uid } from './format';
 import { hasValues } from './stats';
+import { t } from '../i18n';
 
 const ACTIVE = 'active';
 
@@ -74,7 +75,7 @@ export function workoutFromDraft(a: ActiveWorkout, keepUnchecked: boolean): Work
 
 export async function finishActive(opts: { title: string; description?: string; keepUnchecked: boolean; updateRoutine: boolean }) {
   const active = await getActive();
-  if (!active) throw new Error('No workout in progress.');
+  if (!active) throw new Error(t('error.noActive'));
   const workout = workoutFromDraft({ ...active, title: opts.title, description: opts.description }, opts.keepUnchecked);
   await db.transaction('rw', db.workouts, db.kv, db.routines, async () => {
     await db.workouts.put(workout);

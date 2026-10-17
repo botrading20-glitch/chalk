@@ -16,7 +16,7 @@ Status: DONE (built and verified) · PARTIAL · TODO · DEFERRED.
 | REQ-006 | Body-weight log: one weigh-in per day, trend chart. | R, C | P2 | DONE | Manual |
 | REQ-007 | Workout share image (1080×1350 PNG). | R, C | P2 | DONE | Manual |
 | REQ-008 | Plate calculator using the plates the gym owns (kg or lb). | R, C | P2 | DONE | `plates.test.ts` |
-| REQ-009 | Hevy CSV import (metric and imperial) and export in the same format. | R, O | P0 | DONE | `hevy.test.ts` |
+| REQ-009 | Import workout history from a Strong CSV (units from the file or the user's choice) or Setward's own CSV; export everything as Setward's CSV. No Hevy support. | R, O (2026-10-16) | P0 | DONE (branch `launch`) | `importer.test.ts` |
 | REQ-010 | JSON backup and restore of everything the user created. | R | P0 | DONE | `backup.test.ts` |
 | REQ-011 | Optional cloud sync to a private GitHub repo with a fine-grained token. | R, C | P1 | DONE | `syncCore.test.ts`, opt-in `github.smoke` |
 | REQ-012 | Installable PWA that works offline. | R | P0 | DONE | Smoke S-07 |
@@ -26,13 +26,18 @@ Status: DONE (built and verified) · PARTIAL · TODO · DEFERRED.
 | REQ-016 | Stopwatch for timed sets in a live workout: time the next set, see the target, get an alert at it, save the time with one tap. Survives a reload. | O (2026-10-05) | P2 | DONE (branch `features`) | Browser QA, `workouts.test.ts` |
 | REQ-017 | Reorder routines within a folder by dragging, with a non-drag alternative. | O (2026-10-05) | P2 | DONE (branch `features`) | `folders.test.ts`, browser QA |
 | REQ-018 | Check data: find records the app cannot read (from a sync or a bug), from Settings or the crash screen, and repair or delete each one after a backup. Nothing changes until the user asks. | O (2026-10-16) | P1 | DONE (live, REL-103) | `dataCheck.test.ts`, browser QA |
+| REQ-019 | Eleven languages (English, French, Arabic right to left, Spanish, German, Portuguese, Italian, Turkish, Dutch, Polish, Indonesian), chosen on the Language page or following the phone, with no screen overflowing at 320 px in any of them. The non-English translations are machine-made and the Language page says so. | O (2026-10-16) | P1 | DONE (branch `launch`; native-speaker review open) | `i18n.test.ts`, overflow sweeps (TEST_STATUS M6, M8), Smoke S-15 |
+| REQ-020 | Settings are a grouped list with one page per section, covering training, timer and sounds, plates, goals and profile, units and formats, appearance, accessibility and comfort, language, sync, data and about; every setting does what it says. | O (2026-10-16) | P1 | DONE (branch `launch`) | Browser QA (TEST_STATUS M4), tests for the pure parts |
+| REQ-021 | A new install gets a welcome screen (language and units, starter program, scratch, import, restore), six starter programs, and can log a past workout; Progress lists recent records. An existing user never meets the welcome screen. | O (2026-10-16) | P1 | DONE (branch `launch`) | `welcome.test.ts`, `programs.test.ts`, `records.test.ts`, Smoke S-13, S-14 |
+| REQ-022 | Public launch: link previews, a static privacy page, an MIT licence, a user README, home-screen shortcuts, a wide-screen side panel, version 1.0.0 with a What's new shown once to updating users. | O (2026-10-16) | P1 | DONE (branch `launch`) | `whatsNew.test.ts`, Smoke S-16, TEST_STATUS M7 |
+| REQ-023 | Google Play groundwork (Trusted Web Activity route, listing text, graphics, data-safety answers) is written down; nothing is submitted without the owner's decisions on fees and testers. | O (2026-10-16) | P3 | PARTIAL (documented in `.ai/PLAY_STORE.md`; screenshots to retake) | Review |
 
 ## Quality (added 2026-10-04)
 
 | ID | Requirement | Pri | Status | Tasks |
 |----|-------------|-----|--------|-------|
 | REQ-Q01 | Never lose or hide user data silently. A crash shows a recovery screen that can still export a backup. A restore validates its input. Edits in the routine and workout editors survive leaving the screen by accident. | P0 | DONE | REL-001, REL-002, DATA-001, UX-001 |
-| REQ-Q02 | Critical calculations and formats are covered by automated tests: records, weekly stats, Hevy CSV, backup, parsing. | P1 | DONE | TEST-001 |
+| REQ-Q02 | Critical calculations and formats are covered by automated tests: records, weekly stats, CSV import/export, backup, parsing. | P1 | DONE | TEST-001 |
 | REQ-Q03 | Text meets WCAG AA contrast (4.5:1) in both themes, and every control shows keyboard focus. | P1 | PARTIAL (no screen-reader pass) | A11Y-001 |
 | REQ-Q04 | Defence in depth for the stored GitHub token: a Content Security Policy in production builds. | P2 | DONE | SEC-001 |
 | REQ-Q05 | A new session can rebuild the project's state from the repo (`CLAUDE.md` + `.ai/`). | P1 | DONE | DOC-001 |

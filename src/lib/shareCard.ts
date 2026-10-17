@@ -1,6 +1,7 @@
 // Draws a workout summary as a 1080×1350 PNG (the 4:5 portrait size most
 // apps show uncropped), in the app's own colours and fonts.
 import { BRAND_MARK_PATHS, BRAND_NAME } from './brand';
+import { intlLocale, isRtl, t } from '../i18n';
 
 export interface CardData {
   title: string;
@@ -22,11 +23,21 @@ const C = {
   text2: '#a7a5b3',
   text3: '#888692',
   accent: '#7a55e6',
+  /** The accent deepening toward one corner, as --hero-grad does in the app. */
+  accentDeep: '#593da8',
   accentInk: '#b39dff',
   onAccent: '#ffffff',
 };
-const DISPLAY = '"Big Shoulders Display Variable", "Archivo Variable", sans-serif';
-const BODY = '"Archivo Variable", system-ui, sans-serif';
+/** The split-S slant: how far the top edge of a slanted shape is pushed over the bottom one. */
+const SLANT = 22;
+/** Upper case by the rules of the current language (Turkish dotted İ, no case in Arabic). */
+const upper = (s: string) => s.toLocaleUpperCase(intlLocale());
+
+const ARABIC = /[֐-ࣿ]/;
+
+// Noto Sans Arabic only takes Arabic characters (its unicode-range), so it is safe to list after the Latin fonts.
+const DISPLAY = '"Big Shoulders Display Variable", "Archivo Variable", "Noto Sans Arabic Variable", sans-serif';
+const BODY = '"Archivo Variable", "Noto Sans Arabic Variable", system-ui, sans-serif';
 const TROPHY = new Path2D('M8 4h8v5a4 4 0 0 1-8 0V4ZM8 6H4.5v1.5A3.5 3.5 0 0 0 8 11M16 6h3.5v1.5A3.5 3.5 0 0 1 16 11M12 13v4M8.5 20h7M10 17h4v3h-4z');
 
 /** Cuts text to fit `max` pixels, ending in an ellipsis. */
@@ -77,11 +88,12 @@ function trophy(ctx: CanvasRenderingContext2D, x: number, y: number, size: numbe
 }
 
 /** The same Setward mark used in the header and install icons. */
-function brandMark(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
+function brandMark(ctx: CanvasRenderingContext2D, x: number, y: number, size: number, color = C.accentInk, alpha = 1) {
   ctx.save();
+  ctx.globalAlpha = alpha;
   ctx.translate(x, y);
   ctx.scale(size / 100, size / 100);
-  ctx.fillStyle = C.accentInk;
+  ctx.fillStyle = color;
   BRAND_MARK_PATHS.forEach((d) => ctx.fill(new Path2D(d)));
   ctx.restore();
 }
@@ -92,6 +104,8 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
     document.fonts.load(`800 120px ${DISPLAY}`),
     document.fonts.load(`600 36px ${BODY}`),
     document.fonts.load(`400 32px ${BODY}`),
+    // The Arabic face downloads only when asked for an Arabic character.
+    ...(isRtl() ? [document.fonts.load('800 72px "Noto Sans Arabic Variable"', 'ع'), document.fonts.load('500 30px "Noto Sans Arabic Variable"', 'ع')] : []),
   ]).catch(() => {});
 
   const canvas = document.createElement('canvas');
@@ -99,15 +113,33 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
   canvas.height = H;
   const ctx = canvas.getContext('2d')!;
   ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = 'left';
+  if (isRtl()) {
+    // The card keeps its layout, but a line in Arabic has to read right to left ("1 س 23 د") while the
+    // exercise names and "121.3 lbs × 10" stay left to right: each line takes the direction of its script.
+    const fill = ctx.fillText.bind(ctx);
+    ctx.fillText = (text: string, x: number, y: number, maxWidth?: number) => {
+      ctx.direction = ARABIC.test(text) ? 'rtl' : 'ltr';
+      fill(text, x, y, maxWidth);
+    };
+  }
   ctx.fillStyle = C.bg;
   ctx.fillRect(0, 0, W, H);
+
+  // A violet glow from the top corner, and the mark very faint in the bottom one.
+  const glow = ctx.createRadialGradient(W * 0.9, -80, 30, W * 0.9, -80, 980);
+  glow.addColorStop(0, 'rgba(122, 85, 230, 0.4)');
+  glow.addColorStop(1, 'rgba(122, 85, 230, 0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+  brandMark(ctx, W - 470, H - 500, 480, C.accentInk, 0.05);
 
   // Header: mark + wordmark, date on the right.
   brandMark(ctx, M, M - 4, 56);
   ctx.fillStyle = C.accentInk;
   ctx.font = `800 48px ${DISPLAY}`;
   ctx.letterSpacing = '3px';
-  ctx.fillText(BRAND_NAME.toUpperCase(), M + 66, M + 39);
+  ctx.fillText(upper(BRAND_NAME), M + 66, M + 39);
   ctx.letterSpacing = '0px';
   ctx.fillStyle = C.text2;
   ctx.font = `500 30px ${BODY}`;
@@ -119,7 +151,7 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
   let y = M + 170;
   ctx.fillStyle = C.text;
   ctx.font = `800 120px ${DISPLAY}`;
-  for (const line of wrap(ctx, data.title.toUpperCase(), W - 2 * M, 2)) {
+  for (const line of wrap(ctx, upper(data.title), W - 2 * M, 2)) {
     ctx.fillText(line, M, y);
     y += 112;
   }
@@ -129,17 +161,33 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
   ctx.fillText(fit(ctx, data.when, W - 2 * M), M, y);
   y += 44;
 
-  // Records banner, styled like the "saved" banner in the app.
+  // Records banner: the app's celebration, with the number as the loudest thing on the card.
   if (data.records > 0) {
-    ctx.fillStyle = C.accent;
+    const h = 150;
+    const grad = ctx.createLinearGradient(M, y, W - M, y + h);
+    grad.addColorStop(0, C.accent);
+    grad.addColorStop(1, C.accentDeep);
+    ctx.save();
+    ctx.shadowColor = 'rgba(122, 85, 230, 0.55)';
+    ctx.shadowBlur = 44;
+    ctx.shadowOffsetY = 14;
+    ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.roundRect(M, y, W - 2 * M, 96, 24);
+    ctx.moveTo(M + SLANT, y);
+    ctx.lineTo(W - M, y);
+    ctx.lineTo(W - M - SLANT, y + h);
+    ctx.lineTo(M, y + h);
+    ctx.closePath();
     ctx.fill();
-    trophy(ctx, M + 28, y + 26, 44, C.onAccent);
+    ctx.restore();
+    trophy(ctx, M + 44, y + 52, 52, C.onAccent);
     ctx.fillStyle = C.onAccent;
-    ctx.font = `800 56px ${DISPLAY}`;
-    ctx.fillText(`${data.records} NEW ${data.records === 1 ? 'RECORD' : 'RECORDS'}`, M + 92, y + 68);
-    y += 96 + 40;
+    ctx.font = `800 124px ${DISPLAY}`;
+    ctx.fillText(String(data.records), M + 118, y + 120);
+    const numberWidth = ctx.measureText(String(data.records)).width;
+    ctx.font = `800 60px ${DISPLAY}`;
+    ctx.fillText(upper(t('celebrate.records', { n: data.records })), M + 118 + numberWidth + 22, y + 118);
+    y += h + 44;
   } else {
     y += 16;
   }
@@ -148,19 +196,26 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
   const col = (W - 2 * M) / data.stats.length;
   data.stats.forEach((s, i) => {
     const x = M + i * col;
-    ctx.fillStyle = C.text3;
-    ctx.font = `600 24px ${BODY}`;
-    ctx.letterSpacing = '2px';
-    ctx.fillText(s.label.toUpperCase(), x, y + 24);
-    ctx.letterSpacing = '0px';
+    ctx.fillStyle = C.text2;
+    ctx.font = `500 28px ${BODY}`;
+    ctx.fillText(fit(ctx, s.label, col - 16), x, y + 26);
     ctx.fillStyle = C.text;
-    ctx.font = `700 64px ${DISPLAY}`;
-    ctx.fillText(fit(ctx, s.value, col - 16), x, y + 96);
+    ctx.font = `800 72px ${DISPLAY}`;
+    ctx.fillText(fit(ctx, s.value, col - 16), x, y + 108);
   });
-  y += 136;
+  y += 150;
 
+  // A slanted rule: the accent for a short run, then the quiet line.
   ctx.fillStyle = C.line;
   ctx.fillRect(M, y, W - 2 * M, 2);
+  ctx.fillStyle = C.accent;
+  ctx.beginPath();
+  ctx.moveTo(M + 8, y - 3);
+  ctx.lineTo(M + 150, y - 3);
+  ctx.lineTo(M + 142, y + 5);
+  ctx.lineTo(M, y + 5);
+  ctx.closePath();
+  ctx.fill();
   y += 30;
 
   // Exercises: as many rows as fit above the footer.
@@ -192,12 +247,12 @@ export async function renderWorkoutCard(data: CardData): Promise<Blob> {
     ctx.fillStyle = C.text3;
     ctx.font = `500 30px ${BODY}`;
     const more = data.exercises.length - shown.length;
-    ctx.fillText(`+ ${more} more ${more === 1 ? 'exercise' : 'exercises'}`, M + 90, y + 50);
+    ctx.fillText(t('share.more', { n: more }), M + 90, y + 50);
   }
 
   ctx.fillStyle = C.text3;
   ctx.font = `500 26px ${BODY}`;
-  ctx.fillText(`Logged with ${BRAND_NAME}`, M, footerY);
+  ctx.fillText(t('share.footer', { app: BRAND_NAME }), M, footerY);
 
-  return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Could not create the image.'))), 'image/png'));
+  return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error(t('share.imageFailed')))), 'image/png'));
 }

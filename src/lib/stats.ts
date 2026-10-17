@@ -1,4 +1,6 @@
-import type { Exercise, ExerciseType, Workout, WorkoutExercise, WorkoutSet } from '../types';
+import { labelMap } from '../i18n/labels';
+import type { Exercise, ExerciseType, OneRmFormula, Workout, WorkoutExercise, WorkoutSet } from '../types';
+import { calcContext } from './context';
 import { COUNTS_VOLUME, FIELDS } from './meta';
 import { addDays, startOfWeek } from './format';
 
@@ -9,10 +11,12 @@ export function typeLookup(exercises: Exercise[] | undefined): TypeOf {
   return (id) => map.get(id) ?? 'weight_reps';
 }
 
-/** Epley estimate of a one-rep max. */
-export function e1rm(weight = 0, reps = 0) {
+/** Estimated one-rep max: Epley (the default) or Brzycki, which isn't defined from 37 reps on, so those use Epley. */
+export function e1rm(weight = 0, reps = 0, formula: OneRmFormula = calcContext().oneRmFormula) {
   if (!weight || !reps) return 0;
-  return reps === 1 ? weight : weight * (1 + reps / 30);
+  if (reps === 1) return weight;
+  if (formula === 'brzycki' && reps < 37) return (weight * 36) / (37 - reps);
+  return weight * (1 + reps / 30);
 }
 
 export function setVolume(s: WorkoutSet, type: ExerciseType) {
@@ -49,14 +53,7 @@ export function hasValues(s: WorkoutSet) {
 
 export type RecordKind = 'weight' | 'e1rm' | 'volume' | 'reps' | 'duration' | 'distance';
 
-export const RECORD_LABEL: Record<RecordKind, string> = {
-  weight: 'Heaviest weight',
-  e1rm: 'Best est. 1RM',
-  volume: 'Best set volume',
-  reps: 'Most reps',
-  duration: 'Longest duration',
-  distance: 'Longest distance',
-};
+export const RECORD_LABEL = labelMap<RecordKind>('record', ['weight', 'e1rm', 'volume', 'reps', 'duration', 'distance']);
 
 export const RECORD_KINDS: Record<ExerciseType, RecordKind[]> = {
   weight_reps: ['weight', 'e1rm', 'volume'],
@@ -161,16 +158,7 @@ export type SessionMetric =
   | 'maxDuration'
   | 'maxDistance';
 
-export const SESSION_METRIC_LABEL: Record<SessionMetric, string> = {
-  heaviest: 'Heaviest weight',
-  e1rm: 'Est. 1RM',
-  bestSetVolume: 'Best set volume',
-  sessionVolume: 'Session volume',
-  totalReps: 'Total reps',
-  maxReps: 'Most reps',
-  maxDuration: 'Longest set',
-  maxDistance: 'Distance',
-};
+export const SESSION_METRIC_LABEL = labelMap<SessionMetric>('metric', ['heaviest', 'e1rm', 'bestSetVolume', 'sessionVolume', 'totalReps', 'maxReps', 'maxDuration', 'maxDistance']);
 
 export function metricsFor(type: ExerciseType): SessionMetric[] {
   const f = FIELDS[type];
@@ -228,7 +216,7 @@ export function sessionMetric(metric: SessionMetric, sets: WorkoutSet[]) {
   }
 }
 
-/** The set Hevy-style lists call "best set": highest e1RM, else most reps/time/distance. */
+/** The set that workout lists show as the "best set": highest e1RM, else most reps/time/distance. */
 export function bestSet(sets: WorkoutSet[], type: ExerciseType) {
   const kinds = RECORD_KINDS[type];
   const key = kinds.includes('e1rm') ? 'e1rm' : kinds[0];

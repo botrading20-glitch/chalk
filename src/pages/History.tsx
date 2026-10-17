@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
+import { IconPlus } from '../components/Icons';
 import { Empty, PageHeader } from '../components/ui';
 import { WorkoutCard } from '../components/WorkoutCard';
 import { useData } from '../lib/data';
-import { fmtMonth, plural } from '../lib/format';
+import { fmtMonth } from '../lib/format';
 import { Link } from '../lib/router';
 import { beginWorkout } from './WorkoutHome';
+import { count, t } from '../i18n';
 
 const PAGE_MONTHS = 4;
 
@@ -29,29 +31,40 @@ export function History() {
 
   return (
     <div className="page">
-      <PageHeader large title="History" />
+      <PageHeader
+        large
+        title={t('tab.history')}
+        actions={
+          <Link to="/history/new" className="icon-btn" aria-label={t('logPast.action')}>
+            <IconPlus />
+          </Link>
+        }
+      />
       {workouts.length === 0 && (
         <Empty
-          title="No workouts yet"
+          title={t('history.empty')}
           action={
             <div className="empty-actions">
               <button className="btn btn-primary" onClick={() => beginWorkout()}>
-                Start a workout
+                {t('history.start')}
               </button>
-              <Link to="/settings" className="btn btn-ghost">
-                Import from Hevy
+              <Link to="/history/new" className="btn btn-ghost">
+                {t('logPast.action')}
+              </Link>
+              <Link to="/settings/data" className="btn btn-ghost">
+                {t('import.workouts')}
               </Link>
             </div>
           }
         >
-          Finished workouts land here, newest first.
+          {t('history.emptyText')}
         </Empty>
       )}
       {groups.slice(0, months).map((g) => (
         <section key={g.key} className="month">
           <h2 className="month-label">
             {g.label}
-            <span>{plural(g.items.length, 'workout')}</span>
+            <span>{count('workout', g.items.length)}</span>
           </h2>
           <div className="stack">
             {g.items.map((w) => (
@@ -62,7 +75,7 @@ export function History() {
       ))}
       {groups.length > months && (
         <button className="btn btn-ghost btn-block" onClick={() => setMonths((m) => m + PAGE_MONTHS)}>
-          Show earlier months
+          {t('history.showEarlier')}
         </button>
       )}
     </div>

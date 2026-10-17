@@ -1,7 +1,11 @@
 import type Dexie from 'dexie';
 import { DEFAULT_SETTINGS, db } from '../db';
 import type { Settings } from '../types';
-import { fmtDate, plural } from './format';
+import { count, listJoin, t } from '../i18n';
+import type { Key } from '../i18n/catalog';
+import { en } from '../i18n/en';
+import { labelMap } from '../i18n/labels';
+import { fmtDate } from './format';
 import { requestSync } from './sync';
 import { cleanBodyWeight, cleanExercise, cleanRoutine, cleanSettings, cleanWorkout } from './validate';
 
@@ -20,13 +24,9 @@ const isObj = (v: unknown): v is Obj => typeof v === 'object' && v !== null && !
 export type RecordKind = 'workouts' | 'routines' | 'exercises' | 'bodyweight';
 export type Kind = RecordKind | 'settings';
 
-export const KIND_LABEL: Record<Kind, string> = {
-  workouts: 'Workout',
-  routines: 'Routine',
-  exercises: 'Exercise',
-  bodyweight: 'Weigh-in',
-  settings: 'Settings',
-};
+export const KIND_LABEL = labelMap<Kind>('check.kind', ['workouts', 'routines', 'exercises', 'bodyweight', 'settings']);
+/** The same names in lower case for use inside a sentence (not every language lowercases a noun the same way). */
+export const KIND_WORD = labelMap<Kind>('check.word', ['workouts', 'routines', 'exercises', 'bodyweight', 'settings']);
 
 export interface Issue {
   kind: Kind;
@@ -54,43 +54,7 @@ const CLEAN = {
   bodyweight: cleanBodyWeight,
 } as const;
 
-const FIELD: Record<string, string> = {
-  title: 'title',
-  description: 'description',
-  startTime: 'start time',
-  endTime: 'end time',
-  exercises: 'exercises and sets',
-  exerciseIds: 'exercise list',
-  routineId: 'routine link',
-  notes: 'notes',
-  folder: 'folder',
-  order: 'order',
-  createdAt: 'created time',
-  updatedAt: 'updated time',
-  name: 'name',
-  type: 'type',
-  equipment: 'equipment',
-  primaryMuscle: 'main muscle',
-  secondaryMuscles: 'other muscles',
-  instructions: 'instructions',
-  images: 'images',
-  source: 'source',
-  replaces: 'replaced exercise',
-  date: 'date',
-  weight: 'weight',
-  weightUnit: 'weight unit',
-  distanceUnit: 'distance unit',
-  defaultRest: 'default rest',
-  theme: 'theme',
-  timerSound: 'rest sound',
-  timerLockScreen: 'rest alert with the screen off',
-  timerVibrate: 'vibration',
-  keepAwake: 'keep screen on',
-  platesKg: 'kg plates',
-  platesLbs: 'lb plates',
-  plateBars: 'bar weights',
-};
-const fieldName = (k: string) => FIELD[k] ?? k;
+const fieldName = (k: string) => (`check.field.${k}` in en ? t(`check.field.${k}` as Key) : k);
 
 /** Keys sorted and undefined dropped, so two records that mean the same compare equal. */
 function canon(v: unknown): unknown {
@@ -157,15 +121,15 @@ function labelFor(kind: Kind, raw: unknown) {
   const r = isObj(raw) ? raw : {};
   switch (kind) {
     case 'workouts':
-      return [str(r.title) ?? 'Untitled workout', when(r.startTime)].filter(Boolean).join(' · ');
+      return [str(r.title) ?? t('check.untitledWorkout'), when(r.startTime)].filter(Boolean).join(' · ');
     case 'routines':
-      return str(r.title) ?? 'Untitled routine';
+      return str(r.title) ?? t('check.untitledRoutine');
     case 'exercises':
-      return str(r.name) ?? 'Unnamed exercise';
+      return str(r.name) ?? t('check.unnamedExercise');
     case 'bodyweight':
-      return when(r.date) ?? 'Undated weigh-in';
+      return when(r.date) ?? t('check.undated');
     default:
-      return 'Your settings';
+      return t('check.yourSettings').replace(/^./, (c) => c.toUpperCase());
   }
 }
 
@@ -203,8 +167,8 @@ function usesOf(id: unknown, workouts: unknown[], routines: unknown[]) {
   const has = (list: unknown) => Array.isArray(list) && list.some((we) => isObj(we) && we.exerciseId === id);
   const w = workouts.filter((x) => isObj(x) && (has(x.exercises) || (Array.isArray(x.exerciseIds) && x.exerciseIds.includes(id)))).length;
   const r = routines.filter((x) => isObj(x) && has(x.exercises)).length;
-  const parts = [w ? plural(w, 'workout') : '', r ? plural(r, 'routine') : ''].filter(Boolean);
-  return parts.length ? parts.join(' and ') : undefined;
+  const parts = [w ? count('workout', w) : '', r ? count('routine', r) : ''].filter(Boolean);
+  return parts.length ? listJoin(parts) : undefined;
 }
 
 export async function checkData(): Promise<CheckResult> {
@@ -281,5 +245,5 @@ export function describeRecord(raw: unknown, max = 1500) {
   } catch {
     text = String(raw);
   }
-  return text.length > max ? `${text.slice(0, max)}\n… (${text.length - max} more characters)` : text;
+  return text.length > max ? `${text.slice(0, max)}\n${t('check.more', { n: text.length - max })}` : text;
 }

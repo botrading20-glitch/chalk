@@ -1,3 +1,14 @@
+/* Arabic script: only the Arabic subset of Noto Sans Arabic (OFL, from Fontsource), and the browser
+   downloads it only when a page actually shows Arabic letters, so other languages never pay for it. */
+@font-face {
+  font-family: 'Noto Sans Arabic Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('@fontsource-variable/noto-sans-arabic/files/noto-sans-arabic-arabic-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+
 /* Setward — violet-tinted charcoal greys with a midnight-purple accent.
    Set badges: orange W (warm-up), and bumper-plate red F (failure) and blue D
    (drop); a checked set turns the row plate-green. */
@@ -26,11 +37,19 @@
   --warmup: #f2994a;
   --fail: #e5484d;
   --drop: #4c8df6;
+  /* The same reds and blues as text on the F and D badges (4.5:1 on their tint). */
+  --fail-ink: #f26a6f;
+  --drop-ink: #6ca3f8;
   --danger: #ff6b6b;
   --viz: #8b6cf0;
   --viz-wash: rgb(139 108 240 / 0.12);
   --grid: #26252d;
   --shadow: 0 10px 30px rgb(0 0 0 / 0.5);
+  /* Layered surfaces: a faint lift at the top edge, then a soft drop. */
+  --surface-hi: #201f27;
+  --lift: inset 0 1px 0 rgb(255 255 255 / 0.05);
+  --elev-1: 0 1px 2px rgb(0 0 0 / 0.35);
+  --elev-2: 0 6px 18px rgb(0 0 0 / 0.4);
   /* Google's sign-in button colours, dark variant. */
   --google-bg: #131314;
   --google-line: #8e918f;
@@ -56,22 +75,52 @@
   --warmup: #964400;
   --fail: #d1343a;
   --drop: #2f6fdb;
+  --fail-ink: #b22a30;
+  --drop-ink: #2459bd;
   --danger: #c62828;
   --viz: #6a4bd6;
   --viz-wash: rgb(106 75 214 / 0.1);
   --grid: #e9e8ee;
   --shadow: 0 10px 30px rgb(20 18 28 / 0.14);
+  --surface-hi: #ffffff;
+  --lift: inset 0 1px 0 rgb(255 255 255 / 1);
+  --elev-1: 0 1px 2px rgb(20 18 28 / 0.08);
+  --elev-2: 0 6px 18px rgb(20 18 28 / 0.1);
   --google-bg: #ffffff;
   --google-line: #747775;
   --google-text: #1f1f1f;
 }
 
 :root {
-  --font-display: 'Big Shoulders Display Variable', 'Archivo Variable', system-ui, sans-serif;
-  --font-body: 'Archivo Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Big Shoulders Display Variable', 'Archivo Variable', 'Noto Sans Arabic Variable', system-ui, sans-serif;
+  --font-body: 'Archivo Variable', 'Noto Sans Arabic Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --radius: 16px;
   --radius-sm: 10px;
+  --radius-lg: 22px;
   --gutter: 16px;
+
+  /* Hero fill: the accent deepening toward one corner. White text stays above
+     4.5:1 because the gradient only ever gets darker than --accent. */
+  --accent-deep: color-mix(in oklab, var(--accent) 70%, #0d0618);
+  --hero-grad: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+  --glow: 0 8px 26px -8px color-mix(in srgb, var(--accent) 70%, transparent);
+  --glow-ring: 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
+  --wash: linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, var(--surface)) 0%, var(--surface) 62%);
+
+  /* The slant from the split-S: progress bars, goal and streak chips. */
+  --slant: 7px;
+  --slant-clip: polygon(var(--slant) 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%);
+  --slant-end: polygon(0 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%);
+
+  --ease-out: cubic-bezier(0.2, 0.9, 0.3, 1);
+  --dur-fast: 0.12s;
+  --dur: 0.2s;
+  --dur-slow: 0.4s;
+}
+
+[dir='rtl'] {
+  --slant-clip: polygon(0 0, calc(100% - var(--slant)) 0, 100% 100%, var(--slant) 100%);
+  --slant-end: polygon(0 0, 100% 0, 100% 100%, var(--slant) 100%);
 }
 
 .brand {
@@ -88,7 +137,7 @@
 
 .brand-name {
   color: var(--text);
-  font: 800 28px/1 var(--font-display);
+  font: 800 1.75rem/1 var(--font-display);
   letter-spacing: -0.5px;
 }
 
@@ -107,7 +156,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 400 15px/1.45 var(--font-body);
+  font: 400 0.9375rem/1.45 var(--font-body);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }
@@ -153,7 +202,7 @@ p {
 }
 
 .small {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .tabular {
@@ -200,14 +249,14 @@ p {
 }
 
 .page-head .icon-btn:first-child {
-  margin-left: -8px;
+  margin-inline-start: -8px;
 }
 
 .page-title {
   flex: 1;
   min-width: 0;
   font-weight: 600;
-  font-size: 17px;
+  font-size: 1.0625rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -219,7 +268,7 @@ p {
 }
 
 .page-head.large .page-title {
-  font: 800 40px/1 var(--font-display);
+  font: 800 2.5rem/1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.01em;
 }
@@ -238,16 +287,31 @@ p {
 
 .section-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px 12px;
 }
 
 .section-title,
 .month-label {
-  font: 700 22px/1.1 var(--font-display);
+  position: relative;
+  padding-inline-start: 14px;
+  font: 700 1.375rem/1.1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.02em;
+}
+
+/* A small slanted tick in the accent opens every section. */
+.section-title::before,
+.month-label::before {
+  content: '';
+  position: absolute;
+  inset-block: 0.1em 0.05em;
+  inset-inline-start: 0;
+  width: 6px;
+  background: var(--accent);
+  clip-path: polygon(2px 0, 100% 0, calc(100% - 2px) 100%, 0 100%);
 }
 
 .month-label {
@@ -258,7 +322,7 @@ p {
 }
 
 .month-label span {
-  font: 500 13px var(--font-body);
+  font: 500 0.8125rem var(--font-body);
   text-transform: none;
   color: var(--text-3);
   letter-spacing: 0;
@@ -272,31 +336,28 @@ p {
 
 .list-label {
   margin: 14px 0 2px;
-  font-size: 12px;
+  font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .eyebrow {
   display: block;
-  font-size: 11px;
+  font-size: 0.8125rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--accent-ink);
 }
 
 .card {
-  background: var(--surface);
+  background: linear-gradient(180deg, var(--surface-hi), var(--surface));
   border: 1px solid var(--line);
   border-radius: var(--radius);
+  box-shadow: var(--lift), var(--elev-1);
   padding: 16px;
 }
 
 .card-title {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 650;
   margin-bottom: 12px;
 }
@@ -313,10 +374,10 @@ p {
   border: 0;
   border-radius: 12px;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 0.9375rem;
   text-decoration: none;
   white-space: nowrap;
-  transition: transform 0.08s ease, background-color 0.15s ease;
+  transition: transform var(--dur-fast) var(--ease-out), background-color var(--dur) ease, box-shadow var(--dur) ease;
 }
 
 .btn:active:not(:disabled) {
@@ -326,6 +387,13 @@ p {
 .btn-primary {
   background: var(--accent);
   color: var(--on-accent);
+}
+
+/* The few buttons that get the glow: Start workout, Finish, the celebration. */
+.btn-glow {
+  background: var(--hero-grad);
+  color: var(--on-accent);
+  box-shadow: var(--glow), inset 0 1px 0 rgb(255 255 255 / 0.18);
 }
 
 .btn-secondary {
@@ -357,20 +425,31 @@ p {
 
 .btn-block {
   width: 100%;
+  /* Full-width buttons carry the longest labels ("Rechercher des problèmes dans les données"): let them wrap. */
+  padding-block: 10px;
+  line-height: 1.25;
+  white-space: normal;
 }
 
 .btn-small {
   min-height: 36px;
   padding: 0 12px;
-  font-size: 14px;
+  font-size: 0.875rem;
   border-radius: 10px;
 }
 
 .btn-hero {
-  min-height: 58px;
-  font: 800 21px/1 var(--font-display);
+  min-height: 60px;
+  border-radius: 14px;
+  font: 800 1.375rem/1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+@media (hover: hover) {
+  .btn-glow:hover:not(:disabled) {
+    box-shadow: 0 10px 30px -8px color-mix(in srgb, var(--accent) 85%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.18);
+  }
 }
 
 .icon-btn {
@@ -437,7 +516,7 @@ p {
   border-radius: 999px;
   background: var(--surface-2);
   color: var(--text-2);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   white-space: nowrap;
   flex: none;
@@ -451,7 +530,7 @@ p {
 
 .chip-select {
   appearance: none;
-  padding-right: 30px;
+  padding-inline-end: 30px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='m5 9 7 7 7-7'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 11px center;
@@ -467,20 +546,28 @@ p {
 
 .segmented button {
   flex: 1;
+  min-width: 0;
   min-height: 34px;
-  padding: 0 12px;
+  padding: 3px 8px;
   border: 0;
   border-radius: 9px;
   background: transparent;
   color: var(--text-2);
   font-weight: 600;
-  font-size: 14px;
-  white-space: nowrap;
+  font-size: 0.875rem;
+  line-height: 1.2;
+  /* Long labels (Extra large, Same routine first) wrap rather than push the page sideways. */
+  overflow-wrap: anywhere;
+}
+
+.segmented button {
+  transition: background-color var(--dur) ease, color var(--dur) ease;
 }
 
 .segmented button.on {
   background: var(--surface-3);
   color: var(--text);
+  box-shadow: var(--lift), var(--elev-1);
 }
 
 .toggle {
@@ -512,12 +599,13 @@ p {
   content: '';
   position: absolute;
   top: 3px;
-  left: 3px;
+  inset-inline-start: 3px;
   width: 22px;
   height: 22px;
   border-radius: 50%;
   background: #fff;
-  transition: transform 0.15s ease;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.35);
+  transition: transform var(--dur) var(--ease-out);
 }
 
 .toggle input:checked + .toggle-track {
@@ -537,11 +625,14 @@ p {
 
 .form {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
 }
 
 .field {
   display: grid;
+  /* A select is as wide as its longest option; the track must still be able to shrink below that. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 6px;
   min-width: 0;
   margin: 0;
@@ -552,11 +643,9 @@ p {
 .field > span,
 .field > legend {
   padding: 0;
-  font-size: 12px;
+  font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .field > legend {
@@ -572,7 +661,7 @@ p {
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: var(--surface-2);
-  font-size: 16px;
+  font-size: 1rem;
   resize: vertical;
 }
 
@@ -591,11 +680,12 @@ p {
 
 .form-error {
   color: var(--danger);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .form-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 4px;
@@ -636,25 +726,46 @@ p {
   display: grid;
   justify-items: center;
   gap: 2px;
-  padding: 9px 0 8px;
+  padding: 8px 0 7px;
   color: var(--text-3);
   text-decoration: none;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
+}
+
+/* The active tab sits on a slanted pill that glows, the split-S angle again. */
+.tab svg {
+  position: relative;
+  z-index: 1;
+  box-sizing: content-box;
+  padding: 3px 16px;
+  transition: color var(--dur) ease;
+}
+
+.tab::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  width: 54px;
+  height: 28px;
+  clip-path: var(--slant-clip);
+  background: var(--hero-grad);
+  opacity: 0;
+  transform: scaleX(0.6);
+  transition: opacity var(--dur) ease, transform var(--dur) var(--ease-out);
 }
 
 .tab.on {
   color: var(--text);
 }
 
+.tab.on svg {
+  color: var(--on-accent);
+}
+
 .tab.on::before {
-  content: '';
-  position: absolute;
-  top: -1px;
-  width: 28px;
-  height: 3px;
-  border-radius: 0 0 3px 3px;
-  background: var(--accent);
+  opacity: 1;
+  transform: none;
 }
 
 .active-banner {
@@ -673,14 +784,14 @@ p {
   flex: 1;
   min-width: 0;
   display: grid;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-2);
   font-variant-numeric: tabular-nums;
 }
 
 .active-banner-text strong {
   color: var(--text);
-  font-size: 15px;
+  font-size: 0.9375rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -713,7 +824,8 @@ p {
   align-items: center;
   gap: 10px;
   margin: 0 8px 8px;
-  padding: 10px 10px 10px 16px;
+  padding: 10px;
+  padding-inline-start: 16px;
   border-radius: 14px;
   background: var(--surface-3);
   box-shadow: var(--shadow);
@@ -724,8 +836,12 @@ p {
   position: absolute;
   inset: 0;
   transform-origin: left;
-  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 14%, transparent), color-mix(in srgb, var(--accent) 34%, transparent));
   transition: transform 0.25s linear;
+}
+
+[dir='rtl'] .rest-progress {
+  transform-origin: right;
 }
 
 .rest-bar > :not(.rest-progress) {
@@ -734,7 +850,7 @@ p {
 
 .rest-time {
   flex: 1;
-  font: 700 28px/1 var(--font-display);
+  font: 700 1.75rem/1 var(--font-display);
   font-variant-numeric: tabular-nums;
 }
 
@@ -759,6 +875,31 @@ p {
   padding: 0 14px;
 }
 
+/* The smallest phones: the clock, ±15 and the skip word of any language have to share 300 px. */
+@media (max-width: 339px) {
+  .rest-bar {
+    gap: 8px;
+    padding: 8px;
+    padding-inline-start: 12px;
+  }
+
+  .rest-time {
+    font-size: 1.5rem;
+  }
+
+  .rest-actions {
+    gap: 4px;
+  }
+
+  .rest-actions button {
+    min-width: 42px;
+  }
+
+  .rest-actions .rest-skip {
+    padding: 0 10px;
+  }
+}
+
 /* ---------- Sheets & dialogs ---------- */
 
 dialog.sheet {
@@ -771,14 +912,25 @@ dialog.sheet {
   border-radius: 22px 22px 0 0;
   background: var(--surface);
   color: var(--text);
-  box-shadow: var(--shadow);
+  box-shadow: var(--lift), var(--shadow);
   overflow: hidden;
 }
 
 dialog.sheet[open] {
   display: flex;
   flex-direction: column;
-  animation: sheet-in 0.22s cubic-bezier(0.2, 0.9, 0.3, 1);
+  animation: sheet-in var(--dur) var(--ease-out);
+}
+
+/* The grab handle: sheets slide up from the bottom edge on a phone. */
+dialog.sheet::before {
+  content: '';
+  flex: none;
+  width: 38px;
+  height: 4px;
+  margin: 8px auto 0;
+  border-radius: 2px;
+  background: var(--surface-3);
 }
 
 dialog.sheet::backdrop {
@@ -802,6 +954,10 @@ dialog.sheet-full {
     margin: auto;
     border-radius: 22px;
   }
+
+  dialog.sheet::before {
+    display: none;
+  }
 }
 
 .sheet-body {
@@ -822,12 +978,13 @@ dialog.sheet-full {
   justify-content: space-between;
   gap: 8px;
   margin: 0 -16px 8px;
-  padding: 16px 12px 8px 16px;
+  padding: 8px 12px 8px;
+  padding-inline-start: 16px;
   background: var(--surface);
 }
 
 .sheet-head h2 {
-  font: 700 24px/1.05 var(--font-display);
+  font: 700 1.5rem/1.05 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -842,7 +999,7 @@ dialog.sheet-full {
 }
 
 .confirm-body h2 {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 650;
 }
 
@@ -867,8 +1024,8 @@ dialog.sheet-full {
   border: 0;
   border-top: 1px solid var(--line);
   background: transparent;
-  font-size: 16px;
-  text-align: left;
+  font-size: 1rem;
+  text-align: start;
 }
 
 .action-item svg {
@@ -907,7 +1064,7 @@ dialog.sheet-full {
   background: var(--text);
   color: var(--bg);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 0.875rem;
   box-shadow: var(--shadow);
   animation: toast-in 0.2s ease-out;
 }
@@ -929,8 +1086,13 @@ dialog.sheet-full {
   text-align: center;
 }
 
+.empty-mark {
+  color: var(--accent-ink);
+  opacity: 0.22;
+}
+
 .empty h3 {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 650;
 }
 
@@ -953,14 +1115,14 @@ dialog.sheet-full {
 .recovery-details {
   max-width: 100%;
   color: var(--text-2);
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .recovery-details code {
   display: block;
   margin-top: 6px;
   overflow-wrap: anywhere;
-  text-align: left;
+  text-align: start;
 }
 
 .stat-row {
@@ -975,16 +1137,16 @@ dialog.sheet-full {
 }
 
 .stat-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-3);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-2);
 }
 
+/* Numbers are the loud part of the app, so they take the display face. */
 .stat-value {
-  font-size: 17px;
-  font-weight: 600;
+  font: 700 1.5rem/1.05 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
 }
 
 .stat-grid {
@@ -996,19 +1158,21 @@ dialog.sheet-full {
 .stat-grid .stat {
   padding: 14px 16px;
   border-radius: var(--radius);
-  background: var(--surface);
+  background: linear-gradient(180deg, var(--surface-hi), var(--surface));
   border: 1px solid var(--line);
+  box-shadow: var(--lift), var(--elev-1);
 }
 
 .stat-grid .stat-value {
-  font-size: 28px;
-  line-height: 1.1;
+  font-size: 2.25rem;
+  line-height: 1;
 }
 
 /* ---------- Workout home ---------- */
 
 .resume-card {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -1016,7 +1180,7 @@ dialog.sheet-full {
 }
 
 .resume-title {
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 650;
 }
 
@@ -1025,11 +1189,162 @@ dialog.sheet-full {
   gap: 8px;
 }
 
+/* ---------- The slant: bars and chips ---------- */
+
+.slant-bar {
+  height: 12px;
+  background: var(--surface-3);
+  clip-path: var(--slant-clip);
+  overflow: hidden;
+}
+
+.slant-fill {
+  display: block;
+  height: 100%;
+  background: var(--hero-grad);
+  clip-path: var(--slant-end);
+  transition: width var(--dur-slow) var(--ease-out);
+}
+
+.slant-chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px calc(var(--slant) + 8px);
+  clip-path: var(--slant-clip);
+  background: color-mix(in srgb, var(--accent) 24%, var(--surface-2));
+  color: var(--text);
+  font: 700 0.9375rem/1 var(--font-display);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+/* ---------- This week (Home hero) ---------- */
+
+.week-card {
+  display: grid;
+  gap: 14px;
+  background: var(--wash);
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--line));
+  box-shadow: var(--lift), var(--elev-2);
+}
+
+.week-card > * {
+  min-width: 0;
+}
+
+.week-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.week-greet {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-2);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.week-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+}
+
+.week-num {
+  font: 800 4.5rem/0.85 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.week-of {
+  color: var(--accent-ink);
+  font: 700 2rem/1 var(--font-display);
+}
+
+.week-label {
+  min-width: 0;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.week-card.met .slant-fill {
+  background: var(--done);
+}
+
+.week-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.week-day {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  color: var(--text-3);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.week-dot {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  transition: background-color var(--dur) ease, box-shadow var(--dur) ease;
+}
+
+.week-day.on .week-dot {
+  background: var(--hero-grad);
+  box-shadow: var(--glow);
+}
+
+.week-day.on .week-dot::after {
+  content: '';
+  width: 10px;
+  height: 5px;
+  margin-top: -2px;
+  /* A tick is not mirrored in right-to-left, so these are physical on purpose. */
+  border-left: 2.5px solid #fff;
+  border-bottom: 2.5px solid #fff;
+  transform: rotate(-45deg);
+}
+
+.week-day.today {
+  color: var(--text);
+}
+
+.week-day.today .week-dot {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+.week-note {
+  color: var(--text-2);
+  font-size: 0.875rem;
+}
+
+.week-link {
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
 .install-card {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 8px 12px 12px;
+  padding: 12px;
+  padding-inline-end: 8px;
 }
 
 .install-icon {
@@ -1041,18 +1356,18 @@ dialog.sheet-full {
   flex: 1;
   min-width: 0;
   display: grid;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.3;
   color: var(--text-2);
 }
 
 .install-text strong {
   color: var(--text);
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .install-card .icon-btn {
-  margin-left: -4px;
+  margin-inline-start: -4px;
 }
 
 .install-how {
@@ -1070,7 +1385,7 @@ dialog.sheet-full {
   padding: 12px 14px;
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--accent) 12%, transparent);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .routine-list {
@@ -1093,7 +1408,7 @@ dialog.sheet-full {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-right: -8px;
+  margin-inline-end: -8px;
 }
 
 .folder-toggle {
@@ -1106,7 +1421,7 @@ dialog.sheet-full {
   padding: 0;
   border: 0;
   background: transparent;
-  text-align: left;
+  text-align: start;
 }
 
 .folder-chevron {
@@ -1121,7 +1436,7 @@ dialog.sheet-full {
 
 .folder-name {
   min-width: 0;
-  font: 700 19px/1.1 var(--font-display);
+  font: 700 1.1875rem/1.1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.03em;
   white-space: nowrap;
@@ -1135,7 +1450,7 @@ dialog.sheet-full {
   border-radius: 999px;
   background: var(--surface-2);
   color: var(--text-2);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -1231,11 +1546,12 @@ dialog.sheet-full {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin: -6px -8px -4px 0;
+  margin: -6px 0 -4px;
+  margin-inline-end: -8px;
 }
 
 .routine-title {
-  font: 700 24px/1.1 var(--font-display);
+  font: 700 1.5rem/1.1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.02em;
   text-decoration: none;
@@ -1243,7 +1559,7 @@ dialog.sheet-full {
 
 .routine-exercises {
   color: var(--text-2);
-  font-size: 14px;
+  font-size: 0.875rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -1251,7 +1567,7 @@ dialog.sheet-full {
 }
 
 .routine-meta {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-3);
 }
 
@@ -1268,22 +1584,42 @@ dialog.sheet-full {
   display: grid;
   grid-template-columns: 44px 1fr auto;
   align-items: center;
+  row-gap: 8px;
   margin: 0 calc(-1 * var(--gutter));
-  padding: calc(env(safe-area-inset-top) + 6px) var(--gutter) 6px;
+  padding: calc(env(safe-area-inset-top) + 6px) var(--gutter) 8px;
   background: color-mix(in srgb, var(--bg) 90%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
 .workout-head .icon-btn {
-  margin-left: -8px;
+  margin-inline-start: -8px;
+}
+
+.workout-clock-cell {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  min-width: 0;
 }
 
 .workout-clock {
   text-align: center;
-  font: 700 34px/1 var(--font-display);
+  font: 700 2.5rem/0.95 var(--font-display);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
+}
+
+.workout-sets {
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.workout-progress {
+  grid-column: 1 / -1;
+  height: 8px;
 }
 
 .title-input {
@@ -1292,7 +1628,7 @@ dialog.sheet-full {
   border: 0;
   border-bottom: 2px solid transparent;
   background: transparent;
-  font: 800 32px/1.1 var(--font-display);
+  font: 800 2rem/1.1 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.01em;
 }
@@ -1331,14 +1667,14 @@ dialog.sheet-full {
 }
 
 .ex-block.in-superset {
-  border-left: 3px solid var(--accent);
+  border-inline-start: 3px solid var(--accent);
 }
 
 .ex-head {
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-right: -4px;
+  margin-inline-end: -4px;
 }
 
 .ex-title {
@@ -1356,13 +1692,13 @@ dialog.sheet-full {
 }
 
 .ex-name {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 650;
   line-height: 1.25;
 }
 
 .superset-tag {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1376,12 +1712,12 @@ dialog.sheet-full {
   border: 0;
   border-radius: var(--radius-sm);
   background: var(--surface-2);
-  font-size: 16px;
+  font-size: 1rem;
   resize: vertical;
 }
 
 .ex-note {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-2);
   font-style: italic;
 }
@@ -1395,12 +1731,14 @@ dialog.sheet-full {
   border: 0;
   background: transparent;
   color: var(--accent-ink);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
 }
 
 .set-table {
   --field-w: 4.25rem;
+  --badge-w: 2.5rem;
+  --check-w: 2.75rem;
   display: grid;
   gap: 3px;
 }
@@ -1428,7 +1766,7 @@ dialog.sheet-full {
   }
 
   .set-table .prev {
-    font-size: 11px;
+    font-size: 0.6875rem;
     line-height: 1.15;
     white-space: normal;
   }
@@ -1439,6 +1777,19 @@ dialog.sheet-full {
 
   .set-head .prev-short {
     display: inline;
+  }
+
+  /* Larger text on the smallest phones: slimmer inputs keep room for Previous. */
+  html[data-text='large'] .set-table,
+  html[data-text='xlarge'] .set-table {
+    --field-w: 2.75rem;
+    --badge-w: 2.2rem;
+    --check-w: 2.5rem;
+  }
+
+  html[data-text='large'] .set-table .set-input,
+  html[data-text='xlarge'] .set-table .set-input {
+    font-size: 0.9375rem;
   }
 }
 
@@ -1454,7 +1805,7 @@ dialog.sheet-full {
 
 .set-head {
   padding-block: 0;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1469,6 +1820,14 @@ dialog.sheet-full {
 
 .set-head .prev-col {
   place-items: start;
+}
+
+/* Headers like "Poprz." or "Zuvor" have to fit the 38 px Previous column on the smallest phones. */
+@media (max-width: 339px) {
+  .set-head {
+    font-size: 0.625rem;
+    letter-spacing: 0.02em;
+  }
 }
 
 .set-row.done {
@@ -1488,15 +1847,15 @@ dialog.sheet-full {
   background: var(--surface-2);
   box-shadow: inset 0 0 0 2px var(--surface-3);
   color: var(--text);
-  font: 700 17px/1 var(--font-display);
+  font: 700 1.0625rem/1 var(--font-display);
   font-variant-numeric: tabular-nums;
 }
 
 .set-badge sup {
   position: absolute;
   top: -5px;
-  right: -8px;
-  font: 700 9px/1 var(--font-body);
+  inset-inline-end: -8px;
+  font: 700 0.5625rem/1 var(--font-body);
   color: var(--text-2);
 }
 
@@ -1507,13 +1866,13 @@ dialog.sheet-full {
 }
 
 .set-badge[data-type='failure'] {
-  color: var(--fail);
+  color: var(--fail-ink);
   background: color-mix(in srgb, var(--fail) 14%, transparent);
   box-shadow: inset 0 0 0 2px var(--fail);
 }
 
 .set-badge[data-type='dropset'] {
-  color: var(--drop);
+  color: var(--drop-ink);
   background: color-mix(in srgb, var(--drop) 14%, transparent);
   box-shadow: inset 0 0 0 2px var(--drop);
 }
@@ -1521,7 +1880,7 @@ dialog.sheet-full {
 .set-badge.static {
   width: 28px;
   height: 28px;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .prev {
@@ -1530,8 +1889,8 @@ dialog.sheet-full {
   border: 0;
   background: transparent;
   color: var(--text-3);
-  font-size: 13px;
-  text-align: left;
+  font-size: 0.8125rem;
+  text-align: start;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   overflow: hidden;
@@ -1555,7 +1914,7 @@ dialog.sheet-full {
   border-radius: 9px;
   background: var(--surface-2);
   text-align: center;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 650;
   font-variant-numeric: tabular-nums;
 }
@@ -1592,6 +1951,19 @@ dialog.sheet-full {
   color: #fff;
 }
 
+.check.pop {
+  animation: check-pop var(--dur-slow) var(--ease-out);
+}
+
+@keyframes check-pop {
+  0% {
+    transform: scale(0.8);
+  }
+  55% {
+    transform: scale(1.14);
+  }
+}
+
 .check:active {
   transform: scale(0.92);
 }
@@ -1607,7 +1979,7 @@ dialog.sheet-full {
   background: var(--surface-2);
   color: var(--text-2);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .set-actions {
@@ -1643,7 +2015,7 @@ dialog.sheet-full {
   justify-content: space-between;
   gap: 8px;
   color: var(--text-2);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -1654,7 +2026,7 @@ dialog.sheet-full {
 
 .stopwatch-time {
   text-align: center;
-  font: 700 64px/1 var(--font-display);
+  font: 700 4rem/1 var(--font-display);
   font-variant-numeric: tabular-nums;
 }
 
@@ -1704,13 +2076,13 @@ dialog.sheet-full {
   border-radius: 12px;
   background: var(--surface-2);
   font-weight: 600;
-  text-align: left;
+  text-align: start;
 }
 
 .set-type-option .set-badge {
   width: 30px;
   height: 30px;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .set-type-option.on {
@@ -1758,7 +2130,7 @@ dialog.sheet-full {
   flex: none;
   width: var(--w);
   height: var(--h);
-  margin-left: 2px;
+  margin-inline-start: 2px;
   border-radius: 3px;
   background: var(--plate);
   box-shadow: inset -2px 0 0 rgb(0 0 0 / 0.18);
@@ -1768,7 +2140,7 @@ dialog.sheet-full {
   flex: 1;
   min-width: 16px;
   height: 14px;
-  margin-left: 2px;
+  margin-inline-start: 2px;
   border-radius: 0 4px 4px 0;
   background: var(--text-3);
 }
@@ -1780,13 +2152,13 @@ dialog.sheet-full {
 }
 
 .plates-side {
-  font: 700 28px/1.1 var(--font-display);
+  font: 700 1.75rem/1.1 var(--font-display);
   font-variant-numeric: tabular-nums;
 }
 
 .plates-side .muted {
   display: block;
-  font: 600 12px var(--font-body);
+  font: 600 0.75rem var(--font-body);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-3);
@@ -1798,7 +2170,7 @@ dialog.sheet-full {
 }
 
 .plates-owned summary {
-  font-size: 14px;
+  font-size: 0.875rem;
   margin-bottom: 10px;
 }
 
@@ -1825,7 +2197,8 @@ dialog.sheet-full {
   align-items: center;
   gap: 8px;
   min-height: 46px;
-  padding: 0 6px 0 14px;
+  padding: 0 6px;
+  padding-inline-start: 14px;
   border-radius: 12px;
   background: var(--surface-2);
   color: var(--text-3);
@@ -1838,7 +2211,7 @@ dialog.sheet-full {
   border: 0;
   background: transparent;
   color: var(--text);
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .search input:focus {
@@ -1877,7 +2250,7 @@ dialog.sheet-full {
   border: 0;
   border-bottom: 1px solid var(--line);
   background: transparent;
-  text-align: left;
+  text-align: start;
 }
 
 .ex-row.on {
@@ -1896,15 +2269,19 @@ dialog.sheet-full {
 }
 
 .ex-row-meta {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-3);
 }
 
 .ex-row-count {
-  font-size: 13px;
-  font-weight: 600;
+  font: 700 1.0625rem/1 var(--font-display);
+  letter-spacing: 0.02em;
   color: var(--text-2);
   font-variant-numeric: tabular-nums;
+}
+
+.ex-row:active {
+  background: var(--surface-2);
 }
 
 .ex-row-check {
@@ -1986,12 +2363,13 @@ dialog.sheet-full {
 }
 
 .workout-card-head h3 {
-  font-size: 17px;
-  font-weight: 650;
+  font: 700 1.5rem/1.1 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .workout-card-head .muted {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 
 .workout-card-stats {
@@ -1999,23 +2377,32 @@ dialog.sheet-full {
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 16px;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-2);
   font-variant-numeric: tabular-nums;
 }
 
+/* The two headline numbers of a session read in the display face. */
+.workout-card-stats > span:not(.pr-pill) {
+  color: var(--text);
+  font: 700 1.25rem/1 var(--font-display);
+  letter-spacing: 0.02em;
+}
+
 .pr-pill,
 .pr-tags {
+  --slant: 5px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 9px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  padding: 3px calc(var(--slant) + 7px);
+  clip-path: var(--slant-clip);
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
   color: var(--accent-ink);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 700;
-  white-space: nowrap;
+  /* A long record name ("Najlepsze szacowane 1RM 549,7 lbs") wraps inside the pill instead of pushing the page sideways. */
+  max-width: 100%;
 }
 
 .workout-card-lines {
@@ -2025,7 +2412,7 @@ dialog.sheet-full {
   border-top: 1px solid var(--line);
   display: grid;
   gap: 5px;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .workout-card-lines li {
@@ -2049,7 +2436,7 @@ dialog.sheet-full {
 }
 
 .detail-title {
-  font: 800 34px/1.05 var(--font-display);
+  font: 800 2.125rem/1.05 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.01em;
   overflow-wrap: anywhere;
@@ -2059,38 +2446,118 @@ dialog.sheet-full {
   white-space: pre-wrap;
 }
 
-.saved-banner {
+.celebration {
+  position: relative;
+  overflow: hidden;
   display: grid;
+  justify-items: start;
   gap: 4px;
-  padding: 18px 18px 16px;
-  border-radius: var(--radius);
-  background: var(--accent);
+  padding: 20px 20px 18px;
+  border-radius: var(--radius-lg);
+  background: var(--hero-grad);
   color: var(--on-accent);
-  animation: stamp 0.45s cubic-bezier(0.2, 1.4, 0.4, 1);
+  box-shadow: var(--glow), inset 0 1px 0 rgb(255 255 255 / 0.2);
+  animation: stamp 0.5s var(--ease-out);
 }
 
-.saved-banner .eyebrow {
-  color: inherit;
-  opacity: 0.75;
+/* One slanted sheen crosses the card as it lands. */
+.celebration::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 38%, rgb(255 255 255 / 0.16) 50%, transparent 62%);
+  background-size: 250% 100%;
+  background-position: 120% 0;
+  animation: sheen 1.1s var(--ease-out) 0.15s both;
+  pointer-events: none;
 }
 
-.saved-banner .muted {
-  color: inherit;
-  opacity: 0.75;
-  font-size: 14px;
+.celebration > * {
+  position: relative;
+  z-index: 1;
 }
 
-.saved-headline {
-  font: 800 46px/0.95 var(--font-display);
+.celebration .eyebrow {
+  color: var(--on-accent);
+}
+
+.celebration-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 12px;
+  margin: 2px 0 4px;
+}
+
+.celebration-num {
+  font: 800 6.5rem/0.82 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 4px 24px rgb(13 6 24 / 0.35);
+}
+
+.celebration-label,
+.celebration-logged {
+  font: 800 2.5rem/0.95 var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.01em;
 }
 
-.saved-share {
-  justify-self: start;
-  margin-top: 8px;
+.celebration-logged {
+  font-size: 3.5rem;
+}
+
+.celebration-note {
+  font-size: 0.875rem;
+}
+
+.celebration-share {
+  margin-top: 10px;
   background: var(--on-accent);
   color: var(--accent);
+}
+
+.burst {
+  position: absolute;
+  inset-block-start: 5.4rem;
+  inset-inline-start: 4.2rem;
+  width: 0;
+  height: 0;
+  z-index: 0;
+}
+
+.burst i {
+  position: absolute;
+  inset-block-start: -9px;
+  inset-inline-start: -2px;
+  width: 5px;
+  height: 18px;
+  border-radius: 1px;
+  background: rgb(255 255 255 / 0.9);
+  clip-path: polygon(0 0, 100% 0, 60% 100%, 0 100%);
+  opacity: 0;
+  animation: shard 0.95s var(--ease-out) var(--w) both;
+}
+
+.burst i.long {
+  height: 28px;
+  background: rgb(255 255 255 / 0.6);
+}
+
+@keyframes shard {
+  0% {
+    opacity: 1;
+    transform: rotate(var(--a)) translateY(-14px) scaleY(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--a)) translateY(calc(var(--d) * -1)) scaleY(1);
+  }
+}
+
+@keyframes sheen {
+  to {
+    background-position: -40% 0;
+  }
 }
 
 .share-preview {
@@ -2164,7 +2631,7 @@ dialog.sheet-full {
 }
 
 .exercise-hero .detail-title {
-  font-size: 28px;
+  font-size: 1.75rem;
 }
 
 .chart-card {
@@ -2174,6 +2641,7 @@ dialog.sheet-full {
 
 .chart-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
@@ -2188,33 +2656,41 @@ dialog.sheet-full {
   text-align: center;
 }
 
+/* Records are numbers first: two tiles across, the value in the display face. */
 .records {
   margin: 0;
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .records > div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.records > div:last-child {
-  border-bottom: 0;
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
 }
 
 .records dt {
   color: var(--text-2);
+  font-size: 0.8125rem;
+  font-weight: 500;
 }
 
 .records dd {
   margin: 0;
   display: grid;
-  justify-items: end;
-  text-align: right;
+  gap: 1px;
+  min-width: 0;
+}
+
+.records dd strong {
+  font: 700 1.75rem/1.05 var(--font-display);
+  letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
 }
 
 .records dd a {
@@ -2234,6 +2710,7 @@ dialog.sheet-full {
   border-radius: var(--radius);
   overflow: hidden;
   background: #fff;
+  box-shadow: var(--elev-2);
 }
 
 .demo img {
@@ -2270,7 +2747,7 @@ dialog.sheet-full {
 .demo-toggle {
   position: absolute;
   top: 10px;
-  right: 10px;
+  inset-inline-end: 10px;
   display: grid;
   place-items: center;
   width: 36px;
@@ -2299,7 +2776,7 @@ dialog.sheet-full {
 
 .steps li::before {
   content: counter(step);
-  font: 700 22px/1.1 var(--font-display);
+  font: 700 1.375rem/1.1 var(--font-display);
   color: var(--accent-ink);
 }
 
@@ -2320,7 +2797,7 @@ dialog.sheet-full {
 
 .chart .axis {
   fill: var(--text-3);
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -2335,7 +2812,6 @@ dialog.sheet-full {
 }
 
 .chart .bar {
-  fill: var(--viz);
   transition: opacity 0.12s ease;
 }
 
@@ -2350,7 +2826,7 @@ dialog.sheet-full {
 
 .chart .bar-label {
   fill: var(--text-2);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
@@ -2360,10 +2836,6 @@ dialog.sheet-full {
   stroke-width: 2;
   stroke-linejoin: round;
   stroke-linecap: round;
-}
-
-.chart .area {
-  fill: var(--viz-wash);
 }
 
 .chart .dot {
@@ -2390,14 +2862,14 @@ dialog.sheet-full {
   border-radius: 9px;
   background: var(--surface-3);
   box-shadow: var(--shadow);
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--text-2);
   white-space: nowrap;
   pointer-events: none;
 }
 
 .tooltip strong {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text);
   font-variant-numeric: tabular-nums;
 }
@@ -2415,7 +2887,7 @@ dialog.sheet-full {
   grid-template-columns: 7.5rem 1fr;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .hbar-label {
@@ -2435,8 +2907,13 @@ dialog.sheet-full {
   height: 12px;
   min-width: 2px;
   width: calc((100% - 2.5rem) * var(--p));
-  border-radius: 0 4px 4px 0;
-  background: var(--viz);
+  --slant: 5px;
+  clip-path: var(--slant-end);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--viz) 50%, transparent), var(--viz));
+}
+
+[dir='rtl'] .hbar-fill {
+  background: linear-gradient(270deg, color-mix(in srgb, var(--viz) 50%, transparent), var(--viz));
 }
 
 .hbar-value {
@@ -2451,9 +2928,9 @@ dialog.sheet-full {
 
 .cal-months {
   display: grid;
-  margin-left: 30px;
+  margin-inline-start: 30px;
   gap: 3px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--text-3);
   white-space: nowrap;
 }
@@ -2468,7 +2945,7 @@ dialog.sheet-full {
   grid-template-rows: repeat(7, 1fr);
   width: 24px;
   gap: 3px;
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--text-3);
   align-items: center;
 }
@@ -2492,8 +2969,29 @@ dialog.sheet-full {
   background: var(--surface-2);
 }
 
-.cal-cell.on {
+/* Heat: the busier the day (sets done), the deeper the purple. */
+.cal-cell[data-level='1'],
+.cal-legend i[data-level='1'] {
+  background: color-mix(in srgb, var(--viz) 52%, var(--surface-2));
+}
+
+.cal-cell[data-level='2'],
+.cal-legend i[data-level='2'] {
+  background: color-mix(in srgb, var(--viz) 68%, var(--surface-2));
+}
+
+.cal-cell[data-level='3'],
+.cal-legend i[data-level='3'] {
+  background: color-mix(in srgb, var(--viz) 80%, var(--surface-2));
+}
+
+.cal-cell[data-level='4'],
+.cal-legend i[data-level='4'] {
   background: var(--viz);
+}
+
+.cal-cell[data-level='4'] {
+  box-shadow: 0 0 8px -1px color-mix(in srgb, var(--viz) 70%, transparent);
 }
 
 .cal-cell.today {
@@ -2506,6 +3004,31 @@ dialog.sheet-full {
 
 .cal-foot {
   margin-top: 6px;
+}
+
+.cal-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: 0.6875rem;
+}
+
+.cal-legend i {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: var(--surface-2);
+}
+
+.cal-legend span:first-child {
+  margin-inline-end: 2px;
+}
+
+.cal-legend span:last-child {
+  margin-inline-start: 2px;
 }
 
 .top-list {
@@ -2546,7 +3069,8 @@ dialog.sheet-full {
 }
 
 .bw-value {
-  font: 700 34px/1 var(--font-display);
+  font: 800 3rem/0.95 var(--font-display);
+  letter-spacing: 0.01em;
 }
 
 .bw-more {
@@ -2578,7 +3102,7 @@ dialog.sheet-full {
   border: 0;
   border-bottom: 1px solid var(--line);
   background: transparent;
-  text-align: left;
+  text-align: start;
 }
 
 .bw-row-date {
@@ -2589,8 +3113,13 @@ dialog.sheet-full {
 
 .bw-row-value {
   min-width: 5.5rem;
-  text-align: right;
-  font-weight: 650;
+  text-align: end;
+  font: 700 1.375rem/1 var(--font-display);
+  letter-spacing: 0.01em;
+}
+
+.bw-row:active {
+  background: var(--surface-2);
 }
 
 .form-actions .spacer {
@@ -2610,10 +3139,16 @@ dialog.sheet-full {
 
 .setting {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 6px 12px;
   min-height: 48px;
+}
+
+/* At the largest text a label and its control stack instead of pushing past the edge. */
+.setting > .chip-select {
+  max-width: 100%;
 }
 
 .setting .segmented {
@@ -2622,6 +3157,7 @@ dialog.sheet-full {
 
 .sync-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
@@ -2630,7 +3166,7 @@ dialog.sheet-full {
 .sync-pill {
   padding: 2px 10px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 700;
   background: color-mix(in srgb, var(--done) 18%, transparent);
   color: var(--done);
@@ -2648,11 +3184,11 @@ dialog.sheet-full {
 
 .setup-steps {
   margin: 0;
-  padding-left: 20px;
+  padding-inline-start: 20px;
   display: grid;
   gap: 10px;
   color: var(--text-2);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .setup-steps strong {
@@ -2676,11 +3212,11 @@ dialog.sheet-full {
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--surface-2);
-  text-align: left;
+  text-align: start;
 }
 
 .choice-card span {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-2);
 }
 
@@ -2692,7 +3228,7 @@ dialog.sheet-full {
 }
 
 .replaced-note span {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-2);
 }
 
@@ -2700,11 +3236,12 @@ dialog.sheet-full {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 10px 10px 14px;
+  padding: 10px;
+  padding-inline-start: 14px;
   border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
   border-radius: var(--radius-sm);
   background: var(--surface);
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-2);
 }
 
@@ -2724,7 +3261,7 @@ dialog.sheet-full {
 }
 
 .sync-warning span {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text-2);
 }
 
@@ -2735,9 +3272,9 @@ dialog.sheet-full {
 
 .plain-list {
   margin: 8px 0 0;
-  padding-left: 18px;
+  padding-inline-start: 18px;
   color: var(--text-2);
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 details summary {
@@ -2767,7 +3304,7 @@ details summary {
   width: 100%;
   max-width: 36rem;
   min-width: 0;
-  text-align: left;
+  text-align: start;
 }
 
 /* On the crash screen it sits inside .empty, which centres text and narrows paragraphs. */
@@ -2809,16 +3346,16 @@ details summary {
   min-width: 0;
   padding: 12px;
   border: 1px solid var(--line);
-  border-left-width: 3px;
+  border-inline-start-width: 3px;
   border-radius: var(--radius-sm);
 }
 
 .data-check-item[data-status='repairable'] {
-  border-left-color: var(--accent);
+  border-inline-start-color: var(--accent);
 }
 
 .data-check-item[data-status='damaged'] {
-  border-left-color: var(--danger);
+  border-inline-start-color: var(--danger);
 }
 
 .data-check-title {
@@ -2832,7 +3369,7 @@ details summary {
 
 .data-check-kind {
   color: var(--text-2);
-  font-size: 12px;
+  font-size: 0.75rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -2845,7 +3382,7 @@ details summary {
   background: var(--surface-2);
   border-radius: var(--radius-sm);
   color: var(--text-2);
-  font-size: 12px;
+  font-size: 0.75rem;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -2860,5 +3397,881 @@ details summary {
 
 .data-check-confirm span {
   flex-basis: 100%;
-  font-size: 14px;
+  font-size: 0.875rem;
+}
+
+/* ---------- Right-to-left (Arabic) ---------- */
+
+/* Things a logical property can't flip: the chosen end of a select arrow, a toggle's thumb travel and growing bars. */
+[dir='rtl'] .chip-select {
+  background-position: left 11px center;
+}
+
+[dir='rtl'] .toggle input:checked + .toggle-track::after {
+  transform: translateX(-18px);
+}
+
+[dir='rtl'] .rest-progress,
+[dir='rtl'] .stopwatch-progress span {
+  transform-origin: right;
+}
+
+/* Arrows and chevrons that point along the reading direction. */
+[dir='rtl'] .flip-rtl {
+  transform: scaleX(-1);
+}
+
+/* Time runs left to right on charts and the calendar, in every language. Their labels and the
+   tooltip text still read right to left. */
+[dir='rtl'] .chart,
+[dir='rtl'] .cal-months,
+[dir='rtl'] .cal-body {
+  direction: ltr;
+}
+
+[dir='rtl'] .chart .tooltip {
+  direction: rtl;
+}
+
+/* Arabic letters join, so any letter-spacing breaks the words apart. The script has no case
+   either, so uppercase styling does nothing; its taller letters want more line height. */
+html[lang='ar'] *,
+html[lang='ar'] *::before,
+html[lang='ar'] *::after {
+  letter-spacing: 0 !important;
+}
+
+html[lang='ar'] body {
+  line-height: 1.6;
+}
+
+/* Display type is set tight for Latin capitals. Arabic dots and marks sit above and below the
+   line, and titles that clip their overflow would cut them off. */
+html[lang='ar'] .page-head.large .page-title {
+  line-height: 1.5;
+}
+
+html[lang='ar'] .section-title,
+html[lang='ar'] .month-label,
+html[lang='ar'] .btn-hero,
+html[lang='ar'] .slant-chip,
+html[lang='ar'] .week-of,
+html[lang='ar'] .celebration-logged,
+html[lang='ar'] .welcome-title {
+  line-height: 1.4;
+}
+
+/* ---------- Appearance settings ---------- */
+
+/* Text size: everything is in rem, so the root size scales the whole interface. */
+html[data-text='small'] {
+  font-size: 87.5%;
+}
+
+html[data-text='large'] {
+  font-size: 112.5%;
+}
+
+html[data-text='xlarge'] {
+  font-size: 125%;
+}
+
+/* Pure black for OLED screens. */
+:root[data-theme='dark'][data-black='true'] {
+  --bg: #000000;
+  --surface: #0c0b10;
+  --surface-2: #17161c;
+  --surface-3: #222129;
+  --line: #1d1c23;
+  --grid: #18171d;
+}
+
+/* Stronger text, borders and focus for people who need more separation. */
+:root[data-theme='dark'][data-contrast='high'] {
+  --text: #ffffff;
+  --text-2: #dcdae6;
+  --text-3: #bebcc9;
+  --line: #75738c;
+  --accent-ink: #d2c4ff;
+}
+
+:root[data-theme='light'][data-contrast='high'] {
+  --text: #000000;
+  --text-2: #2c2a36;
+  --text-3: #444250;
+  --line: #85838f;
+  --accent-ink: #3c2096;
+}
+
+:root[data-contrast='high'] :focus-visible {
+  outline-width: 3px;
+}
+
+/* Reduce motion on request, on top of the system setting. */
+:root[data-motion='reduce'] *,
+:root[data-motion='reduce'] *::before,
+:root[data-motion='reduce'] *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Accent colours. Purple is the default and lives at the top of this file. */
+:root[data-accent='indigo'] {
+  --accent: #4d63e0;
+  --accent-ink: #a3b1ff;
+  --viz: #6f84f2;
+  --viz-wash: rgb(111 132 242 / 0.12);
+}
+
+:root[data-accent='teal'] {
+  --accent: #0b7f84;
+  --accent-ink: #5fd6dc;
+  --viz: #25b3b9;
+  --viz-wash: rgb(37 179 185 / 0.12);
+}
+
+:root[data-accent='pink'] {
+  --accent: #c23a78;
+  --accent-ink: #ff9cc6;
+  --viz: #e2649f;
+  --viz-wash: rgb(226 100 159 / 0.12);
+}
+
+:root[data-theme='light'][data-accent='indigo'] {
+  --accent: #3a4bc2;
+  --accent-ink: #2e3fb0;
+  --viz: #4a5fd8;
+  --viz-wash: rgb(74 95 216 / 0.1);
+}
+
+:root[data-theme='light'][data-accent='teal'] {
+  --accent: #0a6b70;
+  --accent-ink: #07595e;
+  --viz: #0f8f94;
+  --viz-wash: rgb(15 143 148 / 0.1);
+}
+
+:root[data-theme='light'][data-accent='pink'] {
+  --accent: #a82a64;
+  --accent-ink: #98235a;
+  --viz: #c23a78;
+  --viz-wash: rgb(194 58 120 / 0.1);
+}
+
+/* ---------- Settings home: grouped rows ---------- */
+
+.srow-group {
+  display: grid;
+  gap: 8px;
+}
+
+.srow-title {
+  margin: 0;
+  padding-inline-start: 4px;
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.srow-card {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--surface-hi), var(--surface));
+  box-shadow: var(--lift), var(--elev-1);
+}
+
+.srow-card li + li {
+  border-top: 1px solid var(--line);
+}
+
+.srow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 10px 14px;
+  text-decoration: none;
+  transition: background-color var(--dur-fast) ease;
+}
+
+.srow:active {
+  background: var(--surface-2);
+}
+
+.srow-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface-2));
+  color: var(--accent-ink);
+}
+
+.srow-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.srow-label {
+  font-weight: 600;
+}
+
+.srow-value {
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.srow-chevron {
+  flex: none;
+  color: var(--text-3);
+}
+
+.srow-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: 0.8125rem;
+}
+
+.srow-foot-mark {
+  color: var(--accent-ink);
+  opacity: 0.7;
+}
+
+/* ---------- Settings pages ---------- */
+
+.sound-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.choice-chips {
+  flex: 1 1 100%;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.choice-chips button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background-color var(--dur) ease, color var(--dur) ease;
+}
+
+.choice-chips button[aria-checked='true'] {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.swatches button {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 10px 4px 8px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.swatches button[aria-checked='true'] {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.swatch {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--sw);
+  color: #fff;
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.18);
+}
+
+/* The accent presets as the dark and light themes draw them. */
+.swatch-purple {
+  --sw: #7a55e6;
+}
+.swatch-indigo {
+  --sw: #4d63e0;
+}
+.swatch-teal {
+  --sw: #0b7f84;
+}
+.swatch-pink {
+  --sw: #c23a78;
+}
+
+:root[data-theme='light'] .swatch-purple {
+  --sw: #5b3cc4;
+}
+:root[data-theme='light'] .swatch-indigo {
+  --sw: #3a4bc2;
+}
+:root[data-theme='light'] .swatch-teal {
+  --sw: #0a6b70;
+}
+:root[data-theme='light'] .swatch-pink {
+  --sw: #a82a64;
+}
+
+.lang-list > button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 0;
+  background: transparent;
+  text-align: start;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.lang-list > button + button {
+  border-top: 1px solid var(--line);
+}
+
+.lang-list > button[aria-checked='true'] {
+  font-weight: 650;
+}
+
+.lang-hint {
+  color: var(--text-3);
+  font-size: 0.8125rem;
+}
+
+.lang-check {
+  margin-inline-start: auto;
+  color: var(--accent-ink);
+}
+
+.about-hero {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 18px 0 6px;
+  text-align: center;
+}
+
+.about-mark {
+  color: var(--accent-ink);
+  filter: drop-shadow(0 6px 18px color-mix(in srgb, var(--accent) 55%, transparent));
+}
+
+.about-name {
+  margin-top: 8px;
+  font: 800 2.25rem/1 var(--font-display);
+  letter-spacing: 0.01em;
+}
+
+.about-item summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+
+.about-item[open] summary {
+  margin-bottom: 10px;
+}
+
+.about-item p {
+  color: var(--text-2);
+  font-size: 0.9375rem;
+}
+
+.faq {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+}
+
+.faq dt {
+  font-weight: 600;
+}
+
+.faq dd {
+  margin: 2px 0 0;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+}
+
+/* ---------- Backup reminder and compact routine cards ---------- */
+
+.backup-card {
+  display: grid;
+  gap: 12px;
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--line));
+}
+
+.backup-text {
+  display: grid;
+  gap: 2px;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+.backup-text strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.backup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Setting "Compact routine cards": names of exercises are hidden, the rest tightens up. */
+.routine-card.compact {
+  gap: 4px;
+  padding: 12px 14px;
+}
+
+.routine-card.compact .routine-exercises {
+  display: none;
+}
+
+.routine-card.compact .routine-title {
+  font-size: 1.25rem;
+}
+
+.routine-card.compact .btn {
+  min-height: 38px;
+  margin-top: 4px;
+}
+
+/* ---------- Larger workout controls ---------- */
+
+html[data-controls='large'] .set-table {
+  --field-w: 4.75rem;
+  --badge-w: 3rem;
+  --check-w: 3.5rem;
+}
+
+html[data-controls='large'] .set-input {
+  height: 50px;
+  font-size: 1.125rem;
+}
+
+html[data-controls='large'] .check {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+}
+
+html[data-controls='large'] .set-badge {
+  width: 42px;
+  height: 42px;
+}
+
+html[data-controls='large'] .add-set {
+  min-height: 48px;
+}
+
+html[data-controls='large'] .rest-actions button {
+  min-height: 46px;
+}
+
+@media (max-width: 379px) {
+  html[data-controls='large'] .set-table {
+    --field-w: 4rem;
+    --badge-w: 2.75rem;
+    --check-w: 3.25rem;
+  }
+}
+
+@media (max-width: 339px) {
+  html[data-controls='large'] .set-table {
+    --field-w: 3.5rem;
+    --badge-w: 2.5rem;
+    --check-w: 3rem;
+  }
+
+  html[data-controls='large'] .set-input {
+    font-size: 1rem;
+  }
+
+  /* Big controls and big text on the narrowest phones leave no room for Previous; the grey
+     placeholders in the boxes still show last time's numbers. */
+  html[data-controls='large'][data-text='large'] .set-table .prev-col,
+  html[data-controls='large'][data-text='xlarge'] .set-table .prev-col {
+    visibility: hidden;
+  }
+}
+
+/* Large text on a phone under 380 px: the Previous column is too narrow for its full title, so it takes the
+   short one; with the largest text and larger controls it has no room at all and is hidden as above. */
+@media (max-width: 379px) {
+  html[data-text='large'] .set-head .prev-long,
+  html[data-text='xlarge'] .set-head .prev-long {
+    display: none;
+  }
+
+  html[data-text='large'] .set-head .prev-short,
+  html[data-text='xlarge'] .set-head .prev-short {
+    display: inline;
+  }
+
+  /* Values like "35 × 10" wrap onto two short lines rather than ending in an ellipsis. */
+  html[data-text='large'] .set-table .prev,
+  html[data-text='xlarge'] .set-table .prev {
+    font-size: 0.6875rem;
+    line-height: 1.15;
+    white-space: normal;
+  }
+}
+
+/* On a phone under 390 px the largest text squeezes the Previous column below 40 px (17 px at 360), too little for
+   anything, so it is hidden there too. */
+@media (max-width: 389px) {
+  html[data-text='xlarge'] .set-table .prev-col {
+    visibility: hidden;
+  }
+}
+
+/* The largest text leaves the Previous column about 50 px on a 412 px phone (6 px with larger controls on top),
+   so up to 460 px it takes the short title and wraps its values, and with larger controls it is hidden; the
+   grey placeholders in the boxes still show last time. */
+@media (max-width: 459px) {
+  html[data-text='xlarge'] .set-head .prev-long {
+    display: none;
+  }
+
+  html[data-text='xlarge'] .set-head .prev-short {
+    display: inline;
+  }
+
+  html[data-text='xlarge'] .set-table .prev {
+    font-size: 0.6875rem;
+    line-height: 1.15;
+    white-space: normal;
+  }
+
+  html[data-controls='large'][data-text='xlarge'] .set-table .prev-col {
+    visibility: hidden;
+  }
+}
+
+/* ---------- Welcome ---------- */
+
+.welcome {
+  padding-top: calc(env(safe-area-inset-top) + 28px);
+}
+
+.welcome-hero {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.welcome-mark {
+  color: var(--accent-ink);
+  filter: drop-shadow(0 8px 24px color-mix(in srgb, var(--accent) 60%, transparent));
+}
+
+.welcome-title {
+  margin-top: 6px;
+  font: 800 2.75rem/0.95 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.welcome-hero p {
+  max-width: 34ch;
+}
+
+.start-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.start-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 72px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--surface-hi), var(--surface));
+  box-shadow: var(--lift), var(--elev-1);
+  text-align: start;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.start-option:active {
+  transform: scale(0.985);
+}
+
+.start-option.primary {
+  background: var(--wash);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  box-shadow: var(--lift), var(--elev-2);
+}
+
+.start-text {
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  line-height: 1.3;
+}
+
+.welcome-install {
+  align-items: flex-start;
+}
+
+.welcome-install .install-text {
+  gap: 4px;
+}
+
+.welcome-skip {
+  align-self: center;
+}
+
+/* ---------- Starter programs ---------- */
+
+.program-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.program-card {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  text-align: start;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.program-card:active {
+  transform: scale(0.985);
+}
+
+.program-title {
+  font: 700 1.625rem/1.05 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.program-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.program-card .chip {
+  min-height: 28px;
+  font-size: 0.8125rem;
+}
+
+.program-preview {
+  display: grid;
+  gap: 14px;
+}
+
+.program-day .list-label {
+  margin-top: 0;
+}
+
+.program-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.9375rem;
+}
+
+.program-row:last-child {
+  border-bottom: 0;
+}
+
+/* ---------- Recent records (Progress) ---------- */
+
+.rec-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  text-decoration: none;
+}
+
+.top-list li + li .rec-row {
+  border-top: 1px solid var(--line);
+}
+
+.rec-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.rec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.rec-head .ex-row-name {
+  min-width: 0;
+}
+
+.rec-head .small {
+  flex: none;
+}
+
+.rec-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ---------- What's new ---------- */
+
+.whatsnew {
+  list-style: none;
+  margin: 14px 0 18px;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+/* The slanted tick that opens every section, smaller, in front of each entry. */
+.whatsnew li {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding-inline-start: 16px;
+}
+
+.whatsnew li::before {
+  content: '';
+  position: absolute;
+  inset-block: 0.2em 0.15em;
+  inset-inline-start: 0;
+  width: 5px;
+  background: var(--accent);
+  clip-path: polygon(2px 0, 100% 0, calc(100% - 2px) 100%, 0 100%);
+}
+
+.whatsnew strong {
+  font-weight: 650;
+}
+
+.whatsnew span {
+  color: var(--text-2);
+  font-size: 0.9375rem;
+}
+
+/* ---------- Wide screens ---------- */
+
+/* On a wide desktop window the app is a phone-width column. This panel sits beside it and says what Setward is
+   and where it works best. It needs 1240 px: the 560 px column, a 40 px gap and 300 px of panel, each side. */
+.wide-panel {
+  display: none;
+}
+
+@media (min-width: 1240px) {
+  .wide-panel {
+    position: fixed;
+    top: 50%;
+    inset-inline-start: calc(50% - 620px);
+    transform: translateY(-50%);
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 28px 24px;
+    background: linear-gradient(180deg, var(--surface-hi), var(--surface));
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--lift), var(--elev-1);
+  }
+
+  .wide-mark {
+    color: var(--accent-ink);
+    filter: drop-shadow(0 8px 24px color-mix(in srgb, var(--accent) 55%, transparent));
+  }
+
+  .wide-name {
+    margin: 0;
+    font: 800 2.5rem/1 var(--font-display);
+    letter-spacing: 0.01em;
+  }
+
+  .wide-tagline {
+    margin: -6px 0 0;
+    color: var(--text-2);
+  }
+
+  .wide-features {
+    margin: 4px 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+
+  .wide-features li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+  }
+
+  .wide-features svg {
+    flex: none;
+    color: var(--done);
+  }
+
+  .wide-link {
+    color: var(--accent-ink);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
 }

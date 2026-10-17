@@ -1,7 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import type { WorkoutSet } from '../types';
 import { parseCsv, toCsv } from './csv';
-import { fmtClock, fmtDuration, fmtRest, inputNum, kgTo, parseClock, parseNum, toKg } from './format';
+import { setCalcContext } from './context';
+import { fmtClock, fmtDuration, fmtRest, fmtTime, inputNum, kgTo, parseClock, parseNum, startOfWeek, toKg } from './format';
 import { fmtSet } from './sets';
 
 describe('number input', () => {
@@ -83,5 +84,29 @@ describe('csv', () => {
       ['title', 'n', 'empty'],
       ['Chest "heavy" day, 2', '12.5', ''],
     ]);
+  });
+});
+
+describe('week and time settings', () => {
+  const wed = new Date(2026, 9, 14, 12, 0).getTime(); // Wednesday 14 October 2026
+
+  afterEach(() => setCalcContext({ timeFormat: 'auto', weekStart: 'auto', oneRmFormula: 'epley' }));
+
+  it('starts the week on Monday by default, or on the day chosen', () => {
+    expect(new Date(startOfWeek(wed)).getDay()).toBe(1);
+    setCalcContext({ timeFormat: 'auto', weekStart: 'sun', oneRmFormula: 'epley' });
+    expect(new Date(startOfWeek(wed)).getDay()).toBe(0);
+    expect(new Date(startOfWeek(wed)).getDate()).toBe(11);
+    setCalcContext({ timeFormat: 'auto', weekStart: 'sat', oneRmFormula: 'epley' });
+    expect(new Date(startOfWeek(wed)).getDate()).toBe(10);
+  });
+
+  it('shows 24-hour times by default for English and 12-hour when asked', () => {
+    const evening = new Date(2026, 9, 14, 21, 30).getTime();
+    expect(fmtTime(evening)).toBe('21:30');
+    setCalcContext({ timeFormat: '12h', weekStart: 'auto', oneRmFormula: 'epley' });
+    expect(fmtTime(evening).toLowerCase().replace(/\s/g, '')).toBe('9:30pm');
+    setCalcContext({ timeFormat: '24h', weekStart: 'auto', oneRmFormula: 'epley' });
+    expect(fmtTime(evening)).toBe('21:30');
   });
 });

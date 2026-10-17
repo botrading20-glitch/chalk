@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { toast } from '../components/dialogs';
 import { confirmDiscard, DraftBar } from '../components/DraftBar';
 import { Empty, PageHeader } from '../components/ui';
@@ -5,10 +6,12 @@ import { WorkoutEditor } from '../components/WorkoutEditor';
 import { db } from '../db';
 import { useData } from '../lib/data';
 import { clearDraft, useDraft, useStoredDraft } from '../lib/drafts';
-import { goBack } from '../lib/router';
+import { defaultWorkoutTitle, uid } from '../lib/format';
+import { goBack, navigate } from '../lib/router';
 import { hasValues } from '../lib/stats';
 import { workoutFromDraft } from '../lib/workouts';
 import type { ActiveWorkout, Workout } from '../types';
+import { t } from '../i18n';
 
 function toLocalInput(ts: number) {
   const d = new Date(ts);
@@ -24,8 +27,8 @@ export function EditWorkout({ id }: { id: string }) {
   if (!original) {
     return (
       <div className="page">
-        <PageHeader back="/history" title="Edit workout" />
-        <Empty title="This workout doesn't exist">It may have been deleted.</Empty>
+        <PageHeader back="/history" title={t('editWorkout.title')} />
+        <Empty title={t('missing.workout')}>{t('missing.hint')}</Empty>
       </div>
     );
   }
@@ -33,25 +36,52 @@ export function EditWorkout({ id }: { id: string }) {
   return <Editor key={draftKey} draftKey={draftKey} original={original} stored={stored} />;
 }
 
-function Editor({ draftKey, original, stored }: { draftKey: string; original: Workout; stored: ActiveWorkout | null }) {
+/** `#/history/new`: a workout done earlier, entered by hand. Same editor, with its own draft slot. */
+export function NewWorkout() {
+  const stored = useStoredDraft<ActiveWorkout>(NEW_KEY);
+  // The blank workout is made once, so its id stays put while the draft changes.
+  const [blank] = useState<ActiveWorkout>(() => {
+    const start = Math.floor((Date.now() - 60 * 60000) / 60000) * 60000;
+    return { id: uid(), title: '', startTime: start, endTime: start + 60 * 60000, exercises: [] };
+  });
+  if (stored === undefined) return null;
+  return <Editor key={NEW_KEY} draftKey={NEW_KEY} blank={blank} stored={stored} />;
+}
+
+const NEW_KEY = 'workout:new';
+
+function Editor({
+  draftKey,
+  original,
+  blank,
+  stored,
+}: {
+  draftKey: string;
+  original?: Workout;
+  /** The starting point for a workout that doesn't exist yet. */
+  blank?: ActiveWorkout;
+  stored: ActiveWorkout | null;
+}) {
   const draft = useDraft<ActiveWorkout>(
     draftKey,
-    {
-      id: original.id,
-      editingId: original.id,
-      title: original.title,
-      description: original.description,
-      startTime: original.startTime,
-      endTime: original.endTime,
-      exercises: original.exercises,
-      routineId: original.routineId,
-    },
+    original
+      ? {
+          id: original.id,
+          editingId: original.id,
+          title: original.title,
+          description: original.description,
+          startTime: original.startTime,
+          endTime: original.endTime,
+          exercises: original.exercises,
+          routineId: original.routineId,
+        }
+      : blank!,
     stored,
   );
   const w = draft.value;
   const set = (patch: Partial<ActiveWorkout>) => draft.update((d) => ({ ...d, ...patch }));
   const minutes = Math.round(((w.endTime ?? w.startTime) - w.startTime) / 60000);
-  const back = `/history/${original.id}`;
+  const back = original ? `/history/${original.id}` : '/history';
 
   async function save() {
     // Without checkboxes in edit mode, any set with numbers in it counts as done.
@@ -59,9 +89,19 @@ function Editor({ draftKey, original, stored }: { draftKey: string; original: Wo
       { ...w, exercises: w.exercises.map((we) => ({ ...we, sets: we.sets.map((s) => ({ ...s, completed: hasValues(s) })) })) },
       false,
     );
+    if (!original) {
+      if (!workout.exercises.length) {
+        toast(t('logPast.needSets'));
+        return;
+      }
+      await db.workouts.put(workout);
+      await draft.clear();
+      navigate(`/history/${workout.id}?saved=1`, { replace: true });
+      return;
+    }
     await db.workouts.put(workout);
     await draft.clear();
-    toast('Workout updated');
+    toast(t('editWorkout.updated'));
     goBack(back);
   }
 
@@ -74,25 +114,26 @@ function Editor({ draftKey, original, stored }: { draftKey: string; original: Wo
           await clearDraft(draftKey);
           goBack(back);
         }}
-        title="Edit workout"
+        title={original ? t('editWorkout.title') : t('logPast.title')}
         actions={
           <button className="btn btn-primary btn-small" onClick={save}>
-            Save
+            {t('common.save')}
           </button>
         }
       />
       {stored && draft.dirty && <DraftBar onDiscard={draft.discard} />}
       <div className="form">
         <label className="field">
-          <span>Name</span>
-          <input value={w.title} onChange={(e) => set({ title: e.target.value })} />
+          <span>{t('form.name')}</span>
+          <input value={w.title} placeholder={original ? undefined : defaultWorkoutTitle(w.startTime)} onChange={(e) => set({ title: e.target.value })} />
         </label>
         <div className="field-row">
           <label className="field">
-            <span>Started</span>
+            <span>{t('editWorkout.started')}</span>
             <input
               type="datetime-local"
               value={toLocalInput(w.startTime)}
+              max={original ? undefined : toLocalInput(Date.now())}
               onChange={(e) => {
                 const start = new Date(e.target.value).getTime();
                 if (Number.isNaN(start)) return;
@@ -101,7 +142,7 @@ function Editor({ draftKey, original, stored }: { draftKey: string; original: Wo
             />
           </label>
           <label className="field field-narrow">
-            <span>Minutes</span>
+            <span>{t('editWorkout.minutes')}</span>
             <input
               type="number"
               inputMode="numeric"
@@ -112,7 +153,7 @@ function Editor({ draftKey, original, stored }: { draftKey: string; original: Wo
           </label>
         </div>
         <label className="field">
-          <span>Notes</span>
+          <span>{t('common.notes')}</span>
           <textarea rows={2} value={w.description ?? ''} onChange={(e) => set({ description: e.target.value || undefined })} />
         </label>
       </div>
@@ -120,8 +161,9 @@ function Editor({ draftKey, original, stored }: { draftKey: string; original: Wo
         exercises={w.exercises}
         onChange={(fn) => draft.update((d) => ({ ...d, exercises: fn(d.exercises) }))}
         mode="edit"
-        previousBefore={original.startTime}
-        excludeWorkoutId={original.id}
+        previousBefore={original?.startTime ?? w.startTime}
+        excludeWorkoutId={original?.id}
+        routineId={original?.routineId}
       />
     </div>
   );

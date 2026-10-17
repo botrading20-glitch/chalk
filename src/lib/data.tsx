@@ -2,6 +2,8 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { db } from '../db';
 import type { Exercise, Workout, WorkoutSet } from '../types';
+import { useSettings } from './settings';
+import { previousSession } from './previous';
 import { computeRecords, typeLookup, type Records, type TypeOf } from './stats';
 
 interface AppData {
@@ -21,6 +23,8 @@ const Ctx = createContext<AppData | null>(null);
 export function DataProvider({ children }: { children: ReactNode }) {
   const exercises = useLiveQuery(() => db.exercises.toArray(), []);
   const workouts = useLiveQuery(() => db.workouts.orderBy('startTime').reverse().toArray(), []);
+  // Records depend on the 1RM formula, so they are recomputed when it changes.
+  const { oneRmFormula } = useSettings();
 
   const value = useMemo<AppData>(() => {
     const list = exercises ?? [];
@@ -34,7 +38,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       typeOf,
       records: computeRecords(workouts ?? [], typeOf),
     };
-  }, [exercises, workouts]);
+  }, [exercises, workouts, oneRmFormula]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
@@ -45,18 +49,20 @@ export function useData() {
   return v;
 }
 
-/** Sets from the most recent earlier session of each exercise. */
-export function usePreviousSets(exerciseIds: string[], opts: { before?: number; excludeId?: string } = {}) {
+/**
+ * Sets from the most recent earlier session of each exercise: any workout, or (with the
+ * "Same routine first" setting and a routine to go by) that routine's own sessions first.
+ */
+export function usePreviousSets(exerciseIds: string[], opts: { before?: number; excludeId?: string; routineId?: string } = {}) {
   const { workouts } = useData();
+  const { previousFrom } = useSettings();
   const key = exerciseIds.join('|');
+  const routineId = previousFrom === 'routine' ? opts.routineId : undefined;
   return useMemo(() => {
-    const wanted = new Set(exerciseIds);
     const out = new Map<string, WorkoutSet[]>();
-    for (const w of workouts) {
-      if (out.size === wanted.size) break;
-      if (w.id === opts.excludeId || (opts.before !== undefined && w.startTime >= opts.before)) continue;
-      for (const id of w.exerciseIds) {
-        if (!wanted.has(id) || out.has(id)) continue;
+    for (const id of new Set(exerciseIds)) {
+      const w = previousSession(workouts, id, { before: opts.before, excludeId: opts.excludeId, routineId });
+      if (w) {
         out.set(
           id,
           w.exercises.filter((we) => we.exerciseId === id).flatMap((we) => we.sets),
@@ -64,7 +70,7 @@ export function usePreviousSets(exerciseIds: string[], opts: { before?: number; 
       }
     }
     return out;
-  }, [workouts, key, opts.before, opts.excludeId]);
+  }, [workouts, key, opts.before, opts.excludeId, routineId]);
 }
 
 export function useNow(intervalMs = 1000, enabled = true) {

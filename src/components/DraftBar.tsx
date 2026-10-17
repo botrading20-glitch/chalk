@@ -1,13 +1,15 @@
 import { confirmDialog } from './dialogs';
+import { t } from '../i18n';
+import { tRich } from '../i18n/rich';
 
 /** Asks before throwing away unsaved editor changes; resolves true when it's fine to drop them. */
 export function confirmDiscard(dirty: boolean) {
   if (!dirty) return Promise.resolve(true);
   return confirmDialog({
-    title: 'Discard your changes?',
-    message: 'They haven’t been saved.',
-    confirmLabel: 'Discard changes',
-    cancelLabel: 'Keep editing',
+    title: t('draft.discardTitle'),
+    message: t('draft.discardMessage'),
+    confirmLabel: t('draft.discardConfirm'),
+    cancelLabel: t('draft.keepEditing'),
     danger: true,
   });
 }
@@ -16,16 +18,14 @@ export function confirmDiscard(dirty: boolean) {
 export function DraftBar({ onDiscard }: { onDiscard: () => void }) {
   return (
     <div className="draft-bar" role="status">
-      <span>
-        <strong>Unsaved changes</strong> kept from when you left. Save to keep them.
-      </span>
+      <span>{tRich('draft.bar', { b: (text) => <strong>{text}</strong> })}</span>
       <button
         className="btn btn-ghost btn-small"
         onClick={async () => {
           if (await confirmDiscard(true)) onDiscard();
         }}
       >
-        Discard
+        {t('common.discard')}
       </button>
     </div>
   );

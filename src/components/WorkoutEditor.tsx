@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useData, useNow, usePreviousSets } from '../lib/data';
+import { previousSession } from '../lib/previous';
 import { fmtClock, fmtRest, kgTo, kmTo, toKg, toKm, uid } from '../lib/format';
 import { SET_TYPE_LABEL, type Field } from '../lib/meta';
 import { Link } from '../lib/router';
@@ -27,6 +28,8 @@ import {
 import { PlateSheet } from './PlateCalculator';
 import { ActionSheet, Sheet } from './Sheet';
 import { ExerciseAvatar } from './ui';
+import { t } from '../i18n';
+import type { Key } from '../i18n/catalog';
 
 export type EditorMode = 'live' | 'edit' | 'routine';
 
@@ -42,6 +45,7 @@ export function WorkoutEditor({
   mode,
   previousBefore,
   excludeWorkoutId,
+  routineId,
   onRest,
   stopwatch,
   onStopwatch,
@@ -52,6 +56,8 @@ export function WorkoutEditor({
   /** Only sessions that started before this time count as "previous". */
   previousBefore?: number;
   excludeWorkoutId?: string;
+  /** The routine this workout or template belongs to, for "Same routine first". */
+  routineId?: string;
   /** Live mode: called with the rest length after a set is checked off. */
   onRest?: (seconds: number) => void;
   /** Live mode: the timed set in progress, and how to start or clear it. */
@@ -62,13 +68,15 @@ export function WorkoutEditor({
   const settings = useSettings();
   const previous = usePreviousSets(
     exercises.map((e) => e.exerciseId),
-    { before: previousBefore, excludeId: excludeWorkoutId },
+    { before: previousBefore, excludeId: excludeWorkoutId, routineId },
   );
   const [picker, setPicker] = useState<{ replace?: string } | null>(null);
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const [setMenu, setSetMenu] = useState<{ ex: string; set: string } | null>(null);
   const [restFor, setRestFor] = useState<string | null>(null);
   const [platesFor, setPlatesFor] = useState<string | null>(null);
+  /** The set that was just checked off, so only it plays the pop. */
+  const [popId, setPopId] = useState<string | null>(null);
 
   const supersetLetters = useMemo(() => {
     const map = new Map<number, string>();
@@ -84,12 +92,12 @@ export function WorkoutEditor({
     updateEx(exId, (we) => ({ ...we, sets: we.sets.map((s) => (s.id === setId ? { ...s, ...patch } : s)) }));
 
   function lastBlocks(exerciseId: string) {
-    for (const w of workouts) {
-      if (w.id === excludeWorkoutId || (previousBefore !== undefined && w.startTime >= previousBefore)) continue;
-      const blocks = w.exercises.filter((we) => we.exerciseId === exerciseId);
-      if (blocks.length) return blocks;
-    }
-    return undefined;
+    const w = previousSession(workouts, exerciseId, {
+      before: previousBefore,
+      excludeId: excludeWorkoutId,
+      routineId: settings.previousFrom === 'routine' ? routineId : undefined,
+    });
+    return w?.exercises.filter((we) => we.exerciseId === exerciseId);
   }
 
   function newBlock(exerciseId: string): WorkoutExercise {
@@ -97,7 +105,7 @@ export function WorkoutEditor({
     const prevSets = prev?.flatMap((b) => b.sets);
     const sets = prevSets?.length
       ? prevSets.map((s) => emptySet(s.type))
-      : Array.from({ length: mode === 'routine' ? 3 : 1 }, () => emptySet());
+      : Array.from({ length: settings.newExerciseSets || (mode === 'routine' ? 3 : 1) }, () => emptySet());
     return { id: uid(), exerciseId, sets, restSeconds: prev?.[0]?.restSeconds };
   }
 
@@ -130,18 +138,20 @@ export function WorkoutEditor({
   /** What a timed set aims for: its own time, else last session's, else the set before it. */
   function timerTarget(we: WorkoutExercise, index: number) {
     const own = we.sets[index].duration;
-    if (own !== undefined) return { seconds: own, label: 'Target' };
+    if (own !== undefined) return { seconds: own, label: t('stopwatch.target') };
     const last = prevFor(we, index)?.duration;
-    if (last !== undefined) return { seconds: last, label: 'Last time' };
+    if (last !== undefined) return { seconds: last, label: t('stopwatch.lastTime') };
     const earlier = placeholderFor(we, index)?.duration;
-    return earlier !== undefined ? { seconds: earlier, label: 'Previous set' } : undefined;
+    return earlier !== undefined ? { seconds: earlier, label: t('stopwatch.previousSet') } : undefined;
   }
 
-  function restAfter(we: WorkoutExercise) {
+  function restAfter(we: WorkoutExercise, set: WorkoutSet) {
     if (we.supersetId !== undefined) {
       const group = exercises.filter((x) => x.supersetId === we.supersetId);
       if (group.at(-1)?.id !== we.id) return 0;
     }
+    // Warm-ups can rest for their own time (0 turns the timer off for them).
+    if (set.type === 'warmup' && settings.warmupRest >= 0) return settings.warmupRest;
     return we.restSeconds ?? settings.defaultRest;
   }
 
@@ -163,12 +173,14 @@ export function WorkoutEditor({
     const filled: Partial<WorkoutSet> = { ...patch };
     for (const f of fields) if (s[f] === undefined && ph?.[f] !== undefined) filled[f] = ph[f];
     if (!fields.some((f) => (filled[f] ?? s[f]) !== undefined)) {
-      toast(`Enter ${fields.includes('reps') ? 'reps' : fields.includes('duration') ? 'a time' : 'a value'} first`);
+      toast(t(fields.includes('reps') ? 'editor.enterReps' : fields.includes('duration') ? 'editor.enterTime' : 'editor.enterValue'));
       return;
     }
     unlockAudio();
+    setPopId(s.id);
+    if (settings.vibrateOnCheck) navigator.vibrate?.(12);
     updateSet(we.id, s.id, { ...filled, completed: true });
-    onRest?.(restAfter(we));
+    if (settings.autoRest) onRest?.(restAfter(we, s));
   }
 
   function startTiming(setId: string) {
@@ -235,8 +247,8 @@ export function WorkoutEditor({
     <div className="editor">
       {exercises.length === 0 && (
         <div className="empty editor-empty">
-          <h3>No exercises yet</h3>
-          <p className="muted">Add the exercises you're doing. Your last numbers show up next to each set.</p>
+          <h3>{t('editor.emptyTitle')}</h3>
+          <p className="muted">{t('editor.emptyText')}</p>
         </div>
       )}
 
@@ -246,7 +258,7 @@ export function WorkoutEditor({
         const fields = fieldsFor(type);
         const labels = setLabels(we.sets);
         const letter = we.supersetId !== undefined ? supersetLetters.get(we.supersetId) : undefined;
-        const cols = `2.5rem minmax(0,1fr) ${fields.map(() => 'var(--field-w)').join(' ')}${mode === 'live' ? ' 2.75rem' : ''}`;
+        const cols = `var(--badge-w) minmax(0,1fr) ${fields.map(() => 'var(--field-w)').join(' ')}${mode === 'live' ? ' var(--check-w)' : ''}`;
         const timedIndex = stopwatch ? we.sets.findIndex((s) => s.id === stopwatch.setId) : -1;
         const nextIndex = we.sets.findIndex((s) => !s.completed);
         const canTime = mode === 'live' && !!onStopwatch && fields.includes('duration') && !timing && nextIndex >= 0;
@@ -257,11 +269,11 @@ export function WorkoutEditor({
               <Link to={`/exercises/${we.exerciseId}`} className="ex-title">
                 <ExerciseAvatar exercise={ex} size={38} />
                 <span>
-                  {letter && <span className="superset-tag">Superset {letter}</span>}
-                  <span className="ex-name">{ex?.name ?? 'Deleted exercise'}</span>
+                  {letter && <span className="superset-tag">{t('editor.supersetTag', { letter })}</span>}
+                  <span className="ex-name">{ex?.name ?? t('exercise.deleted')}</span>
                 </span>
               </Link>
-              <button className="icon-btn" onClick={() => setMenuFor(we.id)} aria-label={`Options for ${ex?.name}`}>
+              <button className="icon-btn" onClick={() => setMenuFor(we.id)} aria-label={t('editor.options', { name: ex?.name ?? t('exercise.deleted') })}>
                 <IconMore />
               </button>
             </header>
@@ -270,7 +282,7 @@ export function WorkoutEditor({
               <BufferedTextarea
                 className="ex-notes"
                 rows={1}
-                placeholder="Add a note: seat height, grip, how it felt…"
+                placeholder={t('editor.notePlaceholder')}
                 value={we.notes}
                 onChange={(notes) => updateEx(we.id, (x) => ({ ...x, notes }))}
               />
@@ -278,16 +290,16 @@ export function WorkoutEditor({
 
             {mode !== 'edit' && (
               <button className="rest-chip" onClick={() => setRestFor(we.id)}>
-                <IconTimer size={16} /> Rest {fmtRest(we.restSeconds ?? settings.defaultRest)}
+                <IconTimer size={16} /> {t('editor.rest', { time: fmtRest(we.restSeconds ?? settings.defaultRest) })}
               </button>
             )}
 
             <div className="set-table" style={{ '--cols': cols } as CSSProperties}>
               <div className="set-row set-head" aria-hidden="true">
-                <span>Set</span>
+                <span>{t('editor.set')}</span>
                 <span className="prev-col">
-                  <span className="prev-long">Previous</span>
-                  <span className="prev-short">Last</span>
+                  <span className="prev-long">{t('editor.previous')}</span>
+                  <span className="prev-short">{t('editor.last')}</span>
                 </span>
                 {fields.map((f) => (
                   <span key={f}>{fieldHeader(f, type, settings)}</span>
@@ -307,10 +319,10 @@ export function WorkoutEditor({
                       className="set-badge"
                       data-type={s.type}
                       onClick={() => setSetMenu({ ex: we.id, set: s.id })}
-                      aria-label={`Set ${labels[i]}, ${SET_TYPE_LABEL[s.type]}. Change set type`}
+                      aria-label={t('editor.setLabel', { label: labels[i], type: SET_TYPE_LABEL[s.type] })}
                     >
                       {labels[i]}
-                      {s.rpe !== undefined && <sup>@{s.rpe}</sup>}
+                      {settings.showRpe && s.rpe !== undefined && <sup>@{s.rpe}</sup>}
                     </button>
                     <button
                       className="prev-col prev"
@@ -321,7 +333,7 @@ export function WorkoutEditor({
                         for (const f of fields) patch[f] = prev[f];
                         updateSet(we.id, s.id, patch);
                       }}
-                      aria-label={prev ? `Copy previous: ${fmtSet(prev, type, settings)}` : 'No previous set'}
+                      aria-label={prev ? t('editor.copyPrevious', { value: fmtSet(prev, type, settings) }) : t('editor.noPrevious')}
                     >
                       {prev ? fmtSet(prev, type, settings, true) : '—'}
                     </button>
@@ -331,16 +343,16 @@ export function WorkoutEditor({
                         field={f}
                         set={s}
                         placeholder={ph}
-                        label={`Set ${labels[i]} ${f}`}
+                        label={t('editor.fieldLabel', { label: labels[i], field: t(f === 'duration' ? 'field.time' : (`field.${f}` as Key)) })}
                         onChange={(patch) => updateSet(we.id, s.id, patch)}
                       />
                     ))}
                     {mode === 'live' && (
                       <button
-                        className={`check ${s.completed ? 'on' : ''}`}
+                        className={`check ${s.completed ? 'on' : ''} ${s.completed && popId === s.id ? 'pop' : ''}`}
                         onClick={() => toggleDone(we, i)}
                         aria-pressed={s.completed}
-                        aria-label={`Mark set ${labels[i]} done`}
+                        aria-label={t('editor.markDone', { label: labels[i] })}
                       >
                         <IconCheck size={18} />
                       </button>
@@ -367,11 +379,11 @@ export function WorkoutEditor({
                   updateEx(we.id, (x) => ({ ...x, sets: [...x.sets, emptySet(last?.type === 'warmup' ? 'normal' : last?.type)] }));
                 }}
               >
-                <IconPlus size={16} /> Add set
+                <IconPlus size={16} /> {t('editor.addSet')}
               </button>
               {canTime && (
                 <button className="add-set time-set" onClick={() => startTiming(we.sets[nextIndex].id)}>
-                  <IconTimer size={16} /> Time set {labels[nextIndex]}
+                  <IconTimer size={16} /> {t('editor.timeSet', { label: labels[nextIndex] })}
                 </button>
               )}
             </div>
@@ -380,7 +392,7 @@ export function WorkoutEditor({
       })}
 
       <button className="btn btn-accent-outline btn-block" onClick={() => setPicker({})}>
-        <IconPlus size={18} /> Add exercise
+        <IconPlus size={18} /> {t('editor.addExercise')}
       </button>
 
       <ExercisePicker
@@ -388,7 +400,7 @@ export function WorkoutEditor({
         onClose={() => setPicker(null)}
         onPick={addExercises}
         multi={!picker?.replace}
-        title={picker?.replace ? 'Replace exercise' : 'Add exercises'}
+        title={picker?.replace ? t('picker.replace') : t('picker.add')}
       />
 
       <ActionSheet
@@ -399,27 +411,27 @@ export function WorkoutEditor({
           menuEx
             ? [
                 {
-                  label: 'Add a note',
+                  label: t('editor.addNote'),
                   icon: <IconNote />,
                   hidden: menuEx.notes !== undefined,
                   onSelect: () => updateEx(menuEx.id, (x) => ({ ...x, notes: '' })),
                 },
                 {
-                  label: 'Plate calculator',
+                  label: t('editor.plates'),
                   icon: <IconPlate />,
                   hidden: !fieldsFor(exerciseMap.get(menuEx.exerciseId)?.type ?? 'weight_reps').includes('weight'),
                   onSelect: () => setPlatesFor(menuEx.id),
                 },
-                { label: 'Replace exercise', icon: <IconSwap />, onSelect: () => setPicker({ replace: menuEx.id }) },
-                { label: 'Move up', icon: <IconUp />, hidden: menuIndex <= 0, onSelect: () => move(menuEx.id, -1) },
+                { label: t('editor.replace'), icon: <IconSwap />, onSelect: () => setPicker({ replace: menuEx.id }) },
+                { label: t('editor.moveUp'), icon: <IconUp />, hidden: menuIndex <= 0, onSelect: () => move(menuEx.id, -1) },
                 {
-                  label: 'Move down',
+                  label: t('editor.moveDown'),
                   icon: <IconArrowDown />,
                   hidden: menuIndex >= exercises.length - 1,
                   onSelect: () => move(menuEx.id, 1),
                 },
                 {
-                  label: 'Superset with next exercise',
+                  label: t('editor.superset'),
                   icon: <IconLink />,
                   hidden:
                     menuIndex >= exercises.length - 1 ||
@@ -427,13 +439,13 @@ export function WorkoutEditor({
                   onSelect: () => supersetWithNext(menuEx.id),
                 },
                 {
-                  label: 'Remove from superset',
+                  label: t('editor.leaveSuperset'),
                   icon: <IconLink />,
                   hidden: menuEx.supersetId === undefined,
                   onSelect: () => leaveSuperset(menuEx.id),
                 },
                 {
-                  label: 'Remove exercise',
+                  label: t('editor.removeExercise'),
                   icon: <IconTrash />,
                   danger: true,
                   onSelect: () => onChange((list) => list.filter((x) => x.id !== menuEx.id)),
@@ -451,7 +463,7 @@ export function WorkoutEditor({
         use={
           platesEx && plates
             ? {
-                label: `Use {weight} for set ${plates.label}`,
+                label: t('editor.useWeight', { label: plates.label }),
                 current: plates.set.weight,
                 apply: (kg) => updateSet(platesEx.id, plates.set.id, { weight: kg }),
               }
@@ -459,7 +471,7 @@ export function WorkoutEditor({
         }
       />
 
-      <Sheet open={!!setMenuSet} onClose={() => setSetMenu(null)} title="Set type">
+      <Sheet open={!!setMenuSet} onClose={() => setSetMenu(null)} title={t('editor.setType')}>
         {setMenuEx && setMenuSet && (
           <div className="set-menu">
             <div className="set-type-grid">
@@ -479,15 +491,15 @@ export function WorkoutEditor({
                 </button>
               ))}
             </div>
-            {mode !== 'routine' && (
+            {mode !== 'routine' && settings.showRpe && (
               <>
-                <h3 className="list-label">RPE — how hard was it?</h3>
+                <h3 className="list-label">{t('editor.rpeTitle')}</h3>
                 <div className="chips wrap">
                   <button
                     className={`chip ${setMenuSet.rpe === undefined ? 'on' : ''}`}
                     onClick={() => updateSet(setMenuEx.id, setMenuSet.id, { rpe: undefined })}
                   >
-                    None
+                    {t('common.none')}
                   </button>
                   {RPE_OPTIONS.map((r) => (
                     <button
@@ -508,13 +520,13 @@ export function WorkoutEditor({
                 setSetMenu(null);
               }}
             >
-              <IconTrash size={18} /> Remove set
+              <IconTrash size={18} /> {t('editor.removeSet')}
             </button>
           </div>
         )}
       </Sheet>
 
-      <Sheet open={!!restEx} onClose={() => setRestFor(null)} title="Rest after each set">
+      <Sheet open={!!restEx} onClose={() => setRestFor(null)} title={t('editor.restTitle')}>
         {restEx && (
           <div className="chips wrap rest-grid">
             {REST_OPTIONS.map((r) => (
@@ -568,10 +580,10 @@ function StopwatchPanel({
   }, [reached, elapsed, goal, settings.timerSound, settings.timerVibrate]);
 
   return (
-    <div className={`stopwatch ${reached ? 'reached' : ''}`} role="timer" aria-label={`Stopwatch for set ${label}`}>
+    <div className={`stopwatch ${reached ? 'reached' : ''}`} role="timer" aria-label={t('stopwatch.label', { label })}>
       <div className="stopwatch-head">
-        <span>Set {label}</span>
-        {!!goal && <span>{`${target!.label} ${fmtClock(goal)}${reached ? ' reached' : ''}`}</span>}
+        <span>{t('stopwatch.set', { label })}</span>
+        {!!goal && <span>{t(reached ? 'stopwatch.goalReached' : 'stopwatch.goal', { label: target!.label, time: fmtClock(goal) })}</span>}
       </div>
       <div className="stopwatch-time">{fmtClock(elapsed)}</div>
       {!!goal && (
@@ -581,10 +593,10 @@ function StopwatchPanel({
       )}
       <div className="stopwatch-actions">
         <button className="btn btn-ghost" onClick={onCancel}>
-          Cancel
+          {t('common.cancel')}
         </button>
         <button className="btn btn-primary" onClick={onStop}>
-          <IconCheck size={18} /> Stop and save
+          <IconCheck size={18} /> {t('stopwatch.stop')}
         </button>
       </div>
     </div>

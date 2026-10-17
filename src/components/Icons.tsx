@@ -129,3 +129,66 @@ export const IconChart = (p: P) => base(p, <path d="M4 20V10M10 20V4M16 20v-7M22
 export const IconCloud = (p: P) => base(p, <path d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.1 4.75 4.75 0 0 0 7 18.5Z" />);
 export const IconUpload = (p: P) => base(p, <path d="M12 15V3M7 8l5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />);
 export const IconDownload = (p: P) => base(p, <path d="M12 3v12M7 10l5 5 5-5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />);
+
+// Settings sections
+export const IconUser = (p: P) =>
+  base(
+    p,
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4.5 20a7.5 7.5 0 0 1 15 0" />
+    </>,
+  );
+export const IconPalette = (p: P) =>
+  base(
+    p,
+    <>
+      <path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.2 0 1.8-.8 1.8-1.7 0-1.3-1-1.6-1-2.7 0-.9.7-1.6 1.6-1.6h2A3.6 3.6 0 0 0 20.5 11 8.5 8.5 0 0 0 12 3.5Z" />
+      <path d="M7.5 11h.01M10 7.5h.01M14.5 7.5h.01" strokeWidth={2.6} />
+    </>,
+  );
+export const IconAccessibility = (p: P) =>
+  base(
+    p,
+    <>
+      <circle cx="12" cy="4.5" r="1.8" />
+      <path d="M5 8.5c4.7 1.3 9.3 1.3 14 0M12 9v4.5m0 0-3 6.5m3-6.5 3 6.5" />
+    </>,
+  );
+export const IconGlobe = (p: P) =>
+  base(
+    p,
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9S14.6 18.4 12 21c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3Z" />
+    </>,
+  );
+export const IconDatabase = (p: P) =>
+  base(
+    p,
+    <>
+      <ellipse cx="12" cy="5.5" rx="7.5" ry="2.8" />
+      <path d="M4.5 5.5v13c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-13M4.5 12c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8" />
+    </>,
+  );
+export const IconInfo = (p: P) =>
+  base(
+    p,
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5.5M12 7.6h.01" strokeWidth={2.6} />
+    </>,
+  );
+export const IconRuler = (p: P) =>
+  base(p, <path d="m3.5 16.5 13-13 4 4-13 13-4-4ZM8.5 11.5l2 2M11.5 8.5l2 2M5.5 14.5l1.5 1.5" />);
+export const IconTarget = (p: P) =>
+  base(
+    p,
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="4.5" />
+      <circle cx="12" cy="12" r="0.8" fill="currentColor" />
+    </>,
+  );
+export const IconVolume = (p: P) => base(p, <path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4ZM15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" />);
+export const IconExternal = (p: P) => base(p, <path d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10" />);

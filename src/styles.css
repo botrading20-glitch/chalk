@@ -3935,6 +3935,59 @@ html[data-controls='large'] .rest-actions button {
   }
 }
 
+/* Large text on a phone under 380 px: the Previous column is too narrow for its full title, so it takes the
+   short one; with the largest text and larger controls it has no room at all and is hidden as above. */
+@media (max-width: 379px) {
+  html[data-text='large'] .set-head .prev-long,
+  html[data-text='xlarge'] .set-head .prev-long {
+    display: none;
+  }
+
+  html[data-text='large'] .set-head .prev-short,
+  html[data-text='xlarge'] .set-head .prev-short {
+    display: inline;
+  }
+
+  /* Values like "35 × 10" wrap onto two short lines rather than ending in an ellipsis. */
+  html[data-text='large'] .set-table .prev,
+  html[data-text='xlarge'] .set-table .prev {
+    font-size: 0.6875rem;
+    line-height: 1.15;
+    white-space: normal;
+  }
+}
+
+/* On a phone under 390 px the largest text squeezes the Previous column below 40 px (17 px at 360), too little for
+   anything, so it is hidden there too. */
+@media (max-width: 389px) {
+  html[data-text='xlarge'] .set-table .prev-col {
+    visibility: hidden;
+  }
+}
+
+/* The largest text leaves the Previous column about 50 px on a 412 px phone (6 px with larger controls on top),
+   so up to 460 px it takes the short title and wraps its values, and with larger controls it is hidden; the
+   grey placeholders in the boxes still show last time. */
+@media (max-width: 459px) {
+  html[data-text='xlarge'] .set-head .prev-long {
+    display: none;
+  }
+
+  html[data-text='xlarge'] .set-head .prev-short {
+    display: inline;
+  }
+
+  html[data-text='xlarge'] .set-table .prev {
+    font-size: 0.6875rem;
+    line-height: 1.15;
+    white-space: normal;
+  }
+
+  html[data-controls='large'][data-text='xlarge'] .set-table .prev-col {
+    visibility: hidden;
+  }
+}
+
 /* ---------- Welcome ---------- */
 
 .welcome {

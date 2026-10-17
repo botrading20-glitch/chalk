@@ -2,6 +2,19 @@
 
 Completed roadmap work, newest first. Evidence is in `TEST_STATUS.md` and on each task in `DEVELOPMENT_ROADMAP.md`.
 
+## 2026-10-17: Setward 1.0 launch work (branch `launch`, verified, not yet released)
+
+| Task | Result | Notes |
+|------|--------|-------|
+| LAUNCH-M1 | Hevy retired; Strong import and Setward CSV | roadmap LAUNCH-M1 |
+| LAUNCH-M2 | i18n layer, settings model, rem and logical CSS | roadmap LAUNCH-M2 |
+| LAUNCH-M3 | The Forward look on every screen | roadmap LAUNCH-M3 |
+| LAUNCH-M4 | Grouped Settings, every new setting wired | roadmap LAUNCH-M4 |
+| LAUNCH-M5 | Welcome, starter programs, past workouts, recent records | roadmap LAUNCH-M5 |
+| LAUNCH-M6 | Ten translations and Arabic right to left | roadmap LAUNCH-M6 |
+| LAUNCH-M7 | Link previews, privacy page, licence, README, wide-screen panel, 1.0.0 and What's new, Play notes | roadmap LAUNCH-M7 |
+| LAUNCH-M8 | Full verification and REL-104 | roadmap LAUNCH-M8; waits for the owner's go-ahead |
+
 ## 2026-10-16: data check (merged as e7ad7fe and deployed)
 
 | Task | Result | Commit |

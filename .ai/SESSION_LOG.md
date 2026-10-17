@@ -1,5 +1,20 @@
 # Session log
 
+## Session: 2026-10-16 to 2026-10-17 (Setward 1.0 launch work)
+
+The owner approved a launch plan (`LAUNCH_PLAN.md`) and then released each milestone to me in turn: M1 to M8 on the local branch `launch`, each committed, each with its checks in `TEST_STATUS.md`. At the end all of it is verified (REL-104) and **nothing is merged, pushed or deployed**: the last step, as agreed, is to ask the owner before merging `launch` into `main`.
+
+What changed for users: Hevy removed in favour of Strong and Setward CSV; the Forward look; grouped Settings with accessibility and comfort options; a welcome screen, six starter programs, logging a past workout and recent records; ten machine translations with right-to-left Arabic; link previews, a privacy page, an MIT licence, a user README, home-screen shortcuts, a wide-screen panel, version 1.0.0 with a What's new sheet; Play Store groundwork. Details per milestone are in the roadmap.
+
+Problems met and what they taught:
+- A phone-sized browser widens `window.innerWidth` to fit an overflowing page, so overflow checks against it passed. M6 and M8 sweeps use `document.documentElement.clientWidth` and found real overflows (long button labels, a Polish record pill, German table headers, the live workout's Previous column at large text), all fixed.
+- Shell commands over about 6 KB fail with "unexpected EOF"; long edits went through script files in the scratchpad.
+- A single browser-tool call times out after 45 s, so long sweeps run in the background in the page and are polled.
+- Hot reload of `data.tsx` duplicates its context ("useData must be used inside DataProvider"): a dev artefact, reload the page.
+- The share card drew every line left to right, which garbled Arabic durations; each line now takes the direction of its script.
+
+Open for the owner: the release decision (REL-104), phone checks, a native-speaker look at the translations, the copyright holder in `LICENSE`, and the Google Play decisions in `PLAY_STORE.md`.
+
 ## Session: 2026-10-16 (release of REL-103)
 
 The owner said "Merge data-check into main and push it". Merged as e7ad7fe (`--no-ff`, message file); on `main`: typecheck, 88 tests, `/chalk/` build (same bundle `index-D2GzHZz1.js` as the branch), `npm ci --dry-run` and a secret scan of the merged diff passed. Pushed 663cb56..e7ad7fe; Pages run 38953196792 succeeded (build 21 s, deploy 11 s, 0 annotations on both jobs). Live: new bundle, Setward manifest with the `/chalk/` scope, CSP meta, service worker in control, 5 routes without overflow, Check data opens and reads "No problems found" on empty storage, 0 CSP violations, no console errors. Stopping point: released; waiting for the owner's phone checks. The commit recording this release in the notes was pushed afterwards at the owner's request ("Push the notes commit"); that deployed the same bundle again.

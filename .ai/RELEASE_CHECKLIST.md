@@ -2,6 +2,33 @@
 
 Pushing `main` deploys to the live app (NN-15); each new release needs the owner's authorization.
 
+## REL-104: branch `launch` (Setward 1.0), verified 2026-10-17, NOT yet released
+
+**Decision: READY WITH DOCUMENTED LIMITATIONS, waiting for the owner's go-ahead (NN-15).** Nothing is merged, pushed or deployed. The branch is local, eight milestones ahead of `main` (M1 Hevy removal and Strong import, M2 i18n and settings model, M3 the Forward look, M4 grouped Settings, M5 welcome / starter programs / past workouts / recent records, M6 ten languages and Arabic right to left, M7 link previews / privacy page / licence / README / wide-screen panel / What's new / store notes, M8 verification fixes). Rollback after a release: `git revert -m 1 <merge>` and push; installed copies update on next open.
+
+**Data safety:** no Dexie schema change and no sync-format change in the whole branch (the `chalk` database name, backup `app: 'chalk'`, `chalk-sync/1` and the `/chalk/` scope are untouched). New per-device state is prefs in `kv` (`lastSeenVersion`, `welcomeSeen`, backup reminder) and new fields in the settings record with defaults, so an existing install opens exactly as before, keeps English until the user picks a language, and sees the What's new sheet once. Backups made by any earlier version still restore (`backup.test.ts`).
+
+| Area | State |
+|------|-------|
+| Typecheck, 163 tests (2 skipped), contrast 732 pairs 0 failing, `npm ci --dry-run`, secret scan, tree clean | ✅ |
+| `/chalk/` production build | ✅ main chunk 168.55 kB gzip (baseline 153.77); languages 14 to 17.5 kB each, lazy and precached; Arabic font cached on first use; 37 precache entries |
+| Smoke S-01 to S-16 (dev with sample data, and the preview on empty storage) | ✅ |
+| Existing user: no welcome screen, data intact (65 workouts, 6 routines, 1,004 exercises, 16 weigh-ins) | ✅ dev |
+| First run: welcome, starter program, workout, save; past workout; backup, erase, restore; Strong and Setward CSV; data check; crash screen and repair (in French) | ✅ preview |
+| Offline: reload with the server down, in French | ✅ preview |
+| Overflow: every route, all ten languages at 320 and 375 px (and German, French, Dutch, Polish, Turkish, Arabic at extra-large text with larger controls); English at 320, 360, 375 and 412 px in four or more setting combinations; all measured against `clientWidth` | ✅ after the fixes recorded in TEST_STATUS (M6, M8) |
+| Keyboard and reduced motion | ✅ no unnamed control on 27 routes, arrow keys in radio groups, motion off under the setting |
+| CSP and service worker | ✅ 0 violations; `privacy.html` served as itself; no console errors in the final build |
+| Owner's go-ahead (NN-15) | ⏳ asked, not given |
+| Real phone, iPhone, screen reader | ⚠ not run (owner) |
+| Native-speaker review of the translations | ⚠ not run: all ten are machine translations |
+| Real link previews (Facebook debugger, WhatsApp) and launcher long-press shortcuts | ⚠ need the deployed address and a phone |
+| Google Play | ⚠ groundwork only (`.ai/PLAY_STORE.md`); screenshots must be retaken; the owner decides fee, testers, package name |
+
+Known limitations: the translations are machine-made and some wording will be off; exercise names and instructions stay English; a few translated words are short on purpose (German "Weiter", the set-table headers); at the largest text size the live workout's Previous column is hidden on phones, and the placeholders show last time instead; the Arabic font needs the network the first time Arabic is shown; the privacy page is English only; `LICENSE` names "The Setward authors" until the owner chooses a name; sweeps before M6 may have been measured against `innerWidth` (redone for the whole app in M6 and M8).
+
+After a release, the owner (or a session with the live address) should check: the live page loads and the service worker updates; the What's new sheet appears once on a device that has data; `/chalk/privacy.html` opens as the privacy page; Chrome devtools, Application, Manifest shows the shortcuts and screenshots with no errors; a link to the app pasted into Facebook's sharing debugger and WhatsApp shows the preview image.
+
 ## REL-103: branch `data-check` (Check data), released 2026-10-16
 
 **Decision: READY WITH DOCUMENTED LIMITATIONS.** The owner approved ("Merge data-check into main and push it"); merged as e7ad7fe and deployed (Pages run 38953196792). No data migration, schema change or sync-format change: the check only reads, and writes only when the user taps Repair or Delete. Rollback: `git revert -m 1 e7ad7fe` and push.
@@ -85,3 +112,6 @@ Known limitations: no screen-reader pass; iPhone untested; Android lock-screen c
 5. REL-101 (deployed 2026-10-05): the installed app's name and home-screen icon become Setward (accept Chrome's update prompt if it shows one), and all workouts are still there.
 6. REL-101: deleting a custom exercise that a routine uses is refused with a message saying where it's used.
 7. REL-103 (deployed 2026-10-16): Settings → Your data → *Check data for problems* reads "No problems found" with your counts of workouts, routines, exercises and weigh-ins.
+8. REL-104 (once released): open the app on your phone and let it update; the What's new sheet shows once and all your workouts, routines and settings are still there. Settings → Language: try French and Arabic. A real set with the rest timer and the screen locked still beeps (NN-13).
+9. REL-104: long-press the home-screen icon (Android): *Start workout* and *Log body weight* open the right screens.
+10. REL-104: Settings → About → Privacy → *Privacy page* opens the static policy.

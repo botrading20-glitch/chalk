@@ -1,5 +1,30 @@
 # Test status
 
+## Full verification for 1.0 (LAUNCH-M8): 2026-10-17, branch `launch` after M7, with the M8 fixes
+
+Environment: Windows 11, built-in Chromium; dev server on :5173 with the sample backup (65 workouts, 6 routines) and the production preview on :4173/chalk/ (empty storage); phone emulation 320, 360, 375 and 412 px.
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Types / tests / contrast / lockfile / secrets | PASS | `tsc` exit 0; 163 passed, 2 skipped; 732 pairs, 0 failing; `npm ci --dry-run` exit 0; no key patterns in the 223 tracked files; tree clean |
+| Production build | PASS | main chunk 168.55 kB gzip (153.77 at the 2026-10 baseline); CSS 12.40; Settings 10.25, Welcome 1.18, Programs 2.01; languages 14.39 (id) to 17.46 (ar) kB, all lazy; 37 precache entries, 2.07 MB |
+| S-01 existing user | PASS | no welcome screen, no What's new (already seen), counts intact: 65 / 6 / 1,004 / 16 |
+| S-02 to S-06 live workout | PASS | four tabs and back; routine started; two sets checked, rest bar, +15 / −15 (90, 105, 89), Skip; a typed 77.5 and 2 checked sets survive a reload; Finish, Save, celebration "Workout 66 saved, 2 new records"; Save as routine, then start it with pre-filled sets; edit the title and save ("Workout updated"); delete (data restored to 65 / 6) |
+| S-07 / S-08 offline and sub-path | PASS | preview at `/chalk/`; server stopped, page reloaded from the service worker in French with data intact |
+| S-09 backup round trip | PASS | Back up now (app `chalk`, version 1), Erase all data, welcome, Restore a backup: 2 workouts and 3 routines back |
+| S-10 CSV | PASS | the export has units in the column names; re-importing it says "2 workouts already here will be skipped"; a Strong CSV previews 2 new workouts and 1 new exercise and imports ("Imported 2 workouts") |
+| S-11 / S-12 crash and data check | PASS | a damaged workout in IndexedDB shows the recovery screen (French); *Check for damaged data* lists it; Delete then confirm removes it ("Plus aucun problème"); Reload opens the app; a healthy database reads "No problems found" |
+| S-13 / S-14 first run, past workout | PASS | empty storage lands on the welcome page; Full body adds a folder with 3 routines; a workout is saved (100 lb stored as 45.36 kg); reload stays on Home; an empty past-workout save is refused, the draft is restored after leaving, save leads to the celebration |
+| S-15 / S-16 | PASS | languages (M6); What's new, shortcuts and privacy page (M7) |
+| Overflow, English, `clientWidth` | PASS after fixes | 27 routes in default, light + high contrast, black + large + teal, extra-large, extra-large + larger controls and extra-large + light + high contrast + larger controls, at 320 / 360 / 375 / 412 px. Found and fixed: the live workout's Previous header and values at large text (see roadmap LAUNCH-M8) |
+| Overflow, other languages | PASS | M6 sweeps (ten languages at 320 and 375 px, six at extra-large) plus German, Polish and Arabic at extra-large and 360 px after the M8 CSS |
+| Keyboard | PASS | no unnamed button, link, input or summary on 27 routes, no positive `tabindex`; ArrowRight in the accent radio group moves Purple to Indigo, applies it and moves focus |
+| Reduced motion | PASS | setting "Always": `data-motion="reduce"`, button transition 0 s (was 0.12 s), the pulse animation none |
+| CSP / console | PASS | 0 violations through first run, restore, import and language switches; no console errors from the final bundle |
+| Phone / iPhone / screen reader / native speakers / real link previews | NOT_RUN | listed in `RELEASE_CHECKLIST.md` REL-104 for the owner |
+
+Dev-browser state after the run: sample data restored, default settings, no running workout.
+
 ## Public and store readiness (LAUNCH-M7): 2026-10-17, branch `launch`
 
 Environment: Windows 11, built-in Chromium, dev server on localhost:5173 (sample backup) and production preview on localhost:4173/chalk/ (a new, empty origin), phone emulation at 412 px, desktop at 1280 px.

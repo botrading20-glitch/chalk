@@ -7,6 +7,7 @@ import { Empty, ExerciseAvatar, PageHeader, Segmented } from '../components/ui';
 import { db } from '../db';
 import { useData } from '../lib/data';
 import { exerciseUses, reassignExercise } from '../lib/exercises';
+import { recordFormat } from '../lib/recordFormat';
 import { fmtClock, fmtDate, fmtNum, kgTo, kmTo } from '../lib/format';
 import { COUNTS_VOLUME, EQUIPMENT_LABEL, MUSCLE_LABEL, TYPE_LABEL } from '../lib/meta';
 import { Link, navigate } from '../lib/router';
@@ -40,21 +41,6 @@ function metricFormatter(metric: SessionMetric, s: Settings) {
   if (metric === 'maxDuration') return (v: number) => fmtClock(v);
   if (metric === 'maxDistance') return (v: number) => `${fmtNum(v, 2)} ${s.distanceUnit}`;
   return (v: number) => count('rep', v);
-}
-
-function recordFormat(kind: RecordKind, v: number, s: Settings) {
-  switch (kind) {
-    case 'weight':
-    case 'e1rm':
-    case 'volume':
-      return `${fmtNum(kgTo(v, s.weightUnit), 1)} ${s.weightUnit}`;
-    case 'reps':
-      return count('rep', v);
-    case 'duration':
-      return fmtClock(v);
-    case 'distance':
-      return `${fmtNum(kmTo(v, s.distanceUnit), 2)} ${s.distanceUnit}`;
-  }
 }
 
 export function ExerciseDetail({ id }: { id: string }) {

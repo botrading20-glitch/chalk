@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { IconPlus } from '../components/Icons';
 import { Empty, PageHeader } from '../components/ui';
 import { WorkoutCard } from '../components/WorkoutCard';
 import { useData } from '../lib/data';
@@ -30,7 +31,15 @@ export function History() {
 
   return (
     <div className="page">
-      <PageHeader large title={t('tab.history')} />
+      <PageHeader
+        large
+        title={t('tab.history')}
+        actions={
+          <Link to="/history/new" className="icon-btn" aria-label={t('logPast.action')}>
+            <IconPlus />
+          </Link>
+        }
+      />
       {workouts.length === 0 && (
         <Empty
           title={t('history.empty')}
@@ -39,7 +48,10 @@ export function History() {
               <button className="btn btn-primary" onClick={() => beginWorkout()}>
                 {t('history.start')}
               </button>
-              <Link to="/settings" className="btn btn-ghost">
+              <Link to="/history/new" className="btn btn-ghost">
+                {t('logPast.action')}
+              </Link>
+              <Link to="/settings/data" className="btn btn-ghost">
                 {t('import.workouts')}
               </Link>
             </div>

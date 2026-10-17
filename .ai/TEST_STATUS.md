@@ -1,5 +1,23 @@
 # Test status
 
+## Welcome, programs, past workouts, recent records (LAUNCH-M5): 2026-10-17, branch `launch`
+
+Environment: Windows 11, built-in Chromium, dev server on localhost:5173 (sample backup) and production preview on localhost:4173/chalk/ (storage wiped for the first-run tests), 375 and 320 px.
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Types / tests | PASS | `tsc --noEmit` exit 0; 125 passed, 2 skipped (new: `welcome.test.ts`, `programs.test.ts` incl. every exercise id in the library and `addProgram` through IndexedDB, `records.test.ts`) |
+| Contrast | PASS | 732 pairs, 0 failing |
+| Production build | PASS | main chunk 166.85 kB gzip; Welcome 1.18, Programs 2.00, Settings 10.19 kB (lazy) |
+| First run | PASS | Wiped storage: lands on `#/welcome` (no tab bar), `language: auto`, units from the region; starter program → Push / Pull / Legs → 3 routines in a folder, `welcomeSeen` true, reload stays on Home. Second wipe: Skip → empty Home with "Browse starter programs", reload stays on Home |
+| Existing user | PASS | The dev browser (65 workouts, 6 routines) opens Home, never the welcome page |
+| Programs | PASS | Preview sheet lists the exercises with sets × reps; Add creates the routines; a second add asks first (code path; the prompt itself not clicked) |
+| Past workout | PASS | Empty save refused with a message; a draft survives leaving the page; Save writes the workout (sets marked done), clears the draft and opens the celebration |
+| Recent records | PASS | Progress lists 6 entries with the headline record and "+N more" |
+| Overflow sweep | PASS | 14 routes at 375 and 320 px, three setting combinations; one fix (`.setting` wraps) |
+| CSP / service worker | PASS | 0 violations through the whole first-run flow; service worker in control |
+| Phone / screen reader | NOT_RUN | Needs the owner's phone |
+
 ## Settings experience (LAUNCH-M4): 2026-10-17, branch `launch`
 
 Environment: Windows 11, built-in Chromium, dev server on localhost:5173 and production preview on localhost:4173/chalk/ (sample backup), 375 and 320 px.

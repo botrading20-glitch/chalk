@@ -1,9 +1,12 @@
 # Current task
 
 ## Task
-Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, not deployed). The owner-approved plan is `.ai/LAUNCH_PLAN.md`; milestone status is in the roadmap ("Setward 1.0 launch"). **Stopped after M4** (Settings experience, 2026-10-17): M1 (Hevy retired, Strong import, Setward CSV), M2 (i18n layer, settings model, rem/logical CSS), M3 (the Forward look on every screen) and M4 (grouped Settings with every new setting wired) are done and committed. M5 (welcome, starter programs, log a past workout, recent records) is next. REL-101 to REL-103 are live and still wait on the owner's phone checks.
+Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, not deployed). The owner-approved plan is `.ai/LAUNCH_PLAN.md`; milestone status is in the roadmap ("Setward 1.0 launch"). **Stopped after M5** (2026-10-17): M1 (Hevy retired, Strong import, Setward CSV), M2 (i18n layer, settings model, rem/logical CSS), M3 (the Forward look), M4 (grouped Settings, every new setting wired) and M5 (welcome, starter programs, log a past workout, recent records) are done and committed. M6 (the ten translations and Arabic right-to-left) is next. REL-101 to REL-103 are live and still wait on the owner's phone checks.
 
-## This session (2026-10-17): M4
+## This session (2026-10-17): M5
+- Owner approved starting M5 and asked to see the welcome screen first: sent dark and light 375 px screenshots as soon as it existed, then built the programs, the past-workout editor and the records list. Details and evidence: roadmap LAUNCH-M5 and `TEST_STATUS.md`.
+
+## Earlier today (2026-10-17): M4
 - Owner approved starting M4 and asked to see the Settings home first: sent dark and light 375 px screenshots as soon as the home existed, then built the eleven pages and wired the settings. Details and evidence: roadmap LAUNCH-M4 and `TEST_STATUS.md`.
 
 ## Earlier today (2026-10-17): M3 checkpoint 2 and checks
@@ -41,9 +44,9 @@ Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, 
 - ENV-002: deploy jobs are pinned to `ubuntu-24.04` (2026-10-05) because `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19. Revisit when GitHub retires that image.
 
 ## Next exact action (resume here)
-1. `git checkout launch` (HEAD should be the commit "Add the grouped Settings pages and wire the new settings"). Read the roadmap section LAUNCH-M4 and M5 in `.ai/LAUNCH_PLAN.md`.
-2. Start **M5**: the welcome screen (`#/welcome`, shown only with no workouts, no routines and `welcomeSeen` false; `welcomeSeen` is in `src/lib/prefs.ts`), starter programs (`src/data/programs.ts`, with a test that every exercise id exists), log a past workout (`#/history/new`, reusing `EditWorkout`), recent records on Progress (`src/lib/records.ts`). Every string goes through `t()`; the look is the Forward look (use `SlantBar`, `.btn-glow` only for the hero action).
-3. Then M6 (Settings home and sub-pages, which also converts `src/pages/Settings.tsx`, the one screen still hard-coded in English), M5, M6, M7, M8 in order. Merge and push only with the owner's go-ahead (NN-15).
+1. `git checkout launch` (HEAD should be the commit "Add the welcome screen, starter programs, past workouts and recent records"). Read the roadmap section LAUNCH-M5 and M6 in `.ai/LAUNCH_PLAN.md`.
+2. Start **M6**: translate the final English catalog (`src/i18n/en/*.ts`, including `settingsPages.ts` and `welcome.ts`) into French, Arabic, Spanish, German, Brazilian Portuguese, Italian, Turkish, Dutch, Polish and Indonesian with every plural form `Intl.PluralRules` needs; register loaders in `LOADERS` (`src/i18n/index.ts`); `src/i18n/i18n.test.ts` checks same keys, plural forms and placeholders. Arabic needs a right-to-left pass on every screen (directional icons through `.flip-rtl`, charts and numbers kept left to right), an Arabic font from Fontsource, and no uppercase styling; do a German pass at 320 px. The Language page says translations are machine-made. Starter program titles, summaries and session names are catalog keys (`prog.*`); exercise names stay English.
+3. Then M7 (Settings home and sub-pages, which also converts `src/pages/Settings.tsx`, the one screen still hard-coded in English), M5, M6, M7, M8 in order. Merge and push only with the owner's go-ahead (NN-15).
 
 ### M3 design brief (decided, not yet built)
 - Keep the violet-charcoal palette, purple accent, Big Shoulders Display and Archivo. Owner asked for refine + bolder together. Amend NN-16 in `DECISIONS.md` when it lands.
@@ -56,9 +59,9 @@ Setward 1.0 launch work on branch `launch` (local only: not pushed, not merged, 
 - **Bash tool limit:** a single command longer than about 6 KB fails with "unexpected EOF". Split big heredocs into several calls. Doubled backslashes in a command are collapsed to one, so build strings containing a backslash with `chr(92)` or raw strings.
 - **Handy helper pattern:** small python scripts that replace exact strings (each old string must exist once) were used for all the string extraction. `src/i18n/en/*.ts` holds the catalog parts, merged in `src/i18n/en.ts`; add a key there and use `t('key')`.
 - Dev server: `.claude/launch.json` → `chalk-dev` (:5173) and `chalk-preview` (:4173, built with `MSYS_NO_PATHCONV=1 BASE_PATH=/chalk/ npm run build`). The dev browser has the sample data and default settings. No server is left running.
-- Baseline at the stop: typecheck clean, 104 tests pass (2 skipped), contrast 0 of 732 failing, 113 tests, `/chalk/` build main chunk 164.82 kB gzip (Settings chunk 10.29 kB, lazy).
+- Baseline at the stop: typecheck clean, 104 tests pass (2 skipped), contrast 0 of 732 failing, 125 tests, `/chalk/` build main chunk 166.85 kB gzip (Settings, Welcome and Programs are lazy chunks).
 - The dev browser has the sample data; its settings row was reset (theme System, no goal, no name). To see the week card with a goal: `(await import('/src/lib/settings.ts')).updateSettings({ weeklyGoal: 4, profileName: 'Name' })` in the page console.
 - The Hevy removal is final (owner decision); do not reintroduce Hevy wording.
 
 ## Last updated
-2026-10-17 (M4 done; M5 next)
+2026-10-17 (M5 done; M6 next)

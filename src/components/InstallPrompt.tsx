@@ -16,7 +16,7 @@ const bold = (text: string) => <strong>{text}</strong>;
 const DISMISSED = 'installDismissed';
 
 /** Whether there's anything to offer: not already installed, and a phone or a browser with its own install dialog. */
-function useInstallOffer() {
+export function useInstallOffer() {
   const { installed, canPrompt } = useInstall();
   return !installed && (installPlatform !== 'other' || canPrompt);
 }
@@ -63,7 +63,7 @@ export function InstallSettings() {
 }
 
 /** Opens the browser's install dialog when it offers one, otherwise the how-to sheet. */
-function InstallButton({ className }: { className: string }) {
+export function InstallButton({ className }: { className: string }) {
   const { canPrompt } = useInstall();
   const [howTo, setHowTo] = useState(false);
 

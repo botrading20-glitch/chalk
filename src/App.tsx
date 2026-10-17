@@ -7,7 +7,7 @@ import { useRoute } from './lib/router';
 import { useAppearance, useFormatKey } from './lib/appearance';
 import { ActiveWorkoutPage } from './pages/ActiveWorkout';
 import { BodyWeightPage } from './pages/BodyWeight';
-import { EditWorkout } from './pages/EditWorkout';
+import { EditWorkout, NewWorkout } from './pages/EditWorkout';
 import { ExerciseDetail } from './pages/ExerciseDetail';
 import { ExerciseEdit } from './pages/ExerciseEdit';
 import { Exercises } from './pages/Exercises';
@@ -22,6 +22,9 @@ import { Link } from './lib/router';
 // Settings is rarely open and brings the import, sync and data-check code with it, so it loads on demand
 // (the service worker precaches the chunk, so it still works offline).
 const SettingsPage = lazy(() => import('./pages/Settings').then((m) => ({ default: m.SettingsPage })));
+// The welcome screen and the starter programs (with their exercise lists) are the same kind of rarely-used code.
+const WelcomePage = lazy(() => import('./pages/Welcome').then((m) => ({ default: m.WelcomePage })));
+const ProgramsPage = lazy(() => import('./pages/Programs').then((m) => ({ default: m.ProgramsPage })));
 
 export function App() {
   useAppearance();
@@ -39,7 +42,15 @@ export function App() {
       page = <ActiveWorkoutPage />;
       break;
     case 'history':
-      page = !s1 ? <History /> : s2 === 'edit' ? <EditWorkout id={s1} /> : <WorkoutDetail id={s1} justSaved={query.has('saved')} />;
+      page = !s1 ? (
+        <History />
+      ) : s1 === 'new' ? (
+        <NewWorkout />
+      ) : s2 === 'edit' ? (
+        <EditWorkout id={s1} />
+      ) : (
+        <WorkoutDetail id={s1} justSaved={query.has('saved')} />
+      );
       break;
     case 'exercises':
       page = !s1 ? (
@@ -54,6 +65,12 @@ export function App() {
       break;
     case 'routines':
       page = <RoutineEdit id={s1 === 'new' ? undefined : s1} folder={query.get('folder') ?? undefined} />;
+      break;
+    case 'programs':
+      page = <ProgramsPage />;
+      break;
+    case 'welcome':
+      page = <WelcomePage />;
       break;
     case 'profile':
       page = s1 === 'bodyweight' ? <BodyWeightPage /> : <Profile />;
@@ -70,7 +87,7 @@ export function App() {
   }
 
   // Editing screens get the full height; the tab bar would only invite losing changes.
-  const focused = s0 === 'workout' || s0 === 'routines' || s2 === 'edit' || s1 === 'new';
+  const focused = s0 === 'workout' || s0 === 'routines' || s0 === 'welcome' || s2 === 'edit' || s1 === 'new';
 
   return (
     <div className="app" key={formatKey}>

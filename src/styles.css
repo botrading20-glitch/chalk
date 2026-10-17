@@ -3083,10 +3083,16 @@ dialog.sheet-full {
 
 .setting {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 6px 12px;
   min-height: 48px;
+}
+
+/* At the largest text a label and its control stack instead of pushing past the edge. */
+.setting > .chip-select {
+  max-width: 100%;
 }
 
 .setting .segmented {
@@ -3830,4 +3836,187 @@ html[data-controls='large'] .rest-actions button {
   html[data-controls='large'][data-text='xlarge'] .set-table .prev-col {
     visibility: hidden;
   }
+}
+
+/* ---------- Welcome ---------- */
+
+.welcome {
+  padding-top: calc(env(safe-area-inset-top) + 28px);
+}
+
+.welcome-hero {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.welcome-mark {
+  color: var(--accent-ink);
+  filter: drop-shadow(0 8px 24px color-mix(in srgb, var(--accent) 60%, transparent));
+}
+
+.welcome-title {
+  margin-top: 6px;
+  font: 800 2.75rem/0.95 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.welcome-hero p {
+  max-width: 34ch;
+}
+
+.start-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.start-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 72px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--surface-hi), var(--surface));
+  box-shadow: var(--lift), var(--elev-1);
+  text-align: start;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.start-option:active {
+  transform: scale(0.985);
+}
+
+.start-option.primary {
+  background: var(--wash);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  box-shadow: var(--lift), var(--elev-2);
+}
+
+.start-text {
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  line-height: 1.3;
+}
+
+.welcome-install {
+  align-items: flex-start;
+}
+
+.welcome-install .install-text {
+  gap: 4px;
+}
+
+.welcome-skip {
+  align-self: center;
+}
+
+/* ---------- Starter programs ---------- */
+
+.program-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.program-card {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  text-align: start;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.program-card:active {
+  transform: scale(0.985);
+}
+
+.program-title {
+  font: 700 1.625rem/1.05 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.program-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.program-card .chip {
+  min-height: 28px;
+  font-size: 0.8125rem;
+}
+
+.program-preview {
+  display: grid;
+  gap: 14px;
+}
+
+.program-day .list-label {
+  margin-top: 0;
+}
+
+.program-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.9375rem;
+}
+
+.program-row:last-child {
+  border-bottom: 0;
+}
+
+/* ---------- Recent records (Progress) ---------- */
+
+.rec-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  text-decoration: none;
+}
+
+.top-list li + li .rec-row {
+  border-top: 1px solid var(--line);
+}
+
+.rec-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.rec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.rec-head .ex-row-name {
+  min-width: 0;
+}
+
+.rec-head .small {
+  flex: none;
+}
+
+.rec-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }

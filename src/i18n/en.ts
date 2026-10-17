@@ -6,6 +6,7 @@ import home from './en/home';
 import pages from './en/pages';
 import settings from './en/settings';
 import settingsPages from './en/settingsPages';
+import welcome from './en/welcome';
 import workout from './en/workout';
 import labels from './en/labels';
 import time from './en/time';
@@ -23,4 +24,5 @@ export const en = {
   ...pages,
   ...settings,
   ...settingsPages,
+  ...welcome,
 };

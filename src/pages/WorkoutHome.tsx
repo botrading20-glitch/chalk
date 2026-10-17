@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Brand } from '../components/Brand';
 import { confirmDialog, toast } from '../components/dialogs';
 import { IconChevron, IconCopy, IconEdit, IconFolder, IconFolderPlus, IconGrip, IconMore, IconPlay, IconPlus, IconTrash } from '../components/Icons';
@@ -15,6 +15,7 @@ import { groupRoutines, removeFolder, toggleFolder, useCollapsedFolders, type Fo
 import { fmtClock, fmtDate, startOfDay, uid } from '../lib/format';
 import { Link, navigate } from '../lib/router';
 import { useSettings } from '../lib/settings';
+import { useWelcomeGate } from '../lib/welcome';
 import { useSyncStatus } from '../lib/sync';
 import {
   cloneExercises,
@@ -54,9 +55,16 @@ export function WorkoutHome() {
   /** The folder being reordered; `folder` is absent for the routines in no folder. */
   const [reorder, setReorder] = useState<{ folder?: string } | null>(null);
   const collapsed = useCollapsedFolders();
+  const welcome = useWelcomeGate();
+  // A brand-new install opens on the welcome screen; anyone with data never sees it.
+  useEffect(() => {
+    if (welcome) navigate('/welcome', { replace: true });
+  }, [welcome]);
   const { folders, loose } = groupRoutines(routines ?? []);
   const groupOf = (folder?: string) => (folder ? (folders.find((f) => f.name === folder)?.routines ?? []) : loose);
   const card = (r: Routine) => <RoutineCard key={r.id} routine={r} onMenu={() => setMenu(r)} />;
+
+  if (welcome === undefined || welcome) return null;
 
   return (
     <div className="page">
@@ -91,17 +99,22 @@ export function WorkoutHome() {
           <Empty
             title={t('home.noRoutines')}
             action={
-              workouts.length > 0 ? (
-                <button
-                  className="btn btn-secondary"
-                  onClick={async () => {
-                    const created = await createRoutinesFromHistory();
-                    toast(created.length ? t('home.created', { n: created.length }) : t('home.noRepeats'));
-                  }}
-                >
-                  {t('home.fromHistory')}
-                </button>
-              ) : undefined
+              <div className="empty-actions">
+                <Link to="/programs" className="btn btn-secondary">
+                  {t('prog.browse')}
+                </Link>
+                {workouts.length > 0 && (
+                  <button
+                    className="btn btn-ghost"
+                    onClick={async () => {
+                      const created = await createRoutinesFromHistory();
+                      toast(created.length ? t('home.created', { n: created.length }) : t('home.noRepeats'));
+                    }}
+                  >
+                    {t('home.fromHistory')}
+                  </button>
+                )}
+              </div>
             }
           >
             {t('home.noRoutinesText')}
@@ -115,6 +128,11 @@ export function WorkoutHome() {
         ))}
         {folders.length > 0 && loose.length > 0 && <h3 className="list-label">{t('home.notInFolder')}</h3>}
         <div className="routine-list">{loose.map(card)}</div>
+        {!!routines?.length && (
+          <Link to="/programs" className="btn btn-ghost btn-block">
+            {t('prog.browse')}
+          </Link>
+        )}
       </section>
 
       <ActionSheet

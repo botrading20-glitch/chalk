@@ -1,16 +1,15 @@
 # Current task
 
-## RESUME HERE: Setward 1.1 is built and verified on `training-tools`; waiting for the owner (2026-10-18)
+## RESUME HERE: Setward 1.1.0 is released and live (2026-10-18)
 
-**Branch `training-tools`** (cut from `main` @ 032513f; `main` is untouched, nothing pushed or merged, NN-15). All seven milestones are done and committed: M1 c6e8ba3 (e55f6ce), M2 2c85ed2, M3 ecfa27e, M4 daa4c63, M5 71cb1d0, M6 e1dafee, M7 the release-prep commit on top. Plan: `~/.claude/plans/c-users-ousse-downloads-fitness-app-imp-iridescent-hickey.md`. Details, evidence and limits per milestone: `DEVELOPMENT_ROADMAP.md` (TT-M1 to TT-M7), `TEST_STATUS.md` (Training tools), release record `RELEASE_CHECKLIST.md` REL-105.
+`training-tools` was merged into `main` with `--no-ff` as 5d93525 and pushed at the owner's choice ("Merge training-tools into main and push"); Pages run 39141053406 succeeded and the live page was checked (REL-105 in `RELEASE_CHECKLIST.md`, `TEST_STATUS.md`). The notes commit after the merge is local only: a push deploys again, so push it only when the owner asks. Rollback of the release: `git revert -m 1 5d93525` and push. Details per milestone: `DEVELOPMENT_ROADMAP.md` (TT-M1 to TT-M7).
 
-**Baseline at the stop:** version 1.1.0; typecheck clean; 217 tests pass (2 skipped); contrast 0 of 732 failing; `/chalk/` production build fine (index chunk 112.6 kB gzip, 39 precache entries). No server is running. The dev browser origin (localhost:5173) holds the sample data; its language is back to English.
+**Baseline:** version 1.1.0; typecheck clean; 217 tests pass (2 skipped); contrast 0 of 732 failing; `/chalk/` build with 39 precache entries. No server is running. The dev browser origin (localhost:5173) holds the sample data.
 
 ### Next exact action
-1. **Ask the owner** whether to merge `training-tools` into `main` with `--no-ff` and push (this deploys, NN-15; rollback `git revert -m 1 <merge>`). The monthly report's mid-month comparison is settled: a month in progress is compared with the same days of the month before (2026-10-18).
-2. After the merge and push: watch the Pages run, check the live page as for REL-104 (bundle, manifest, What's new once, a new install), and record it in REL-105 and `TEST_STATUS.md`.
-3. Owner's phone checks: REL-105 (camera capture, video playback and sharing, the record toast, warm-ups, the report, Help), plus the older REL-101 to REL-104 ones.
-4. Still open from before: the copyright holder in `LICENSE`, the Google Play decisions in `.ai/PLAY_STORE.md` (the data-safety and permissions notes now cover set videos), a native-speaker look at the translations. FEAT-007 (Contact page) stays deferred until Google sign-in.
+1. **Owner's phone checks:** open the installed app and let it update (back up first: Settings → Your data → Back up now); see What's new once with all the data there; then REL-105 (warm-ups, the record toast, a recorded and a chosen set video with playback and sharing, the monthly report, Help), plus the older REL-101 to REL-104 ones.
+2. **Deferred by the owner (2026-10-18): making the app and the source private** (a personal project now). Do not flip the GitHub repository to private first: on GitHub Free a private repo cannot serve Pages, so the live app would go offline. The agreed order is in memory (`chalk-next-steps.md`): back up, prepare the repo, move the app to Cloudflare Pages by direct upload (the owner creates the account), install and restore on the new address, then make the repo private. Ask the owner before starting.
+3. Still open from before: the copyright holder in `LICENSE`, the Google Play decisions in `.ai/PLAY_STORE.md`, a native-speaker look at the translations. FEAT-007 (Contact page) stays deferred until Google sign-in.
 
 ### Working notes for the next session
 - **New strings:** add to `src/i18n/<code>/training.ts` for all eleven languages in the same change (NN-17). Helpers saved in `.ai/tools/` (`lang.py`, `add_i18n.py`): write `mN.py` next to them (a `lang('en', """key=text""")` block per language, then `T = build()`), run `python .ai/tools/add_i18n.py path/to/mN.py "Section name"`; it appends to every language and refuses duplicate keys. Avoid plural messages (reuse `count()` keys); Indonesian has no plural forms.

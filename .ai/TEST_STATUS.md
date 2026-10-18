@@ -1,5 +1,19 @@
 # Test status
 
+## Live check after the 1.1 release (REL-105): 2026-10-18, `main` @ 5d93525
+
+Environment: the built-in browser on https://botrading20-glitch.github.io/chalk/ (a fresh origin, so a new install). Pages run 39141053406: build and deploy jobs succeeded. Before the push, on `main`: typecheck clean, 217 passed (2 skipped), contrast 732 pairs 0 failing, `npm ci --dry-run` exit 0, `/chalk/` build with 39 precache entries (2.27 MB), the merge's tree identical to the branch.
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Served build | PASS | `index-kTaETHx-.js`, identical to the build made on `main`; service worker activated |
+| Manifest and CSP | PASS | `start_url` and `scope` `/chalk/`, 2 shortcuts, 5 screenshots; `media-src 'self' blob:`; 0 violations, no console errors |
+| First run and 1.1 screens | PASS | a new install lands on the welcome page; About shows Version 1.1.0; Settings lists the Help group; the Getting started guide has five steps; the monthly report opens; the database `chalk` is at Dexie version 30 (schema 3) |
+| Privacy page | PASS | `privacy.html` includes the set-video paragraph |
+| Not run | NOT_RUN | the owner's installed copy updating and keeping its data, the camera, video playback and share on a phone (REL-105 phone checks) |
+
+Nothing was written to the pane's origin beyond the empty database a new install creates.
+
 ## Training tools, Setward 1.1: evidence ledgers and full verification, 2026-10-18, branch `training-tools`
 
 Environment: Windows 11, the built-in Chromium of the Claude app. Dev server on :5173 with the sample backup (65 workouts, 6 routines) and the production preview on :4173/chalk/ for the CSP check; phone emulation at 320, 360 and 375 px. A video cannot be picked in this browser, so clips were made in the page (`canvas.captureStream` and `MediaRecorder`) and attached through `attachVideo`. Not run: a phone, an iPhone, a screen reader, native speakers.

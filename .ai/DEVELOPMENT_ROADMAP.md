@@ -366,7 +366,7 @@ Plan: `~/.claude/plans/c-users-ousse-downloads-fitness-app-imp-iridescent-hickey
 | SEC-002 | CSV formula escaping | DONE 2026-10-17 (TT-M1) |
 | DATA-003 | Exact pound factor | DONE 2026-10-17 (TT-M1) |
 | UX-005 | RPE by half points with a guide | DONE 2026-10-17 (TT-M1) |
-| TT-M7 | Version 1.1.0, What's new, full verification, REL-105 | DONE 2026-10-18 (below); merge waits for the owner |
+| TT-M7 | Version 1.1.0, What's new, full verification, REL-105 | DONE 2026-10-18 (below); merged as 5d93525 and released |
 
 ### TT-M1: Foundations and spec hardening
 - **Done (2026-10-17):**
@@ -429,4 +429,5 @@ Plan: `~/.claude/plans/c-users-ousse-downloads-fitness-app-imp-iridescent-hickey
 - **Version and What's new:** `package.json` and the lockfile at 1.1.0; `WHATS_NEW['1.1.0']` in `src/lib/whatsNew.ts` lists six entries (warm-up sets, muscle map, monthly report, videos on sets, live record alerts, help guides), 12 strings in all eleven languages (`.ai/tools/m7.py`). A device with 1.0 recorded sees the sheet once.
 - **Full verification:** every route in every language at 320 px (385 loads) found one overflow, the French Home backup card, fixed by letting `.backup-actions` wrap; the What's new sheet in all eleven languages; the upgrade from 1.0 data; the simulated schema rollback; the production build under the CSP. Evidence and one ledger per milestone: `TEST_STATUS.md`.
 - **Recorded:** REQUIREMENTS REQ-024 to REQ-030 and the REQ-029 acceptance note; NON_NEGOTIABLES NN-19 (set videos stay on the device); a DECISIONS row; SMOKE_TESTS S-17 to S-19; RELEASE_CHECKLIST REL-105 with the after-deploy phone checks; PROJECT_STATE, PROGRESS, the `CLAUDE.md` and `AGENTS.md` architecture notes (identical files).
-- **Limits and what waits:** the merge into `main` (NN-15) and the owner's phone checks; native-speaker review. Nothing was pushed.
+- **Release:** the owner chose to merge and push; `training-tools` was merged into `main` as 5d93525 (`--no-ff`) and pushed, Pages run 39141053406 succeeded and the live page was checked (`TEST_STATUS.md`). Rollback: `git revert -m 1 5d93525` and push.
+- **Limits and what waits:** the owner's phone checks and a native-speaker review.

@@ -2,7 +2,7 @@
 
 ## Session: 2026-10-17 to 2026-10-18 (Setward 1.1 training tools)
 
-The owner chose Hevy-inspired settings plus the free, offline parts of `FITNESS_APP_IMPLEMENTATION_SPEC_HARDENED.md`, with set videos kept on the phone, RPE only and the Contact page deferred. Seven milestones on the local branch `training-tools`, each committed when the owner asked, with notes in the roadmap (TT-M1 to TT-M7) and evidence in `TEST_STATUS.md`. All of it is verified (REL-105); nothing is merged or pushed.
+The owner chose Hevy-inspired settings plus the free, offline parts of `FITNESS_APP_IMPLEMENTATION_SPEC_HARDENED.md`, with set videos kept on the phone, RPE only and the Contact page deferred. Seven milestones on the local branch `training-tools`, each committed when the owner asked, with notes in the roadmap (TT-M1 to TT-M7) and evidence in `TEST_STATUS.md`. All of it is verified (REL-105); at the end the owner chose to merge and push it: `main` @ 5d93525, Pages run 39141053406, live page checked.
 
 What changed for users: warm-up sets rounded to the plates they own, a trophy and note when a set beats a record, a plate button, stopwatch and superset toggles, a muscle map, a monthly report with a Home card, reps and a 12-month range on the weekly chart, Help guides, videos on sets that stay on the phone, half-point RPE, exact pounds and safer CSV exports.
 
@@ -14,7 +14,7 @@ Problems met and what they taught:
 - A shell command over about 6 KB fails; the edits went through small Python helpers in the scratchpad that keep the files' CRLF endings.
 - The screenshot tool can lag a frame behind the page: read the DOM or shoot again before trusting a picture.
 
-Open for the owner: whether to merge `training-tools` into `main` and push (it deploys), the phone checks in REL-105, a native-speaker look at the translations.
+Open for the owner: the phone checks in REL-105 (back up first), a native-speaker look at the translations, and the deferred move to a private setup (the repo must stay public until the app is hosted elsewhere, or Pages goes offline).
 
 ## Session: 2026-10-16 to 2026-10-17 (Setward 1.0 launch work)
 

@@ -2,11 +2,11 @@
 
 Pushing `main` deploys to the live app (NN-15); each new release needs the owner's authorization.
 
-## REL-105: branch `training-tools` (Setward 1.1), ready, not merged
+## REL-105: branch `training-tools` (Setward 1.1), released 2026-10-18
 
-**Decision: READY WITH DOCUMENTED LIMITATIONS; waiting for the owner's go-ahead to merge and push (NN-15).** The branch was cut from `main` @ 032513f and holds M1 to M7 of the training-tools plan: warm-up sets, live record alerts and the other Workout toggles, the muscle map, the monthly report and the Reps / range chart, Help guides, set videos on the phone, spec hardening (CSV formulas, exact pound, half-point RPE), version 1.1.0 and the What's new list. Details: roadmap TT-M1 to TT-M6, evidence in `TEST_STATUS.md`.
+**Decision: READY WITH DOCUMENTED LIMITATIONS, released.** The owner chose "Merge training-tools into main and push" when asked which to do (NN-15). Merged as 5d93525 (`--no-ff`; parents 032513f and 4735af1; its tree is identical to the branch) and pushed; Pages run 39141053406 succeeded (build and deploy jobs). The branch was cut from `main` @ 032513f and holds M1 to M7 of the training-tools plan: warm-up sets, live record alerts and the other Workout toggles, the muscle map, the monthly report and the Reps / range chart, Help guides, set videos on the phone, spec hardening (CSV formulas, exact pound, half-point RPE), version 1.1.0 and the What's new list. Details: roadmap TT-M1 to TT-M6, evidence in `TEST_STATUS.md`.
 
-**Data safety:** one Dexie schema change, `db.version(3)` adding the `media` table (append-only, NN-10). An install upgrades in the browser with its data intact (checked on a dev origin holding the sample data: version 3, the workouts and routines still there). No sync-format change: videos and the new `reportSeenMonth` pref stay on the device, and settings gain fields with defaults. Backups from 1.0 restore; 1.1 backups do not contain videos. Rollback: `git revert -m 1 <merge>` and push; older code opens the upgraded database and ignores `media` (simulated with Dexie 4.4 on `fake-indexeddb`, not in a real browser), so only the videos become unreachable.
+**Data safety:** one Dexie schema change, `db.version(3)` adding the `media` table (append-only, NN-10). An install upgrades in the browser with its data intact (checked on a dev origin holding the sample data: version 3, the workouts and routines still there). No sync-format change: videos and the new `reportSeenMonth` pref stay on the device, and settings gain fields with defaults. Backups from 1.0 restore; 1.1 backups do not contain videos. Rollback: `git revert -m 1 5d93525` and push; older code opens the upgraded database and ignores `media` (simulated with Dexie 4.4 on `fake-indexeddb`, not in a real browser), so only the videos become unreachable.
 
 | Area | State |
 |------|-------|
@@ -17,7 +17,9 @@ Pushing `main` deploys to the live app (NN-15); each new release needs the owner
 | Set video flows: attach, replace, watch, speeds, remove with confirmation, remove set / exercise asks first, finish keeps and drops, discard, delete workout, editor draft and its discard, Data card (unlinked and all), setting off, erase all | ✅ with a generated clip |
 | Privacy: About → Privacy, `privacy.html` and the Play notes say videos stay on the phone | ✅ |
 | CSP | ✅ a blob video plays in the production build, 0 violations |
-| Owner's go-ahead (NN-15) | ⏳ asked, not yet given |
+| Owner's go-ahead (NN-15) | ✅ 2026-10-18 |
+| Merged, pushed and deployed | ✅ 5d93525, Pages run 39141053406 |
+| Live page checked | ✅ bundle `index-kTaETHx-.js` (the verified build, built again on `main`), service worker activated, manifest scope `/chalk/` with 2 shortcuts and 5 screenshots, a new install lands on the welcome page, About reads Version 1.1.0, Settings has the Help group and the guide has five steps, the monthly report opens, the Dexie database `chalk` is at version 30 (schema 3), `privacy.html` carries the video paragraph, `media-src 'self' blob:` in the CSP, 0 violations, no console errors |
 | Real phone: camera capture, video playback with sound, share sheet, free-space refusal, big files, iPhone | ⚠ not run (owner) |
 | Screen reader, extra-large text and larger controls on the new screens | ⚠ not run |
 | Native-speaker review of the new strings (142 in the training catalog per language, machine-made) | ⚠ not run |

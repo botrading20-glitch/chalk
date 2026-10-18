@@ -144,4 +144,18 @@ export default {
   'set.setVideos': 'Videos on sets',
   'set.setVideosNote': 'Add a video to any set from its number. Turning this off hides the add buttons, not the videos you have.',
   'video.removeUnlinkedText': 'These videos belong to sets that no longer exist. They are deleted from this phone.',
+
+  // What's new in 1.1.0
+  'new.warmups.title': 'Warm-up sets',
+  'new.warmups.text': 'Add a warm-up ladder from an exercise’s menu. It rounds to the plates you own, and you set the steps under Settings → Warm-up sets.',
+  'new.muscles.title': 'Muscle map',
+  'new.muscles.text': 'A front and back figure shows which muscles you worked: in the live workout, on each saved workout and on Progress.',
+  'new.report.title': 'Monthly report',
+  'new.report.text': 'Every month on one page: totals, change since last month, a calendar, muscles and records. Home offers last month’s once, and Progress now charts reps and up to 12 months.',
+  'new.videos.title': 'Videos on sets',
+  'new.videos.text': 'Record or choose a video for any set from its number. Videos stay on your phone: they aren’t synced or backed up.',
+  'new.tools.title': 'Live record alerts',
+  'new.tools.text': 'A trophy and a note the moment a set beats a record. Workout settings add a plate button, a stopwatch switch and scrolling between superset exercises.',
+  'new.help.title': 'Help guides',
+  'new.help.text': 'Getting started and Routines guides and the questions now live under Settings → Help. RPE also goes in half points.',
 } satisfies Record<string, Message>;

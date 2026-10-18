@@ -143,4 +143,18 @@ export default {
   'set.setVideos': 'Video pada set',
   'set.setVideosNote': 'Tambahkan video ke set mana pun lewat nomornya. Mematikan ini hanya menyembunyikan tombol tambah, bukan video yang sudah ada.',
   'video.removeUnlinkedText': 'Video ini milik set yang sudah tidak ada. Video dihapus dari ponsel ini.',
+
+  // What's new in 1.1.0
+  'new.warmups.title': 'Set pemanasan',
+  'new.warmups.text': 'Tambahkan tangga pemanasan dari menu gerakan. Hasilnya dibulatkan ke pelat yang kamu punya, dan langkahnya diatur di Pengaturan → Set pemanasan.',
+  'new.muscles.title': 'Peta otot',
+  'new.muscles.text': 'Sosok tampak depan dan belakang menunjukkan otot mana yang kamu latih: saat latihan berlangsung, di setiap latihan tersimpan, dan di Kemajuan.',
+  'new.report.title': 'Laporan bulanan',
+  'new.report.text': 'Setiap bulan dalam satu halaman: total, perubahan sejak bulan lalu, kalender, otot, dan rekor. Beranda menawarkan laporan bulan lalu satu kali, dan Kemajuan kini juga menampilkan repetisi dan rentang hingga 12 bulan.',
+  'new.videos.title': 'Video pada set',
+  'new.videos.text': 'Rekam atau pilih video untuk set mana pun lewat nomornya. Video tetap di ponselmu: tidak disinkronkan atau dicadangkan.',
+  'new.tools.title': 'Peringatan rekor langsung',
+  'new.tools.text': 'Piala dan catatan begitu sebuah set memecahkan rekor. Pengaturan latihan menambah tombol pelat, sakelar stopwatch, dan gulir antar gerakan superset.',
+  'new.help.title': 'Panduan bantuan',
+  'new.help.text': 'Panduan Memulai dan Rutinitas serta pertanyaan kini ada di Pengaturan → Bantuan. RPE juga bisa dalam setengah poin.',
 } satisfies Record<string, Message>;

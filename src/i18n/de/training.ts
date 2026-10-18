@@ -143,4 +143,18 @@ export default {
   'set.setVideos': 'Videos bei Sätzen',
   'set.setVideosNote': 'Füge jedem Satz über seine Nummer ein Video hinzu. Wenn du das ausschaltest, verschwinden nur die Hinzufügen-Tasten, nicht deine Videos.',
   'video.removeUnlinkedText': 'Diese Videos gehören zu Sätzen, die es nicht mehr gibt. Sie werden von diesem Gerät gelöscht.',
+
+  // What's new in 1.1.0
+  'new.warmups.title': 'Aufwärmsätze',
+  'new.warmups.text': 'Füge über das Menü einer Übung eine Aufwärmreihe hinzu. Sie rundet auf deine Scheiben, und die Schritte stellst du unter Einstellungen → Aufwärmsätze ein.',
+  'new.muscles.title': 'Muskelkarte',
+  'new.muscles.text': 'Eine Figur von vorn und hinten zeigt, welche Muskeln du trainiert hast: im laufenden Training, bei jedem gespeicherten Training und im Fortschritt.',
+  'new.report.title': 'Monatsbericht',
+  'new.report.text': 'Jeder Monat auf einer Seite: Summen, Veränderung zum Vormonat, ein Kalender, Muskeln und Rekorde. Die Startseite bietet den des Vormonats einmal an, und der Fortschritt zeigt jetzt auch Wiederholungen und bis zu 12 Monate.',
+  'new.videos.title': 'Videos bei Sätzen',
+  'new.videos.text': 'Nimm ein Video für einen beliebigen Satz auf oder wähle eins über seine Nummer. Videos bleiben auf deinem Gerät: Sie werden nicht synchronisiert oder gesichert.',
+  'new.tools.title': 'Rekordmeldungen live',
+  'new.tools.text': 'Ein Pokal und ein Hinweis, sobald ein Satz einen Rekord schlägt. Die Trainingseinstellungen bringen eine Scheiben-Taste, einen Stoppuhr-Schalter und das Springen zwischen Supersatz-Übungen.',
+  'new.help.title': 'Hilfe-Anleitungen',
+  'new.help.text': 'Die Anleitungen Erste Schritte und Routinen sowie die Fragen findest du jetzt unter Einstellungen → Hilfe. Der RPE geht auch in halben Punkten.',
 } satisfies Record<string, Message>;

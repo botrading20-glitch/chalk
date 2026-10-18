@@ -143,4 +143,18 @@ export default {
   'set.setVideos': 'Setlerde video',
   'set.setVideosNote': 'Numarasına dokunarak herhangi bir sete video ekleyin. Bunu kapatmak yalnızca ekleme düğmelerini gizler, videolarınızı değil.',
   'video.removeUnlinkedText': 'Bu videolar artık var olmayan setlere ait. Bu telefondan silinirler.',
+
+  // What's new in 1.1.0
+  'new.warmups.title': 'Isınma setleri',
+  'new.warmups.text': 'Bir egzersizin menüsünden ısınma basamakları ekleyin. Elinizdeki plakalara yuvarlanır; adımları Ayarlar → Isınma setleri bölümünde belirlersiniz.',
+  'new.muscles.title': 'Kas haritası',
+  'new.muscles.text': 'Önden ve arkadan bir figür hangi kasları çalıştırdığınızı gösterir: canlı antrenmanda, kayıtlı her antrenmanda ve İlerleme’de.',
+  'new.report.title': 'Aylık rapor',
+  'new.report.text': 'Her ay tek sayfada: toplamlar, geçen aya göre değişim, bir takvim, kaslar ve rekorlar. Ana sayfa geçen ayınkini bir kez sunar; İlerleme artık tekrarları ve 12 aya kadar olan aralığı da gösterir.',
+  'new.videos.title': 'Setlerde video',
+  'new.videos.text': 'Numarasından herhangi bir set için video çekin veya seçin. Videolar telefonunuzda kalır: senkronize edilmez, yedeklenmez.',
+  'new.tools.title': 'Canlı rekor uyarıları',
+  'new.tools.text': 'Bir set rekor kırdığı anda bir kupa ve bir not. Antrenman ayarları plaka düğmesi, kronometre anahtarı ve süper set egzersizleri arasında kaydırma ekler.',
+  'new.help.title': 'Yardım rehberleri',
+  'new.help.text': 'Başlarken ve Rutinler rehberleri ile sorular artık Ayarlar → Yardım altında. RPE yarım puanla da girilebilir.',
 } satisfies Record<string, Message>;

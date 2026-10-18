@@ -2,6 +2,31 @@
 
 Pushing `main` deploys to the live app (NN-15); each new release needs the owner's authorization.
 
+## REL-105: branch `training-tools` (Setward 1.1), ready, not merged
+
+**Decision: READY WITH DOCUMENTED LIMITATIONS; waiting for the owner's go-ahead to merge and push (NN-15).** The branch was cut from `main` @ 032513f and holds M1 to M7 of the training-tools plan: warm-up sets, live record alerts and the other Workout toggles, the muscle map, the monthly report and the Reps / range chart, Help guides, set videos on the phone, spec hardening (CSV formulas, exact pound, half-point RPE), version 1.1.0 and the What's new list. Details: roadmap TT-M1 to TT-M6, evidence in `TEST_STATUS.md`.
+
+**Data safety:** one Dexie schema change, `db.version(3)` adding the `media` table (append-only, NN-10). An install upgrades in the browser with its data intact (checked on a dev origin holding the sample data: version 3, the workouts and routines still there). No sync-format change: videos and the new `reportSeenMonth` pref stay on the device, and settings gain fields with defaults. Backups from 1.0 restore; 1.1 backups do not contain videos. Rollback: `git revert -m 1 <merge>` and push; older code opens the upgraded database and ignores `media` (simulated with Dexie 4.4 on `fake-indexeddb`, not in a real browser), so only the videos become unreachable.
+
+| Area | State |
+|------|-------|
+| Typecheck, 214 tests (2 skipped), contrast 732 pairs 0 failing, `npm ci --dry-run`, secret scan | ✅ |
+| `/chalk/` production build | ✅ index chunk 112.6 kB gzip, 39 precache entries (2.22 MB); the new screens are lazy chunks (Report 1.7 kB, Settings 12.7 kB) |
+| Overflow: every route in all eleven languages at 320 px (385 loads) and the What's new sheet in all eleven | ✅ after one fix (French Home backup card) |
+| Upgrade from 1.0 data, What's new shown once | ✅ dev origin |
+| Set video flows: attach, replace, watch, speeds, remove with confirmation, remove set / exercise asks first, finish keeps and drops, discard, delete workout, editor draft and its discard, Data card (unlinked and all), setting off, erase all | ✅ with a generated clip |
+| Privacy: About → Privacy, `privacy.html` and the Play notes say videos stay on the phone | ✅ |
+| CSP | ✅ a blob video plays in the production build, 0 violations |
+| Owner's go-ahead (NN-15) | ⏳ asked, not yet given |
+| Real phone: camera capture, video playback with sound, share sheet, free-space refusal, big files, iPhone | ⚠ not run (owner) |
+| Screen reader, extra-large text and larger controls on the new screens | ⚠ not run |
+| Native-speaker review of the new strings (142 in the training catalog per language, machine-made) | ⚠ not run |
+| Open question | ⚠ the monthly report compares the month in progress with the whole of last month, so mid-month the changes read negative; the owner may prefer complete months only or the same days |
+
+Known limitations: the guides' pictures are drawn, not screenshots, and the set-table picture can clip a "Previous" value on the smallest phones as the real table does; a set with a video but no numbers that is not checked off is dropped at finish with its video; the phone's camera records sound, so playback starts muted; a video is limited to 500 MB and the browser's free space; videos are not synced or backed up (by design, NN-19); the warm-up defaults (50 / 70 / 85 percent, a 10-rep empty bar) are a starting point, not training advice; the report's year and month names come from the browser's `Intl`.
+
+After the merge and deploy, on the phone (the live page itself should be checked first as for REL-104): let the app update and see the What's new sheet once with all the data still there; Settings → Warm-up sets, then an exercise's ⋯ menu → Warm-up sets; check a set heavier than last time and see the trophy and the toast; tap a set's number → *Record video*, film a few seconds in the phone's camera app, back in Setward the camera shows on the set, *Watch video* plays it (muted at first), try 0.5× and Share; finish the workout and watch it again from the workout page; Settings → Your data → *Set videos* shows the count and size; Progress → *Monthly report* and the Reps and 12-month chart; Settings → Help.
+
 ## REL-104: branch `launch` (Setward 1.0), released 2026-10-17
 
 **Decision: READY WITH DOCUMENTED LIMITATIONS, released.** The owner approved after the verification ("Yes: merge launch into main with --no-ff and push it, then check the live site and record it."). Merged as c3da695 (`--no-ff`; parents 2473881 and 9641d1d; its tree is identical to `launch`) and pushed; Pages run 39056196923 succeeded (build and deploy jobs). The branch was eight milestones ahead of `main` (M1 Hevy removal and Strong import, M2 i18n and settings model, M3 the Forward look, M4 grouped Settings, M5 welcome / starter programs / past workouts / recent records, M6 ten languages and Arabic right to left, M7 link previews / privacy page / licence / README / wide-screen panel / What's new / store notes, M8 verification fixes). Rollback: `git revert -m 1 c3da695` and push; installed copies update on next open.
@@ -117,3 +142,4 @@ Known limitations: no screen-reader pass; iPhone untested; Android lock-screen c
 8. REL-104 (once released): open the app on your phone and let it update; the What's new sheet shows once and all your workouts, routines and settings are still there. Settings → Language: try French and Arabic. A real set with the rest timer and the screen locked still beeps (NN-13).
 9. REL-104: long-press the home-screen icon (Android): *Start workout* and *Log body weight* open the right screens.
 10. REL-104: Settings → About → Privacy → *Privacy page* opens the static policy.
+11. REL-105 (once released): update, see What's new 1.1.0 once, and run the phone checks at the end of the REL-105 section: warm-ups, the record toast, a recorded and a chosen set video with playback and sharing, the monthly report and the Help pages.

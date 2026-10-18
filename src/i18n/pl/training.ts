@@ -143,4 +143,18 @@ export default {
   'set.setVideos': 'Wideo przy seriach',
   'set.setVideosNote': 'Dodaj wideo do dowolnej serii z poziomu jej numeru. Wyłączenie tej opcji ukrywa tylko przyciski dodawania, a nie Twoje wideo.',
   'video.removeUnlinkedText': 'Te wideo należą do serii, które już nie istnieją. Zostaną skasowane z tego telefonu.',
+
+  // What's new in 1.1.0
+  'new.warmups.title': 'Serie rozgrzewkowe',
+  'new.warmups.text': 'Dodaj drabinkę rozgrzewkową z menu ćwiczenia. Zaokrągla się do talerzy, które masz, a kroki ustawisz w Ustawienia → Serie rozgrzewkowe.',
+  'new.muscles.title': 'Mapa mięśni',
+  'new.muscles.text': 'Sylwetka z przodu i z tyłu pokazuje, które mięśnie pracowały: w trwającym treningu, w każdym zapisanym treningu i w Postępach.',
+  'new.report.title': 'Raport miesięczny',
+  'new.report.text': 'Każdy miesiąc na jednej stronie: sumy, zmiana względem poprzedniego miesiąca, kalendarz, mięśnie i rekordy. Ekran główny proponuje raport z poprzedniego miesiąca raz, a Postępy pokazują teraz też powtórzenia i zakres do 12 miesięcy.',
+  'new.videos.title': 'Wideo przy seriach',
+  'new.videos.text': 'Nagraj lub wybierz wideo do dowolnej serii z poziomu jej numeru. Wideo zostają w telefonie: nie są synchronizowane ani kopiowane.',
+  'new.tools.title': 'Alerty o rekordach na żywo',
+  'new.tools.text': 'Puchar i komunikat, gdy tylko seria pobije rekord. Ustawienia treningu dodają przycisk talerzy, przełącznik stopera i przewijanie między ćwiczeniami superserii.',
+  'new.help.title': 'Przewodniki pomocy',
+  'new.help.text': 'Przewodniki Pierwsze kroki i Rutyny oraz pytania są teraz w Ustawienia → Pomoc. RPE można podawać też w półpunktach.',
 } satisfies Record<string, Message>;

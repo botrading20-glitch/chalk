@@ -143,4 +143,18 @@ export default {
   'set.setVideos': 'Vídeos nas séries',
   'set.setVideosNote': 'Adicione um vídeo a qualquer série pelo número dela. Desativar isto esconde os botões de adicionar, não os seus vídeos.',
   'video.removeUnlinkedText': 'Esses vídeos pertencem a séries que não existem mais. Eles são apagados deste celular.',
+
+  // What's new in 1.1.0
+  'new.warmups.title': 'Séries de aquecimento',
+  'new.warmups.text': 'Adicione uma sequência de aquecimento pelo menu de um exercício. Ela se ajusta às anilhas que você tem, e os passos ficam em Configurações → Séries de aquecimento.',
+  'new.muscles.title': 'Mapa muscular',
+  'new.muscles.text': 'Uma figura de frente e de costas mostra quais músculos você trabalhou: no treino em andamento, em cada treino salvo e em Progresso.',
+  'new.report.title': 'Relatório mensal',
+  'new.report.text': 'Cada mês em uma página: totais, mudança desde o mês passado, um calendário, músculos e recordes. O Início oferece o do mês passado uma vez, e o Progresso agora mostra repetições e até 12 meses.',
+  'new.videos.title': 'Vídeos nas séries',
+  'new.videos.text': 'Grave ou escolha um vídeo para qualquer série pelo número dela. Os vídeos ficam no seu celular: não são sincronizados nem incluídos em backups.',
+  'new.tools.title': 'Avisos de recorde ao vivo',
+  'new.tools.text': 'Um troféu e um aviso assim que uma série bate um recorde. As configurações de treino ganham um botão de anilhas, um interruptor do cronômetro e a rolagem entre exercícios de um superset.',
+  'new.help.title': 'Guias de ajuda',
+  'new.help.text': 'Os guias Primeiros passos e Rotinas e as perguntas agora ficam em Configurações → Ajuda. A PSE também aceita meios pontos.',
 } satisfies Record<string, Message>;

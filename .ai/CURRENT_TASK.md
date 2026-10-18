@@ -1,24 +1,23 @@
 # Current task
 
-## RESUME HERE: Setward 1.1 "training tools", M1 to M6 built; next is M7 release prep (2026-10-18)
+## RESUME HERE: Setward 1.1 is built and verified on `training-tools`; waiting for the owner (2026-10-18)
 
-**Branch `training-tools`** (cut from `main` @ 032513f; `main` is untouched, nothing pushed or merged, NN-15). Plan (owner-approved, read it first): `~/.claude/plans/c-users-ousse-downloads-fitness-app-imp-iridescent-hickey.md`. Decisions: `DECISIONS.md` top two rows. Per-milestone notes: `DEVELOPMENT_ROADMAP.md` section "Training tools" (TT-M1 to TT-M4).
+**Branch `training-tools`** (cut from `main` @ 032513f; `main` is untouched, nothing pushed or merged, NN-15). All seven milestones are done and committed: M1 c6e8ba3 (e55f6ce), M2 2c85ed2, M3 ecfa27e, M4 daa4c63, M5 71cb1d0, M6 e1dafee, M7 the release-prep commit on top. Plan: `~/.claude/plans/c-users-ousse-downloads-fitness-app-imp-iridescent-hickey.md`. Details, evidence and limits per milestone: `DEVELOPMENT_ROADMAP.md` (TT-M1 to TT-M7), `TEST_STATUS.md` (Training tools), release record `RELEASE_CHECKLIST.md` REL-105.
 
-**Done:** M1 foundations (c6e8ba3, e55f6ce), M2 warm-ups and workout toggles (2c85ed2), M3 muscle map (ecfa27e; dark and light screenshots were sent to the owner, no reply yet), M4 monthly report and weekly chart (committed daa4c63 on 2026-10-18: report page, Progress and Home entry points, Goals toggle, Reps metric and 3/6/12-month range). M5 Help guides and questions (71cb1d0). M6 local set videos (built 2026-10-18, not yet committed: `media.ts`, `SetVideo.tsx`, Dexie version 3, the Data card, 37 strings, privacy wording). TT-M4 to TT-M6 in the roadmap have the details, evidence and limits.
+**Baseline at the stop:** version 1.1.0; typecheck clean; 214 tests pass (2 skipped); contrast 0 of 732 failing; `/chalk/` production build fine (index chunk 112.6 kB gzip, 39 precache entries). No server is running. The dev browser origin (localhost:5173) holds the sample data; its language is back to English.
 
-**Baseline at the stop:** typecheck clean; 199 tests pass (2 skipped); contrast 0 of 732 failing; production build with `/chalk/` fine (index chunk 112.54 kB gzip, Report chunk 1.69 kB, Settings chunk 12.68 kB); 214 tests pass. The dev server (`chalk-dev`) may still be running; its browser origin holds the sample data (65 workouts) and German or English as last set; reset with `updateSettings({ language: 'en' })` or reload the sample backup (`node scripts/sample-backup.mjs`, then in the page console: `await (await import('/src/lib/backup.ts')).importBackup(await (await fetch('/tmp-import/chalk-sample-backup.json')).text())`).
-
-### Open question for the owner (M4)
-The current month is compared with the whole of last month, so mid-month every change line reads negative ("-8 vs last month" on 18 Oct). Options: compare only complete months (no change line on the month in progress), or compare with the same number of days of last month. Not decided; the plan said only "change against last month".
-
-### After M6 (plan unchanged)
-M7 release prep (version 1.1.0, What's new in eleven languages, REQUIREMENTS REQ-024+, TEST_STATUS ledgers, SMOKE_TESTS, RELEASE_CHECKLIST REL-105, CLAUDE.md architecture notes for the new pieces, fix the stale "keep Hevy CSV compatibility" line in memory `chalk-workout-app.md`, an all-routes overflow sweep in ten languages). Ask the owner before merging `training-tools` into `main`. FEAT-007 (Contact page) stays deferred until Google sign-in.
+### Next exact action
+1. **Ask the owner:** (a) merge `training-tools` into `main` with `--no-ff` and push (this deploys, NN-15; rollback `git revert -m 1 <merge>`), and (b) the open question: the monthly report compares the month in progress with all of last month, so mid-month every change line reads negative ("-8 vs last month" on 18 Oct). Options: compare only complete months (no change line on the month in progress), or compare with the same number of days of last month. If they choose, it is a small change in `src/pages/Report.tsx` (the `compared` flag) and `src/lib/report.ts`.
+2. After the merge and push: watch the Pages run, check the live page as for REL-104 (bundle, manifest, What's new once, a new install), and record it in REL-105 and `TEST_STATUS.md`.
+3. Owner's phone checks: REL-105 (camera capture, video playback and sharing, the record toast, warm-ups, the report, Help), plus the older REL-101 to REL-104 ones.
+4. Still open from before: the copyright holder in `LICENSE`, the Google Play decisions in `.ai/PLAY_STORE.md` (the data-safety and permissions notes now cover set videos), a native-speaker look at the translations. FEAT-007 (Contact page) stays deferred until Google sign-in.
 
 ### Working notes for the next session
 - **New strings:** add to `src/i18n/<code>/training.ts` for all eleven languages in the same change (NN-17). Helpers saved in `.ai/tools/` (`lang.py`, `add_i18n.py`): write `mN.py` next to them (a `lang('en', """key=text""")` block per language, then `T = build()`), run `python .ai/tools/add_i18n.py path/to/mN.py "Section name"`; it appends to every language and refuses duplicate keys. Avoid plural messages (reuse `count()` keys); Indonesian has no plural forms.
 - **Shell limits:** one Bash command over about 6 KB fails with "unexpected EOF" (split it); doubled backslashes are collapsed, so inside Python write `chr(92)` for a backslash and never type `\t` or `\r` in a Python string meant for TypeScript.
 - **Vite sometimes serves a stale file** after an edit (seen once with `WorkoutDetail.tsx`): `touch` the file and reload.
 - The working tree is CRLF (autocrlf); new files are LF, which is fine.
+- **Sweeps in a hidden Browser pane** run at about one route load per second; start them in the page (`localStorage.__sweepSrc` holds the one used for 1.1) and poll `window.__sweep`. Check results against `document.documentElement.clientWidth`.
 
 ---
 
@@ -102,4 +101,4 @@ Setward 1.0 is **released** (2026-10-17): `launch` was merged into `main` as c3d
 - The Hevy removal is final (owner decision); do not reintroduce Hevy wording.
 
 ## Last updated
-2026-10-18 (1.1 M6 built on `training-tools`; 1.0 released 2026-10-17 and live)
+2026-10-18 (1.1 built and verified on `training-tools`, waiting for the owner; 1.0 released 2026-10-17 and live)

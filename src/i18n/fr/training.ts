@@ -143,4 +143,18 @@ export default {
   'set.setVideos': 'Vidéos sur les séries',
   'set.setVideosNote': 'Ajoutez une vidéo à n’importe quelle série depuis son numéro. Désactiver cette option masque les boutons d’ajout, pas vos vidéos.',
   'video.removeUnlinkedText': 'Ces vidéos appartiennent à des séries qui n’existent plus. Elles sont effacées de ce téléphone.',
+
+  // What's new in 1.1.0
+  'new.warmups.title': 'Séries d’échauffement',
+  'new.warmups.text': 'Ajoutez une série d’échauffement depuis le menu d’un exercice. Elle s’arrondit aux disques que vous avez, et vous réglez les étapes dans Réglages → Séries d’échauffement.',
+  'new.muscles.title': 'Carte des muscles',
+  'new.muscles.text': 'Une silhouette de face et de dos montre les muscles travaillés : pendant la séance, sur chaque séance enregistrée et dans Progrès.',
+  'new.report.title': 'Bilan mensuel',
+  'new.report.text': 'Chaque mois sur une page : totaux, évolution depuis le mois dernier, calendrier, muscles et records. L’accueil propose celui du mois dernier une fois, et Progrès montre aussi les répétitions, jusqu’à 12 mois.',
+  'new.videos.title': 'Vidéos sur les séries',
+  'new.videos.text': 'Filmez ou choisissez une vidéo pour n’importe quelle série depuis son numéro. Les vidéos restent sur votre téléphone : ni synchronisées ni sauvegardées.',
+  'new.tools.title': 'Alertes de record en direct',
+  'new.tools.text': 'Un trophée et un message dès qu’une série bat un record. Les réglages de séance ajoutent un bouton disques, un interrupteur de chrono et le défilement entre les exercices d’un superset.',
+  'new.help.title': 'Guides d’aide',
+  'new.help.text': 'Les guides Pour bien démarrer et Routines, ainsi que les questions, sont maintenant dans Réglages → Aide. La RPE se règle aussi par demi-points.',
 } satisfies Record<string, Message>;

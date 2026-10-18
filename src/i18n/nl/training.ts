@@ -143,4 +143,18 @@ export default {
   'set.setVideos': 'Video’s bij sets',
   'set.setVideosNote': 'Voeg een video toe aan elke set via het nummer. Als je dit uitzet, verdwijnen alleen de toevoegknoppen, niet je video’s.',
   'video.removeUnlinkedText': 'Deze video’s horen bij sets die niet meer bestaan. Ze worden van deze telefoon gewist.',
+
+  // What's new in 1.1.0
+  'new.warmups.title': 'Opwarmsets',
+  'new.warmups.text': 'Voeg een opwarmreeks toe via het menu van een oefening. Ze rondt af op de schijven die je hebt, en de stappen stel je in onder Instellingen → Opwarmsets.',
+  'new.muscles.title': 'Spierkaart',
+  'new.muscles.text': 'Een figuur van voren en achteren laat zien welke spieren je hebt getraind: in de lopende training, bij elke opgeslagen training en bij Voortgang.',
+  'new.report.title': 'Maandrapport',
+  'new.report.text': 'Elke maand op één pagina: totalen, verandering sinds vorige maand, een kalender, spieren en records. Start biedt dat van vorige maand één keer aan, en Voortgang toont nu ook herhalingen en tot 12 maanden.',
+  'new.videos.title': 'Video’s bij sets',
+  'new.videos.text': 'Neem een video op of kies er een voor elke set via het nummer. Video’s blijven op je telefoon: ze worden niet gesynchroniseerd of geback-upt.',
+  'new.tools.title': 'Recordmeldingen live',
+  'new.tools.text': 'Een trofee en een melding zodra een set een record breekt. De trainingsinstellingen krijgen een schijvenknop, een stopwatchschakelaar en scrollen tussen oefeningen van een superset.',
+  'new.help.title': 'Helpgidsen',
+  'new.help.text': 'De gidsen Aan de slag en Routines en de vragen staan nu onder Instellingen → Help. RPE kan ook in halve punten.',
 } satisfies Record<string, Message>;

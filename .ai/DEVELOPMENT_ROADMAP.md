@@ -357,6 +357,16 @@ Plan: `~/.claude/plans/c-users-ousse-downloads-fitness-app-imp-iridescent-hickey
 | ID | Item | Status |
 |----|------|--------|
 | FEAT-007 | Contact page (feature request, bug report, help) | Deferred by the owner until Google sign-in (FEAT-001) exists |
+| FEAT-008 | Warm-up sets: calculator, settings page, insert from the exercise menu | DONE 2026-10-17 (TT-M2) |
+| FEAT-009 | Workout toggles: live record alerts, stopwatch button, superset scroll, plate button | DONE 2026-10-17 (TT-M2) |
+| FEAT-010 | Muscle map | DONE 2026-10-17 (TT-M3) |
+| FEAT-011 | Monthly report; Reps and 3 / 6 / 12 month range on the weekly chart | DONE 2026-10-18 (TT-M4); the month-in-progress comparison is an open question |
+| FEAT-012 | Help guides and questions | DONE 2026-10-18 (TT-M5) |
+| FEAT-013 | Local set videos | DONE 2026-10-18 (TT-M6); phone checks open |
+| SEC-002 | CSV formula escaping | DONE 2026-10-17 (TT-M1) |
+| DATA-003 | Exact pound factor | DONE 2026-10-17 (TT-M1) |
+| UX-005 | RPE by half points with a guide | DONE 2026-10-17 (TT-M1) |
+| TT-M7 | Version 1.1.0, What's new, full verification, REL-105 | DONE 2026-10-18 (below); merge waits for the owner |
 
 ### TT-M1: Foundations and spec hardening
 - **Done (2026-10-17):**
@@ -413,3 +423,9 @@ Plan: `~/.claude/plans/c-users-ousse-downloads-fitness-app-imp-iridescent-hickey
 - **Strings:** 37 new keys in all eleven languages (`.ai/tools/m6.py`, `m6b.py`).
 - **Evidence:** typecheck clean; 214 tests pass (2 skipped; media 15); contrast 0 of 732 failing (no new tokens); `/chalk/` build fine (index chunk 112.54 kB gzip, up 2 kB; Settings chunk 12.68 kB). Browser (dev origin with the sample data, a clip made with `canvas.captureStream` and `MediaRecorder` and attached through `attachVideo`, since the pane can't pick files): the set menu offering Record and Choose; the camera on the badge; Watch, 0.5× and close; the confirmation on Remove set (cancelled, nothing lost); finish dropping an unchecked set's video and keeping the checked one; the workout page's camera button and player; Remove video with its confirmation; the editor draft (a video on an added set counted as linked, then removed on Discard while the original set's video stayed); Delete workout clearing the video; the Data card with two unlinked videos and the confirmed removal; `setVideos` off (Watch and Remove remain, no add buttons); discard clearing a new workout's video. 15 combinations of five languages by three settings pages at 320 px with no overflow against `clientWidth`.
 - **Limits and phone checks for the owner:** the camera capture, real video playback, share and the free-space check were not tried on a phone (REL-105). The phone's camera records sound, so playback starts muted. A big video takes phone storage; iPhone untested. Checked only on Chromium (the Claude browser pane). The re-encoding, trimming, rep markers, uploads and shared links in the spec are not built (need sensors or a server).
+
+### TT-M7: Release prep, DONE (2026-10-18)
+- **Version and What's new:** `package.json` and the lockfile at 1.1.0; `WHATS_NEW['1.1.0']` in `src/lib/whatsNew.ts` lists six entries (warm-up sets, muscle map, monthly report, videos on sets, live record alerts, help guides), 12 strings in all eleven languages (`.ai/tools/m7.py`). A device with 1.0 recorded sees the sheet once.
+- **Full verification:** every route in every language at 320 px (385 loads) found one overflow, the French Home backup card, fixed by letting `.backup-actions` wrap; the What's new sheet in all eleven languages; the upgrade from 1.0 data; the simulated schema rollback; the production build under the CSP. Evidence and one ledger per milestone: `TEST_STATUS.md`.
+- **Recorded:** REQUIREMENTS REQ-024 to REQ-030 and the REQ-029 acceptance note; NON_NEGOTIABLES NN-19 (set videos stay on the device); a DECISIONS row; SMOKE_TESTS S-17 to S-19; RELEASE_CHECKLIST REL-105 with the after-deploy phone checks; PROJECT_STATE, PROGRESS, the `CLAUDE.md` and `AGENTS.md` architecture notes (identical files).
+- **Limits and what waits:** the merge into `main` (NN-15) and the owner's phone checks; the month-comparison question; native-speaker review. Nothing was pushed.

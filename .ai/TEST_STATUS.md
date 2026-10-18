@@ -1,5 +1,43 @@
 # Test status
 
+## Training tools, Setward 1.1: evidence ledgers and full verification, 2026-10-18, branch `training-tools`
+
+Environment: Windows 11, the built-in Chromium of the Claude app. Dev server on :5173 with the sample backup (65 workouts, 6 routines) and the production preview on :4173/chalk/ for the CSP check; phone emulation at 320, 360 and 375 px. A video cannot be picked in this browser, so clips were made in the page (`canvas.captureStream` and `MediaRecorder`) and attached through `attachVideo`. Not run: a phone, an iPhone, a screen reader, native speakers.
+
+### Full verification (TT-M7)
+
+| Check | Result | Evidence |
+|-------|--------|----------|
+| Types / tests / contrast / lockfile / secrets | PASS | `tsc` exit 0; 214 passed, 2 skipped (163 at 1.0: +51); 732 pairs, 0 failing (no token was added); `npm ci --dry-run` exit 0; 257 tracked files, the only pattern hit is the `github_pat_…` input placeholder |
+| Production build | PASS | `/chalk/`: index chunk 112.6 kB gzip, Settings 12.7, Report 1.7; 39 precache entries, 2.22 MB (37 and 2.07 MB at 1.0); `dist/sw.js` present |
+| Overflow, every route in every language | PASS after one fix | 35 routes (Home, live workout, history, new past workout, workout page and its editor, exercises, new / detail / edit exercise, new and existing routine, programs, welcome, Progress, body weight, the monthly report for two months, Settings home and all 15 pages, an unknown address) by 11 languages = 385 loads at 320 px, dark, default text, against `clientWidth` and every element's rectangle. One finding: on the French Home the backup card's two buttons did not wrap and made the page 327 px wide; `.backup-actions` now wraps (re-checked clean). 0 window errors during the run |
+| What's new | PASS | with `lastSeenVersion` set back to 1.0.0 the sheet opens on Home with six entries and the 1.1.0 title in all eleven languages, no overflow at 320 px; Done records the version |
+| Upgrade | PASS | the dev origin held 1.0 data (the sample backup): it opened at Dexie version 3 with the new `media` table and its existing workouts and routines, and the sweep and the video checks ran on that data |
+| Rollback of the schema | PASS (simulated) | older code declaring version 2 opens a database already at version 3 and reads its data (Dexie 4.4, `fake-indexeddb`); the `media` table is then ignored. Not tried in a real browser |
+| CSP / console | PASS | a blob video loads in the `/chalk/` build under `media-src 'self' blob:` with no violation; no console errors in the dev runs |
+| New screens at other widths | PARTIAL | by eye at 360 and 375 px in English, German and Arabic; not at extra-large text or larger controls (done for 1.0 in LAUNCH-M8) |
+| Phone / iPhone / screen reader / native speakers / real share sheet / camera capture | NOT_RUN | listed in `RELEASE_CHECKLIST.md` REL-105 |
+
+### Evidence ledgers, one per milestone (HARD-21 shape, condensed)
+
+| Slice and IDs | Revision | Files and contracts changed | Tests and browser evidence | Not verified |
+|---------------|----------|-----------------------------|----------------------------|--------------|
+| **TT-M1** foundations: SEC-002, DATA-003, UX-005 (REQ-030) | c6e8ba3, e55f6ce | `Settings` and `DEFAULT_SETTINGS` gain ten fields, `cleanSettings` checks the warm-up steps and rounding; `csv.ts` `escapeCell` / `unescapeCell`; `KG_PER_LB`; RPE chips by halves; catalog part `training.ts` in 11 languages | typecheck; 166 tests (CSV round trip with `=SUM(A1)` and `-5 kg drop`, 100 lb = 45.359237 kg, settings checks) | a spreadsheet opening the CSV |
+| **TT-M2** warm-ups and live tools: FEAT-008, FEAT-009 (REQ-024, REQ-025) | 2c85ed2 | `warmup.ts`, `liveRecordSets` / `newLiveRecords`, `WarmupSection`, four Workout toggles, plate button, superset scroll, stopwatch toggle | 185 tests (`warmup.test.ts` 14, live records 5); browser: 100 kg barbell gives 20x10, 50x10, 70x5, 85x3, toast and trophy on a record set, superset scroll, pages at 320 px in dark, light, German and Arabic | the default steps as training advice; touch use on a phone |
+| **TT-M3** muscle map: FEAT-010 (REQ-026) | ecfa27e | `muscles.ts`, `MuscleMap.tsx`, the live sheet, the workout page, Progress | 191 tests (`muscles.test.ts` 6); browser: sheet, page and Progress at 320 px dark and light; dark and light screenshots sent to the owner | the owner's view of the figure (no reply) |
+| **TT-M4** monthly report, weekly chart: FEAT-011 (REQ-027) | b34fb99, daa4c63 | `report.ts`, `Report.tsx` (lazy), `ReportCard`, `reportSeenMonth` pref, Goals toggle, Reps and 3 / 6 / 12 months on the chart, `RecordList` extracted | 199 tests (`report.test.ts` 8); browser: the report in English, German and Arabic, Progress with 52 bars, Home's card with a faked date, "See report" and the pref | the comparison rule mid-month (open question); a real month change |
+| **TT-M5** help: FEAT-012 (REQ-028) | 71cb1d0 | `HelpSections.tsx`, Help group on Settings home, FAQ moved out of About, `about.help` removed, 28 strings | 199 tests (`i18n.test.ts` covers the keys); browser: three pages and the two buttons at 320 px in all languages | a native speaker reading the guides |
+| **TT-M6** set videos: FEAT-013 (REQ-029, NN-19) | e1dafee | `db.version(3)` `media`; `media.ts`; `SetVideo.tsx`; lifecycle in `workouts.ts`, `EditWorkout.tsx`, `WorkoutDetail.tsx`, `backup.ts`; `VideosCard`; `setVideos` toggle; privacy text, `privacy.html`, `PLAY_STORE.md`; 37 strings | 214 tests (`media.test.ts` 15: attach, replace, refuse, space, remove, orphans, finish, discard, edit-discard, erase); browser: every path in `RELEASE_CHECKLIST.md` REL-105; CSP in the production build | camera capture, real playback, the share sheet, the free-space check, iPhone |
+| **TT-M7** release prep | this commit | version 1.1.0, `WHATS_NEW` 1.1.0 (12 strings in 11 languages), `.backup-actions` wrap, notes | the table above | merging and deploying |
+
+Shared by every ledger:
+- **Existing behavior preserved:** nothing existing was removed except the FAQ's place in About (now a Settings page). 1.0 backups restore; the sync format, the `chalk` database name, `/chalk/` scope and backup `app: 'chalk'` are untouched; routines, settings and the workout in progress keep working across the schema upgrade.
+- **Data migration and rollback:** one append-only Dexie version (3, NN-10) and new settings fields with defaults. Rolling the code back leaves the `media` table in place and unused (see Upgrade and Rollback above); videos are not in backups or sync, so a rollback loses nothing else.
+- **Real-device validation scope:** none. Every check was in the Claude app's Chromium.
+- **Known failures:** none open. Introduced and fixed: the French Home backup card overflow (M7). Pre-existing and untouched: UX-004, no screen-reader pass, machine translations.
+- **Release status:** READY WITH DOCUMENTED LIMITATIONS, not merged (REL-105). No feature flag; each tool has its own setting (the video, record-alert and report settings default on).
+- **Exact next action:** the owner decides on the merge (and the open month-comparison question), then phone checks.
+
 ## Live check after the 1.0 release (REL-104): 2026-10-17, `main` @ c3da695
 
 Environment: the built-in browser on https://botrading20-glitch.github.io/chalk/ (a fresh origin, so a new install), phone emulation 375 px. Pages run 39056196923: build and deploy jobs succeeded.

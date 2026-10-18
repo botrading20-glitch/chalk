@@ -143,4 +143,18 @@ export default {
   'set.setVideos': 'Vídeos en las series',
   'set.setVideosNote': 'Añade un vídeo a cualquier serie desde su número. Desactivar esto oculta los botones de añadir, no tus vídeos.',
   'video.removeUnlinkedText': 'Estos vídeos pertenecen a series que ya no existen. Se borran de este teléfono.',
+
+  // What's new in 1.1.0
+  'new.warmups.title': 'Series de calentamiento',
+  'new.warmups.text': 'Añade una escalera de calentamiento desde el menú de un ejercicio. Se ajusta a los discos que tienes y los pasos se configuran en Ajustes → Series de calentamiento.',
+  'new.muscles.title': 'Mapa muscular',
+  'new.muscles.text': 'Una figura de frente y de espalda muestra qué músculos trabajaste: durante el entrenamiento, en cada entrenamiento guardado y en Progreso.',
+  'new.report.title': 'Informe mensual',
+  'new.report.text': 'Cada mes en una página: totales, cambio desde el mes pasado, un calendario, músculos y récords. Inicio ofrece el del mes pasado una vez, y Progreso ahora muestra repeticiones y hasta 12 meses.',
+  'new.videos.title': 'Vídeos en las series',
+  'new.videos.text': 'Graba o elige un vídeo para cualquier serie desde su número. Los vídeos se quedan en tu teléfono: no se sincronizan ni se copian.',
+  'new.tools.title': 'Avisos de récord en directo',
+  'new.tools.text': 'Un trofeo y un aviso en cuanto una serie supera un récord. Los ajustes de entrenamiento añaden un botón de discos, un interruptor del cronómetro y el desplazamiento entre ejercicios de una superserie.',
+  'new.help.title': 'Guías de ayuda',
+  'new.help.text': 'Las guías Primeros pasos y Rutinas, y las preguntas, están ahora en Ajustes → Ayuda. El RPE también admite medios puntos.',
 } satisfies Record<string, Message>;

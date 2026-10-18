@@ -143,4 +143,18 @@ export default {
   'set.setVideos': 'Video sulle serie',
   'set.setVideosNote': 'Aggiungi un video a qualsiasi serie dal suo numero. Disattivando questa opzione si nascondono i pulsanti di aggiunta, non i tuoi video.',
   'video.removeUnlinkedText': 'Questi video appartengono a serie che non esistono più. Vengono eliminati da questo telefono.',
+
+  // What's new in 1.1.0
+  'new.warmups.title': 'Serie di riscaldamento',
+  'new.warmups.text': 'Aggiungi una scala di riscaldamento dal menu di un esercizio. Si arrotonda ai dischi che hai, e i passaggi si impostano in Impostazioni → Serie di riscaldamento.',
+  'new.muscles.title': 'Mappa muscolare',
+  'new.muscles.text': 'Una figura frontale e posteriore mostra quali muscoli hai allenato: durante l’allenamento, in ogni allenamento salvato e in Progressi.',
+  'new.report.title': 'Resoconto mensile',
+  'new.report.text': 'Ogni mese in una pagina: totali, variazione rispetto al mese scorso, un calendario, muscoli e record. La Home propone quello del mese scorso una volta, e Progressi ora mostra anche le ripetizioni e fino a 12 mesi.',
+  'new.videos.title': 'Video sulle serie',
+  'new.videos.text': 'Registra o scegli un video per qualsiasi serie dal suo numero. I video restano sul tuo telefono: non vengono sincronizzati né salvati nei backup.',
+  'new.tools.title': 'Avvisi di record dal vivo',
+  'new.tools.text': 'Un trofeo e un avviso appena una serie batte un record. Le impostazioni dell’allenamento aggiungono un pulsante dischi, un interruttore del cronometro e lo scorrimento tra gli esercizi di un superset.',
+  'new.help.title': 'Guide di aiuto',
+  'new.help.text': 'Le guide Per iniziare e Routine e le domande ora si trovano in Impostazioni → Aiuto. L’RPE accetta anche i mezzi punti.',
 } satisfies Record<string, Message>;

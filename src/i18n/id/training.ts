@@ -157,4 +157,6 @@ export default {
   'new.tools.text': 'Piala dan catatan begitu sebuah set memecahkan rekor. Pengaturan latihan menambah tombol pelat, sakelar stopwatch, dan gulir antar gerakan superset.',
   'new.help.title': 'Panduan bantuan',
   'new.help.text': 'Panduan Memulai dan Rutinitas serta pertanyaan kini ada di Pengaturan → Bantuan. RPE juga bisa dalam setengah poin.',
+  'report.vsLastSoFar': '{change} dibanding hari yang sama bulan lalu',
+  'report.sameSoFar': 'Sama dengan hari yang sama bulan lalu',
 } satisfies Record<string, Message>;

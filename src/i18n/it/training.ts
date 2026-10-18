@@ -157,4 +157,6 @@ export default {
   'new.tools.text': 'Un trofeo e un avviso appena una serie batte un record. Le impostazioni dell’allenamento aggiungono un pulsante dischi, un interruttore del cronometro e lo scorrimento tra gli esercizi di un superset.',
   'new.help.title': 'Guide di aiuto',
   'new.help.text': 'Le guide Per iniziare e Routine e le domande ora si trovano in Impostazioni → Aiuto. L’RPE accetta anche i mezzi punti.',
+  'report.vsLastSoFar': '{change} rispetto agli stessi giorni del mese scorso',
+  'report.sameSoFar': 'Uguale agli stessi giorni del mese scorso',
 } satisfies Record<string, Message>;

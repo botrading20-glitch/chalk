@@ -14,7 +14,7 @@ Problems met and what they taught:
 - A shell command over about 6 KB fails; the edits went through small Python helpers in the scratchpad that keep the files' CRLF endings.
 - The screenshot tool can lag a frame behind the page: read the DOM or shoot again before trusting a picture.
 
-Open for the owner: whether to merge `training-tools` into `main` and push (it deploys), the month-comparison question, the phone checks in REL-105, a native-speaker look at the translations.
+Open for the owner: whether to merge `training-tools` into `main` and push (it deploys), the phone checks in REL-105, a native-speaker look at the translations.
 
 ## Session: 2026-10-16 to 2026-10-17 (Setward 1.0 launch work)
 

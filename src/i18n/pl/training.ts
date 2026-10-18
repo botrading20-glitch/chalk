@@ -157,4 +157,6 @@ export default {
   'new.tools.text': 'Puchar i komunikat, gdy tylko seria pobije rekord. Ustawienia treningu dodają przycisk talerzy, przełącznik stopera i przewijanie między ćwiczeniami superserii.',
   'new.help.title': 'Przewodniki pomocy',
   'new.help.text': 'Przewodniki Pierwsze kroki i Rutyny oraz pytania są teraz w Ustawienia → Pomoc. RPE można podawać też w półpunktach.',
+  'report.vsLastSoFar': '{change} względem tych samych dni poprzedniego miesiąca',
+  'report.sameSoFar': 'Tyle samo co w tych samych dniach poprzedniego miesiąca',
 } satisfies Record<string, Message>;

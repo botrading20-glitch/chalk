@@ -157,4 +157,6 @@ export default {
   'new.tools.text': 'Ein Pokal und ein Hinweis, sobald ein Satz einen Rekord schlägt. Die Trainingseinstellungen bringen eine Scheiben-Taste, einen Stoppuhr-Schalter und das Springen zwischen Supersatz-Übungen.',
   'new.help.title': 'Hilfe-Anleitungen',
   'new.help.text': 'Die Anleitungen Erste Schritte und Routinen sowie die Fragen findest du jetzt unter Einstellungen → Hilfe. Der RPE geht auch in halben Punkten.',
+  'report.vsLastSoFar': '{change} zu denselben Tagen im Vormonat',
+  'report.sameSoFar': 'Wie an denselben Tagen im Vormonat',
 } satisfies Record<string, Message>;

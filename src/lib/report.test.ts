@@ -61,7 +61,8 @@ describe('monthReport', () => {
     workout(at(2026, 11, 1, 0), ['press', 110, 5]),
   ].sort((a, b) => b.startTime - a.startTime);
   const records = computeRecords(workouts, typeOf);
-  const report = monthReport(workouts, typeOf, map, records, at(2026, 10, 1, 0));
+  // October 2026 as a finished month: "now" is in the new year.
+  const report = monthReport(workouts, typeOf, map, records, at(2026, 10, 1, 0), 5, at(2027, 1, 15));
 
   it('keeps workouts to the local month: 23:00 on the last day is in, 00:00 on the next 1st is out', () => {
     expect(report.workouts).toBe(3);
@@ -87,10 +88,36 @@ describe('monthReport', () => {
   it('adds muscle sets and handles an empty month', () => {
     expect(report.muscles.get('chest')).toBe(4);
     expect(report.muscles.get('lats')).toBe(3);
-    const empty = monthReport(workouts, typeOf, map, records, at(2027, 5, 1, 0));
+    const empty = monthReport(workouts, typeOf, map, records, at(2027, 5, 1, 0), 5, at(2027, 7, 1));
     expect(empty.workouts).toBe(0);
     expect(empty.top).toEqual([]);
     expect(empty.muscles.size).toBe(0);
+  });
+
+  it('sets a finished month against all of the month before', () => {
+    expect(report.partial).toBe(false);
+    expect(report.previous.workouts).toBe(2);
+  });
+
+  it('sets a month still running against the same days of the month before', () => {
+    // On 2 October the month before counts 1 to 2 September: the workout of the 2nd, not the one of the 30th.
+    const early = monthReport(workouts, typeOf, map, records, at(2026, 10, 1, 0), 5, at(2026, 10, 2, 8));
+    expect(early.partial).toBe(true);
+    expect(early.previous.workouts).toBe(1);
+    expect(early.previous.volume).toBe(400);
+    // From the 30th on, the whole of September is in.
+    const late = monthReport(workouts, typeOf, map, records, at(2026, 10, 1, 0), 5, at(2026, 10, 30, 8));
+    expect(late.previous.workouts).toBe(2);
+    // The 31st of a month after a 30-day month still ends at the month's end, never into this one.
+    const day31 = monthReport(workouts, typeOf, map, records, at(2026, 10, 1, 0), 5, at(2026, 10, 31, 12));
+    expect(day31.previous.workouts).toBe(2);
+    // The report itself still counts the whole month so far, whatever "now" is.
+    expect(early.workouts).toBe(report.workouts);
+  });
+
+  it('is not a running month before it starts or once it is over', () => {
+    expect(monthReport(workouts, typeOf, map, records, at(2026, 10, 1, 0), 5, at(2026, 9, 20)).partial).toBe(false);
+    expect(monthReport(workouts, typeOf, map, records, at(2026, 10, 1, 0), 5, at(2026, 11, 1, 0)).partial).toBe(false);
   });
 
   it('summarises a month for the Home card', () => {

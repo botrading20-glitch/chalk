@@ -4424,6 +4424,9 @@ html[data-controls='large'] .rest-actions button {
 
 .rep-chip {
   justify-self: start;
+  /* The line that says what the change is against can be long in German or Polish: let it wrap rather than push the card wider. */
+  max-width: 100%;
+  white-space: normal;
 }
 
 .stat-note {

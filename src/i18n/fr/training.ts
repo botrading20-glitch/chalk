@@ -157,4 +157,6 @@ export default {
   'new.tools.text': 'Un trophée et un message dès qu’une série bat un record. Les réglages de séance ajoutent un bouton disques, un interrupteur de chrono et le défilement entre les exercices d’un superset.',
   'new.help.title': 'Guides d’aide',
   'new.help.text': 'Les guides Pour bien démarrer et Routines, ainsi que les questions, sont maintenant dans Réglages → Aide. La RPE se règle aussi par demi-points.',
+  'report.vsLastSoFar': '{change} par rapport aux mêmes jours du mois dernier',
+  'report.sameSoFar': 'Identique aux mêmes jours du mois dernier',
 } satisfies Record<string, Message>;

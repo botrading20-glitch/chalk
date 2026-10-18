@@ -157,4 +157,6 @@ export default {
   'new.tools.text': 'Een trofee en een melding zodra een set een record breekt. De trainingsinstellingen krijgen een schijvenknop, een stopwatchschakelaar en scrollen tussen oefeningen van een superset.',
   'new.help.title': 'Helpgidsen',
   'new.help.text': 'De gidsen Aan de slag en Routines en de vragen staan nu onder Instellingen → Help. RPE kan ook in halve punten.',
+  'report.vsLastSoFar': '{change} t.o.v. dezelfde dagen vorige maand',
+  'report.sameSoFar': 'Gelijk aan dezelfde dagen vorige maand',
 } satisfies Record<string, Message>;

@@ -157,4 +157,6 @@ export default {
   'new.tools.text': 'Un trofeo y un aviso en cuanto una serie supera un récord. Los ajustes de entrenamiento añaden un botón de discos, un interruptor del cronómetro y el desplazamiento entre ejercicios de una superserie.',
   'new.help.title': 'Guías de ayuda',
   'new.help.text': 'Las guías Primeros pasos y Rutinas, y las preguntas, están ahora en Ajustes → Ayuda. El RPE también admite medios puntos.',
+  'report.vsLastSoFar': '{change} frente a los mismos días del mes pasado',
+  'report.sameSoFar': 'Igual que los mismos días del mes pasado',
 } satisfies Record<string, Message>;

@@ -157,4 +157,6 @@ export default {
   'new.tools.text': 'Um troféu e um aviso assim que uma série bate um recorde. As configurações de treino ganham um botão de anilhas, um interruptor do cronômetro e a rolagem entre exercícios de um superset.',
   'new.help.title': 'Guias de ajuda',
   'new.help.text': 'Os guias Primeiros passos e Rotinas e as perguntas agora ficam em Configurações → Ajuda. A PSE também aceita meios pontos.',
+  'report.vsLastSoFar': '{change} em relação aos mesmos dias do mês passado',
+  'report.sameSoFar': 'Igual aos mesmos dias do mês passado',
 } satisfies Record<string, Message>;

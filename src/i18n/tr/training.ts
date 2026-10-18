@@ -157,4 +157,6 @@ export default {
   'new.tools.text': 'Bir set rekor kırdığı anda bir kupa ve bir not. Antrenman ayarları plaka düğmesi, kronometre anahtarı ve süper set egzersizleri arasında kaydırma ekler.',
   'new.help.title': 'Yardım rehberleri',
   'new.help.text': 'Başlarken ve Rutinler rehberleri ile sorular artık Ayarlar → Yardım altında. RPE yarım puanla da girilebilir.',
+  'report.vsLastSoFar': '{change} geçen ayın aynı günlerine göre',
+  'report.sameSoFar': 'Geçen ayın aynı günleriyle aynı',
 } satisfies Record<string, Message>;

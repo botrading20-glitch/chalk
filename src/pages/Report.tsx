@@ -27,13 +27,19 @@ export function ReportPage({ month }: { month?: string }) {
   const prev = start > first ? addMonths(start, -1) : undefined;
   const next = start < last ? addMonths(start, 1) : undefined;
 
-  const report = useMemo(() => monthReport(workouts, typeOf, exerciseMap, records, start), [workouts, typeOf, exerciseMap, records, start]);
+  // A month still running is set against the same days of the month before, so the day is all that matters here.
+  const today = startOfDay(now);
+  const report = useMemo(() => monthReport(workouts, typeOf, exerciseMap, records, start, 5, today), [workouts, typeOf, exerciseMap, records, start, today]);
   const list = useMemo(() => recentRecords(report.list, records, 10), [report.list, records]);
 
   // The change against the month before, only when that month had workouts to compare with.
   const compared = report.previous.workouts > 0;
   const vs = (delta: number, format: (n: number) => string) =>
-    !compared ? undefined : delta === 0 ? t('report.same') : t('report.vsLast', { change: isolate(`${delta > 0 ? '+' : '−'}${format(Math.abs(delta))}`) });
+    !compared
+      ? undefined
+      : delta === 0
+        ? t(report.partial ? 'report.sameSoFar' : 'report.same')
+        : t(report.partial ? 'report.vsLastSoFar' : 'report.vsLast', { change: isolate(`${delta > 0 ? '+' : '−'}${format(Math.abs(delta))}`) });
   const whole = (n: number) => fmtNum(n, 0);
   const unit = settings.weightUnit;
   const volumeDelta = Math.round(kgTo(report.volume, unit)) - Math.round(kgTo(report.previous.volume, unit));
@@ -77,7 +83,7 @@ export function ReportPage({ month }: { month?: string }) {
           </div>
 
           <section className="card">
-            <MonthCalendar start={start} workouts={report.list} today={startOfDay(now)} />
+            <MonthCalendar start={start} workouts={report.list} today={today} />
           </section>
 
           <section className="card">

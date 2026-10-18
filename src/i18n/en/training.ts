@@ -158,4 +158,6 @@ export default {
   'new.tools.text': 'A trophy and a note the moment a set beats a record. Workout settings add a plate button, a stopwatch switch and scrolling between superset exercises.',
   'new.help.title': 'Help guides',
   'new.help.text': 'Getting started and Routines guides and the questions now live under Settings → Help. RPE also goes in half points.',
+  'report.vsLastSoFar': '{change} vs the same days last month',
+  'report.sameSoFar': 'Same as the same days last month',
 } satisfies Record<string, Message>;

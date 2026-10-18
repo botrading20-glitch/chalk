@@ -38,14 +38,14 @@ None known at medium or high severity. Low-severity items left in the roadmap "D
 - Sync is shipped but unused by the owner. A Google Drive replacement is parked on the local-only branch `google-sync`; merging it needs its origins added to the CSP `connect-src`.
 
 ## Immediate next steps
-0. The owner decides whether to merge `training-tools` into `main` (REL-105) and answers the open question on how the monthly report compares the month in progress.
+0. The owner decides whether to merge `training-tools` into `main` (REL-105).
 1. The owner runs the phone checks in `RELEASE_CHECKLIST.md` (REL-101 to REL-104) and, if wanted, the sharing-tool checks for the link preview.
 2. Owner decisions that are open: the copyright holder in `LICENSE`, the Google Play steps in `PLAY_STORE.md` (account fee, closed test, package name, contact email), a native-speaker look at the ten translations.
 3. Retake the Play screenshots on a phone (1080 × 1920) before any Play submission.
 
 ## Last verified
 
-2026-10-18 (branch `training-tools`, Setward 1.1.0): typecheck clean, 214 tests passed (2 skipped), contrast 732 pairs 0 failing, `/chalk/` build (index chunk 112.6 kB gzip, 39 precache entries). Browser: every route in all eleven languages at 320 px (385 loads) against `clientWidth`, one fix; the What's new sheet in all eleven; every set-video path with a generated clip; the upgrade from 1.0 data; a blob video under the production CSP. Phone, iPhone, screen reader and native speakers not run. See `TEST_STATUS.md` (Training tools).
+2026-10-18 (branch `training-tools`, Setward 1.1.0): typecheck clean, 217 tests passed (2 skipped), contrast 732 pairs 0 failing, `/chalk/` build (index chunk 112.6 kB gzip, 39 precache entries); the report's same-days comparison rechecked after the sweep. Browser: every route in all eleven languages at 320 px (385 loads) against `clientWidth`, one fix; the What's new sheet in all eleven; every set-video path with a generated clip; the upgrade from 1.0 data; a blob video under the production CSP. Phone, iPhone, screen reader and native speakers not run. See `TEST_STATUS.md` (Training tools).
 
 2026-10-17 (`main` @ c3da695, live): typecheck clean, 163 tests passed (2 skipped), contrast 732 pairs 0 failing, `/chalk/` build main chunk 168.55 kB gzip. Browser: smoke S-01 to S-16 on dev and on the empty-storage preview, offline reload in French, every route in ten languages and in English across setting combinations at 320 to 412 px against `clientWidth`, keyboard and reduced motion. Live page checked after the deploy (Pages run 39056196923). Phone, iPhone, screen reader and native speakers not run. See `TEST_STATUS.md` (LAUNCH-M8).
 

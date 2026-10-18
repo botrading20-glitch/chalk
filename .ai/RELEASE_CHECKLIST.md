@@ -10,7 +10,7 @@ Pushing `main` deploys to the live app (NN-15); each new release needs the owner
 
 | Area | State |
 |------|-------|
-| Typecheck, 214 tests (2 skipped), contrast 732 pairs 0 failing, `npm ci --dry-run`, secret scan | ✅ |
+| Typecheck, 217 tests (2 skipped), contrast 732 pairs 0 failing, `npm ci --dry-run` and secret scan (run before the comparison change; unaffected by it) | ✅ |
 | `/chalk/` production build | ✅ index chunk 112.6 kB gzip, 39 precache entries (2.22 MB); the new screens are lazy chunks (Report 1.7 kB, Settings 12.7 kB) |
 | Overflow: every route in all eleven languages at 320 px (385 loads) and the What's new sheet in all eleven | ✅ after one fix (French Home backup card) |
 | Upgrade from 1.0 data, What's new shown once | ✅ dev origin |
@@ -21,7 +21,7 @@ Pushing `main` deploys to the live app (NN-15); each new release needs the owner
 | Real phone: camera capture, video playback with sound, share sheet, free-space refusal, big files, iPhone | ⚠ not run (owner) |
 | Screen reader, extra-large text and larger controls on the new screens | ⚠ not run |
 | Native-speaker review of the new strings (142 in the training catalog per language, machine-made) | ⚠ not run |
-| Open question | ⚠ the monthly report compares the month in progress with the whole of last month, so mid-month the changes read negative; the owner may prefer complete months only or the same days |
+| Monthly report mid-month | ✅ the month in progress is compared with the same days of last month (2026-10-18), checked at 320 px in eleven languages |
 
 Known limitations: the guides' pictures are drawn, not screenshots, and the set-table picture can clip a "Previous" value on the smallest phones as the real table does; a set with a video but no numbers that is not checked off is dropped at finish with its video; the phone's camera records sound, so playback starts muted; a video is limited to 500 MB and the browser's free space; videos are not synced or backed up (by design, NN-19); the warm-up defaults (50 / 70 / 85 percent, a 10-rep empty bar) are a starting point, not training advice; the report's year and month names come from the browser's `Intl`.
 

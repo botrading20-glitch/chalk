@@ -54,13 +54,18 @@ export interface MonthReport extends MonthTotals {
   /** Most-trained exercises: sets first, then sessions. */
   top: { exerciseId: string; sets: number; sessions: number }[];
   muscles: Map<Muscle, number>;
-  /** The month before, for the comparison. */
+  /** The month before, for the comparison: all of it, or only its first days while this month is still running. */
   previous: MonthTotals;
+  /** This month is still running, so `previous` covers only as many days as have passed in it. */
+  partial: boolean;
+}
+
+function between(workouts: Workout[], from: number, to: number) {
+  return workouts.filter((w) => w.startTime >= from && w.startTime < to);
 }
 
 function inMonth(workouts: Workout[], start: number) {
-  const end = addMonths(start, 1);
-  return workouts.filter((w) => w.startTime >= start && w.startTime < end);
+  return between(workouts, start, addMonths(start, 1));
 }
 
 function totals(list: Workout[], typeOf: TypeOf, records: Records): MonthTotals {
@@ -75,8 +80,25 @@ function totals(list: Workout[], typeOf: TypeOf, records: Records): MonthTotals 
   };
 }
 
-export function monthReport(workouts: Workout[], typeOf: TypeOf, exerciseMap: Map<string, Exercise>, records: Records, start: number, limit = 5): MonthReport {
+/**
+ * One month's report. A month still running (`now` falls in it) is set against the same days of the month
+ * before, so "+2 vs the same days last month" compares like with like; a finished month, against all of it.
+ */
+export function monthReport(
+  workouts: Workout[],
+  typeOf: TypeOf,
+  exerciseMap: Map<string, Exercise>,
+  records: Records,
+  start: number,
+  limit = 5,
+  now = Date.now(),
+): MonthReport {
   const list = inMonth(workouts, start);
+  const partial = now >= start && now < addMonths(start, 1);
+  const before = addMonths(start, -1);
+  // Days passed so far this month, today included, applied to the month before (which may be shorter).
+  const passed = Math.round((startOfDay(now) - start) / 86_400_000) + 1;
+  const previousEnd = partial ? Math.min(start, addDays(before, passed)) : start;
   const perExercise = new Map<string, { sets: number; sessions: number }>();
   for (const w of list) {
     for (const id of new Set(w.exercises.map((we) => we.exerciseId))) {
@@ -97,7 +119,8 @@ export function monthReport(workouts: Workout[], typeOf: TypeOf, exerciseMap: Ma
     list,
     top,
     muscles: mergeMuscleSets(list.map((w) => muscleSets(w.exercises, exerciseMap))),
-    previous: totals(inMonth(workouts, addMonths(start, -1)), typeOf, records),
+    previous: totals(between(workouts, before, previousEnd), typeOf, records),
+    partial,
   };
 }
 

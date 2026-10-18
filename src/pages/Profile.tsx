@@ -2,14 +2,15 @@ import { useMemo, useState } from 'react';
 import { BodyWeightCard } from '../components/BodyWeight';
 import { BarChart, HBars } from '../components/Charts';
 import { useUsageCounts } from '../components/ExerciseList';
-import { IconSettings } from '../components/Icons';
+import { IconChevron, IconSettings } from '../components/Icons';
 import { MuscleMap } from '../components/MuscleMap';
 import { RecordList } from '../components/RecordList';
 import { Empty, ExerciseAvatar, PageHeader, Segmented, Stat } from '../components/ui';
 import { useData } from '../lib/data';
-import { addDays, fmtDate, fmtDayMonth, fmtDuration, fmtMonthShort, fmtNum, fmtWeekdayDate, fmtWeekdayShort, isolate, kgTo, startOfDay, startOfWeek } from '../lib/format';
+import { addDays, fmtDate, fmtDayMonth, fmtDuration, fmtMonth, fmtMonthShort, fmtNum, fmtWeekdayDate, fmtWeekdayShort, isolate, kgTo, startOfDay, startOfWeek } from '../lib/format';
 import { mergeMuscleSets, muscleSets } from '../lib/muscles';
 import { recentRecords } from '../lib/records';
+import { monthKey } from '../lib/report';
 import { MUSCLE_LABEL } from '../lib/meta';
 import { Link } from '../lib/router';
 import { useSettings } from '../lib/settings';
@@ -17,8 +18,10 @@ import { weekStreak, weeklyBuckets, workoutSets, type WeekBucket } from '../lib/
 import type { Muscle } from '../types';
 import { count as count_, t } from '../i18n';
 
-type WeekMetric = 'duration' | 'volume' | 'sets';
-const WEEKS = 12;
+type WeekMetric = 'duration' | 'volume' | 'sets' | 'reps';
+type WeekRange = '3' | '6' | '12';
+/** The weekly chart's range, in months, as the weeks it shows. */
+const RANGE_WEEKS: Record<WeekRange, number> = { '3': 13, '6': 26, '12': 52 };
 const CAL_WEEKS = 17;
 
 export function Profile() {
@@ -26,8 +29,9 @@ export function Profile() {
   const settings = useSettings();
   const usage = useUsageCounts();
   const [metric, setMetric] = useState<WeekMetric>('duration');
+  const [range, setRange] = useState<WeekRange>('3');
 
-  const buckets = useMemo(() => weeklyBuckets(workouts, typeOf, WEEKS), [workouts, typeOf]);
+  const buckets = useMemo(() => weeklyBuckets(workouts, typeOf, RANGE_WEEKS[range]), [workouts, typeOf, range]);
   const streak = useMemo(() => weekStreak(workouts), [workouts]);
   const totalSeconds = useMemo(() => workouts.reduce((n, w) => n + (w.endTime - w.startTime) / 1000, 0), [workouts]);
 
@@ -83,17 +87,20 @@ export function Profile() {
   }
 
   const value = (b: WeekBucket) =>
-    metric === 'duration' ? b.duration / 3600 : metric === 'volume' ? kgTo(b.volume, settings.weightUnit) : b.sets;
+    metric === 'duration' ? b.duration / 3600 : metric === 'volume' ? kgTo(b.volume, settings.weightUnit) : metric === 'reps' ? b.reps : b.sets;
   const format = (v: number) =>
     metric === 'duration'
       ? fmtDuration(v * 3600)
       : metric === 'volume'
         ? isolate(`${fmtNum(Math.round(v), 0)} ${settings.weightUnit}`)
-        : count_('set', Math.round(v));
+        : metric === 'reps'
+          ? count_('rep', Math.round(v))
+          : count_('set', Math.round(v));
   const titles: Record<WeekMetric, string> = {
     duration: t('progress.titleTime'),
     volume: t('progress.titleVolume', { unit: settings.weightUnit }),
     sets: t('progress.titleSets'),
+    reps: t('progress.titleReps'),
   };
   const thisWeek = buckets.at(-1)!;
 
@@ -107,6 +114,14 @@ export function Profile() {
         <Stat label={t('progress.streak')} value={fmtNum(streak, 0)} />
         <Stat label={t('progress.timeTrained')} value={t('progress.hours', { n: Math.round(totalSeconds / 3600) })} />
       </div>
+
+      <Link to={`/profile/report/${monthKey(Date.now())}`} className="card report-link">
+        <span className="report-link-text">
+          <strong>{t('report.title')}</strong>
+          <span className="muted small">{fmtMonth(Date.now())}</span>
+        </span>
+        <IconChevron size={18} className="flip-rtl" />
+      </Link>
 
       <RecentRecords />
 
@@ -131,6 +146,17 @@ export function Profile() {
             { value: 'duration', label: t('progress.metricTime') },
             { value: 'volume', label: t('progress.metricVolume') },
             { value: 'sets', label: t('progress.metricSets') },
+            { value: 'reps', label: t('progress.metricReps') },
+          ]}
+        />
+        <Segmented
+          label={t('progress.rangeLabel')}
+          value={range}
+          onChange={setRange}
+          options={[
+            { value: '3', label: t('progress.range3') },
+            { value: '6', label: t('progress.range6') },
+            { value: '12', label: t('progress.range12') },
           ]}
         />
       </section>

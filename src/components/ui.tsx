@@ -159,11 +159,12 @@ export function ExerciseAvatar({ exercise, size = 44 }: { exercise?: Exercise; s
   );
 }
 
-export function Stat({ label, value }: { label: string; value: ReactNode }) {
+export function Stat({ label, value, note }: { label: string; value: ReactNode; note?: string }) {
   return (
     <div className="stat">
       <span className="stat-label">{label}</span>
       <span className="stat-value">{value}</span>
+      {note && <span className="stat-note">{note}</span>}
     </div>
   );
 }

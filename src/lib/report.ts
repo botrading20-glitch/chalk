@@ -101,6 +101,12 @@ export function monthReport(workouts: Workout[], typeOf: TypeOf, exerciseMap: Ma
   };
 }
 
+/** Workouts and time trained in the month starting at `start`: all Home's card needs. */
+export function monthSummary(workouts: Workout[], start: number) {
+  const list = inMonth(workouts, start);
+  return { workouts: list.length, seconds: list.reduce((n, w) => n + Math.max(0, w.endTime - w.startTime) / 1000, 0) };
+}
+
 /**
  * The month as rows of seven days, each a local midnight or null where the week spills into
  * the neighbouring month. `firstDay` is 0 for Sunday, as Date.getDay() counts.
@@ -112,9 +118,4 @@ export function monthGrid(start: number, firstDay: number): (number | null)[][] 
   for (let day = start; day < end; day = addDays(day, 1)) cells.push(day);
   while (cells.length % 7) cells.push(null);
   return Array.from({ length: cells.length / 7 }, (_, i) => cells.slice(i * 7, i * 7 + 7));
-}
-
-/** Signed difference for the comparison line; 0 when there is nothing to compare with. */
-export function change(now: number, before: number) {
-  return before > 0 ? now - before : 0;
 }

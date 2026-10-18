@@ -225,6 +225,10 @@ export function GoalsSection() {
         onChange={(v) => updateSettings({ weeklyGoal: num(v) })}
       />
       <Note>{t('set.goalNote')}</Note>
+      <div>
+        <Toggle label={t('set.monthlyReport')} checked={s.monthlyReport} onChange={(monthlyReport) => updateSettings({ monthlyReport })} />
+        <Note>{t('set.monthlyReportNote')}</Note>
+      </div>
     </Card>
   );
 }

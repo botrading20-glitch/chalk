@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Exercise, Workout } from '../types';
-import { addMonths, change, monthGrid, monthKey, monthReport, monthStart, parseMonthKey } from './report';
+import { addMonths, monthGrid, monthKey, monthReport, monthStart, monthSummary, parseMonthKey } from './report';
 import { computeRecords } from './stats';
 
 const at = (y: number, m: number, d: number, h = 20) => new Date(y, m - 1, d, h).getTime();
@@ -93,9 +93,8 @@ describe('monthReport', () => {
     expect(empty.muscles.size).toBe(0);
   });
 
-  it('only compares with a month that has data', () => {
-    expect(change(5, 3)).toBe(2);
-    expect(change(2, 3)).toBe(-1);
-    expect(change(5, 0)).toBe(0);
+  it('summarises a month for the Home card', () => {
+    expect(monthSummary(workouts, at(2026, 10, 1, 0))).toEqual({ workouts: report.workouts, seconds: report.seconds });
+    expect(monthSummary(workouts, at(2027, 5, 1, 0))).toEqual({ workouts: 0, seconds: 0 });
   });
 });

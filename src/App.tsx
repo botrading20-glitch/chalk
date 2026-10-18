@@ -28,6 +28,8 @@ const SettingsPage = lazy(() => import('./pages/Settings').then((m) => ({ defaul
 // The welcome screen and the starter programs (with their exercise lists) are the same kind of rarely-used code.
 const WelcomePage = lazy(() => import('./pages/Welcome').then((m) => ({ default: m.WelcomePage })));
 const ProgramsPage = lazy(() => import('./pages/Programs').then((m) => ({ default: m.ProgramsPage })));
+// The monthly report is read once a month, so it loads on demand too.
+const ReportPage = lazy(() => import('./pages/Report').then((m) => ({ default: m.ReportPage })));
 
 export function App() {
   useAppearance();
@@ -77,7 +79,7 @@ export function App() {
       page = <WelcomePage />;
       break;
     case 'profile':
-      page = s1 === 'bodyweight' ? <BodyWeightPage /> : <Profile />;
+      page = s1 === 'bodyweight' ? <BodyWeightPage /> : s1 === 'report' ? <ReportPage month={s2} /> : <Profile />;
       break;
     case 'settings':
       page = <SettingsPage section={s1} />;

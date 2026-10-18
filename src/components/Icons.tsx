@@ -181,6 +181,14 @@ export const IconDatabase = (p: P) =>
       <path d="M4.5 5.5v13c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-13M4.5 12c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8" />
     </>,
   );
+export const IconHelp = (p: P) =>
+  base(
+    p,
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.2 1-1.2 1.8M12 17h.01" />
+    </>,
+  );
 export const IconInfo = (p: P) =>
   base(
     p,

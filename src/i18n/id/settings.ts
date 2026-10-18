@@ -261,7 +261,6 @@ export default {
   'about.free': 'Gratis, tanpa akun dan tanpa iklan. Latihanmu tetap di ponselmu.',
   'about.privacy': 'Privasi',
   'about.privacyText': 'Setward tidak punya akun dan tidak punya server sendiri. Latihan, rutinitas, dan pengaturanmu disimpan di perangkat ini, di penyimpanan browser. Tidak ada yang dikirim ke mana pun kecuali kamu menyalakan sinkronisasi cloud: saat itu datamu pergi ke repositori GitHub pribadi pilihanmu, memakai token yang kamu tempel, dan tidak ke tempat lain. Tidak ada iklan, analitik, atau pelacak. Foto gerakan dimuat dari server GitHub saat kamu membuka sebuah gerakan, yang memberi tahu GitHub bahwa perangkatmu memintanya. Untuk menghapus semuanya, pakai Hapus semua data di Datamu.',
-  'about.help': 'Bantuan dan tanya jawab',
   'about.q1': 'Apa yang terjadi jika aku menghapus data browser?',
   'about.a1': 'Latihanmu ikut terhapus. Cadangkan dari Datamu, atau nyalakan sinkronisasi cloud, dan kamu selalu bisa memulihkannya.',
   'about.q2': 'Bisakah aku memakai Setward di dua perangkat?',

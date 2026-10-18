@@ -8,13 +8,6 @@ import { WHATS_NEW } from '../../lib/whatsNew';
 import { Card, Note } from './controls';
 
 const REPO = 'https://github.com/botrading20-glitch/chalk';
-const FAQ: [Key, Key][] = [
-  ['about.q1', 'about.a1'],
-  ['about.q2', 'about.a2'],
-  ['about.q3', 'about.a3'],
-  ['about.q4', 'about.a4'],
-  ['about.q5', 'about.a5'],
-];
 
 async function share() {
   const url = location.origin + import.meta.env.BASE_URL;
@@ -55,18 +48,6 @@ export function AboutSection() {
         <a className="btn btn-ghost btn-block" href={`${import.meta.env.BASE_URL}privacy.html`} target="_blank" rel="noreferrer">
           <IconExternal size={18} /> {t('about.privacyPage')}
         </a>
-      </details>
-
-      <details className="card about-item">
-        <summary>{t('about.help')}</summary>
-        <dl className="faq">
-          {FAQ.map(([q, a]) => (
-            <div key={q}>
-              <dt>{t(q)}</dt>
-              <dd>{t(a)}</dd>
-            </div>
-          ))}
-        </dl>
       </details>
 
       <details className="card about-item">

@@ -8,9 +8,12 @@ import {
   IconDatabase,
   IconFlame,
   IconGlobe,
+  IconHelp,
   IconInfo,
+  IconList,
   IconPalette,
   IconPlate,
+  IconPlay,
   IconRuler,
   IconTimer,
   IconTrophy,
@@ -71,6 +74,9 @@ function useSummaries(s: Settings) {
     language,
     sync: sync.phase === 'off' ? t('set.sum.syncOff') : sync.phase === 'error' ? t('sync.pillAttention') : t('sync.pillOn'),
     data: lastBackupAt ? backupSummary(lastBackupAt, now) : lastBackupAt === 0 ? t('set.sum.neverBackedUp') : '',
+    guide: t('set.sum.guide'),
+    routines: t('set.sum.routines'),
+    faq: t('set.sum.faq'),
     about: t('set.sum.version', { version: __APP_VERSION__ }),
   };
 }
@@ -109,6 +115,14 @@ export function SettingsHome() {
       rows: [
         { id: 'sync', icon: <IconCloud size={20} />, label: 'set.sync', value: sum.sync },
         { id: 'data', icon: <IconDatabase size={20} />, label: 'set.data', value: sum.data },
+      ],
+    },
+    {
+      title: 'set.group.help',
+      rows: [
+        { id: 'guide', icon: <IconPlay size={20} />, label: 'set.guide', value: sum.guide },
+        { id: 'routines', icon: <IconList size={20} />, label: 'home.routines', value: sum.routines },
+        { id: 'faq', icon: <IconHelp size={20} />, label: 'set.faq', value: sum.faq },
       ],
     },
     {

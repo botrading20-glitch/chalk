@@ -4509,3 +4509,141 @@ html[data-controls='large'] .rest-actions button {
   flex: 1 1 auto;
   padding-inline: 6px;
 }
+
+/* ---------- Help guides ---------- */
+
+.guide {
+  display: grid;
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guide-step {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.guide-num {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: 700 1.0625rem/1 var(--font-display);
+}
+
+.guide-body {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.guide-title {
+  font-size: 1.0625rem;
+  font-weight: 650;
+}
+
+.guide-body > p {
+  color: var(--text-2);
+  font-size: 0.9375rem;
+}
+
+/* The small picture under a step: a stand-in for the real control, so it never takes a tap or the keyboard. */
+.guide-art {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  pointer-events: none;
+  user-select: none;
+}
+
+.guide-art > .btn {
+  width: 100%;
+}
+
+.guide-art .btn-hero {
+  min-height: 52px;
+  font-size: 1.125rem;
+}
+
+/* A little narrower than the live table: the picture has the page's width minus its own padding. */
+.guide-art .set-table {
+  --field-w: 3.75rem;
+  --badge-w: 2.25rem;
+  --check-w: 2.5rem;
+}
+
+.guide-art > .btn-small {
+  width: auto;
+}
+
+.guide-card {
+  margin: 0;
+  box-shadow: none;
+}
+
+.guide-stack {
+  display: grid;
+  gap: 8px;
+}
+
+.guide-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text-3);
+  font-size: 0.9375rem;
+}
+
+.guide-val {
+  display: grid;
+  place-items: center;
+}
+
+.guide-val.hint {
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+.guide-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+
+.guide-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: 0.875rem;
+}
+
+.guide-finish {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.guide-folder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}

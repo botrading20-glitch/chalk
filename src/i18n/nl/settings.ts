@@ -259,7 +259,6 @@ export default {
   'about.free': 'Gratis, zonder account en zonder advertenties. Je trainingen blijven op je telefoon.',
   'about.privacy': 'Privacy',
   'about.privacyText': 'Setward heeft geen account en geen eigen server. Je trainingen, routines en instellingen worden op dit apparaat bewaard, in de opslag van de browser. Er wordt niets verstuurd, tenzij je cloudsynchronisatie aanzet: dan gaan je gegevens naar de privé-GitHub-repository die je hebt gekozen, met de token die je hebt geplakt, en nergens anders heen. Er zijn geen advertenties, geen analyse en geen trackers. Oefenfoto’s worden van GitHub-servers geladen wanneer je een oefening opent, waardoor GitHub weet dat je apparaat ze heeft opgevraagd. Om alles te verwijderen gebruik je Alle gegevens wissen onder Je gegevens.',
-  'about.help': 'Hulp en veelgestelde vragen',
   'about.q1': 'Wat gebeurt er als ik de gegevens van mijn browser wis?',
   'about.a1': 'Je trainingen worden dan ook gewist. Maak een back-up via Je gegevens, of zet cloudsynchronisatie aan, en je kunt altijd herstellen.',
   'about.q2': 'Kan ik Setward op twee apparaten gebruiken?',

@@ -259,7 +259,6 @@ export default {
   'about.free': 'Za darmo, bez konta i bez reklam. Twoje treningi zostają na Twoim telefonie.',
   'about.privacy': 'Prywatność',
   'about.privacyText': 'Setward nie ma konta ani własnego serwera. Twoje treningi, rutyny i ustawienia są przechowywane na tym urządzeniu, w pamięci przeglądarki. Nic nie jest nigdzie wysyłane, chyba że włączysz synchronizację w chmurze: wtedy dane trafiają do wybranego przez Ciebie prywatnego repozytorium GitHub, z użyciem wklejonego tokenu, i nigdzie indziej. Nie ma reklam, analityki ani trackerów. Zdjęcia ćwiczeń ładują się z serwerów GitHuba, gdy otwierasz ćwiczenie, co informuje GitHuba, że Twoje urządzenie o nie poprosiło. Aby usunąć wszystko, użyj Usuń wszystkie dane w Twoich danych.',
-  'about.help': 'Pomoc i najczęstsze pytania',
   'about.q1': 'Co się stanie, jeśli wyczyszczę dane przeglądarki?',
   'about.a1': 'Twoje treningi zostaną z nimi usunięte. Zrób kopię w Twoich danych albo włącz synchronizację w chmurze, a zawsze będziesz mógł je przywrócić.',
   'about.q2': 'Czy mogę używać Setwarda na dwóch urządzeniach?',

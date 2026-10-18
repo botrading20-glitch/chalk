@@ -2,6 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db, getKV, setKV } from '../db';
 import type { ActiveWorkout, Routine, Workout, WorkoutExercise, WorkoutSet } from '../types';
 import { defaultWorkoutTitle, uid } from './format';
+import { removeVideosForWorkout, setIdsOf } from './media';
 import { hasValues } from './stats';
 import { t } from '../i18n';
 
@@ -23,8 +24,16 @@ export async function updateActive(fn: (a: ActiveWorkout) => ActiveWorkout) {
   });
 }
 
-export function discardActive() {
-  return db.kv.delete(ACTIVE);
+/** Drops the workout in progress and its videos; for edits to a saved workout, only the videos on sets it never had. */
+export async function discardActive() {
+  await db.transaction('rw', db.kv, db.media, db.workouts, async () => {
+    const active = await getKV<ActiveWorkout>(ACTIVE);
+    if (active) {
+      const saved = active.editingId ? await db.workouts.get(active.editingId) : undefined;
+      await removeVideosForWorkout(active.editingId ?? active.id, saved ? setIdsOf(saved) : []);
+    }
+    await db.kv.delete(ACTIVE);
+  });
 }
 
 /** Copies exercises with fresh ids so templates and history are never mutated. */
@@ -77,8 +86,10 @@ export async function finishActive(opts: { title: string; description?: string; 
   const active = await getActive();
   if (!active) throw new Error(t('error.noActive'));
   const workout = workoutFromDraft({ ...active, title: opts.title, description: opts.description }, opts.keepUnchecked);
-  await db.transaction('rw', db.workouts, db.kv, db.routines, async () => {
+  await db.transaction('rw', db.workouts, db.kv, db.routines, db.media, async () => {
     await db.workouts.put(workout);
+    // Sets dropped on the way (unchecked, removed) take their videos with them.
+    await removeVideosForWorkout(workout.id, setIdsOf(workout));
     await db.kv.delete(ACTIVE);
     if (opts.updateRoutine && workout.routineId) {
       await db.routines.update(workout.routineId, {

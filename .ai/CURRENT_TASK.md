@@ -1,18 +1,18 @@
 # Current task
 
-## RESUME HERE: Setward 1.1 "training tools", M1 to M5 built; next is M6 (2026-10-18)
+## RESUME HERE: Setward 1.1 "training tools", M1 to M6 built; next is M7 release prep (2026-10-18)
 
 **Branch `training-tools`** (cut from `main` @ 032513f; `main` is untouched, nothing pushed or merged, NN-15). Plan (owner-approved, read it first): `~/.claude/plans/c-users-ousse-downloads-fitness-app-imp-iridescent-hickey.md`. Decisions: `DECISIONS.md` top two rows. Per-milestone notes: `DEVELOPMENT_ROADMAP.md` section "Training tools" (TT-M1 to TT-M4).
 
-**Done:** M1 foundations (c6e8ba3, e55f6ce), M2 warm-ups and workout toggles (2c85ed2), M3 muscle map (ecfa27e; dark and light screenshots were sent to the owner, no reply yet), M4 monthly report and weekly chart (committed daa4c63 on 2026-10-18: report page, Progress and Home entry points, Goals toggle, Reps metric and 3/6/12-month range). M5 Help guides and questions (built 2026-10-18, not yet committed: `HelpSections.tsx`, the Help group on the Settings home, 28 strings). TT-M4 and TT-M5 in the roadmap have the details, evidence and limits.
+**Done:** M1 foundations (c6e8ba3, e55f6ce), M2 warm-ups and workout toggles (2c85ed2), M3 muscle map (ecfa27e; dark and light screenshots were sent to the owner, no reply yet), M4 monthly report and weekly chart (committed daa4c63 on 2026-10-18: report page, Progress and Home entry points, Goals toggle, Reps metric and 3/6/12-month range). M5 Help guides and questions (71cb1d0). M6 local set videos (built 2026-10-18, not yet committed: `media.ts`, `SetVideo.tsx`, Dexie version 3, the Data card, 37 strings, privacy wording). TT-M4 to TT-M6 in the roadmap have the details, evidence and limits.
 
-**Baseline at the stop:** typecheck clean; 199 tests pass (2 skipped); contrast 0 of 732 failing; production build with `/chalk/` fine (index chunk 110.45 kB gzip, Report chunk 1.69 kB, Settings chunk 12.4 kB). The dev server (`chalk-dev`) may still be running; its browser origin holds the sample data (65 workouts) and German or English as last set; reset with `updateSettings({ language: 'en' })` or reload the sample backup (`node scripts/sample-backup.mjs`, then in the page console: `await (await import('/src/lib/backup.ts')).importBackup(await (await fetch('/tmp-import/chalk-sample-backup.json')).text())`).
+**Baseline at the stop:** typecheck clean; 199 tests pass (2 skipped); contrast 0 of 732 failing; production build with `/chalk/` fine (index chunk 112.54 kB gzip, Report chunk 1.69 kB, Settings chunk 12.68 kB); 214 tests pass. The dev server (`chalk-dev`) may still be running; its browser origin holds the sample data (65 workouts) and German or English as last set; reset with `updateSettings({ language: 'en' })` or reload the sample backup (`node scripts/sample-backup.mjs`, then in the page console: `await (await import('/src/lib/backup.ts')).importBackup(await (await fetch('/tmp-import/chalk-sample-backup.json')).text())`).
 
 ### Open question for the owner (M4)
 The current month is compared with the whole of last month, so mid-month every change line reads negative ("-8 vs last month" on 18 Oct). Options: compare only complete months (no change line on the month in progress), or compare with the same number of days of last month. Not decided; the plan said only "change against last month".
 
-### After M5 (plan unchanged)
-M6 local set videos (Dexie `db.version(3)` adds `media`, `src/lib/media.ts`, lifecycle rules, Data page Videos card, About/privacy wording, CSP already allows `blob:` media); M7 release prep (version 1.1.0, What's new in eleven languages, REQUIREMENTS REQ-024+, TEST_STATUS ledgers, SMOKE_TESTS, RELEASE_CHECKLIST REL-105, CLAUDE.md architecture notes for the new pieces, fix the stale "keep Hevy CSV compatibility" line in memory `chalk-workout-app.md`, an all-routes overflow sweep in ten languages). Ask the owner before merging `training-tools` into `main`. FEAT-007 (Contact page) stays deferred until Google sign-in.
+### After M6 (plan unchanged)
+M7 release prep (version 1.1.0, What's new in eleven languages, REQUIREMENTS REQ-024+, TEST_STATUS ledgers, SMOKE_TESTS, RELEASE_CHECKLIST REL-105, CLAUDE.md architecture notes for the new pieces, fix the stale "keep Hevy CSV compatibility" line in memory `chalk-workout-app.md`, an all-routes overflow sweep in ten languages). Ask the owner before merging `training-tools` into `main`. FEAT-007 (Contact page) stays deferred until Google sign-in.
 
 ### Working notes for the next session
 - **New strings:** add to `src/i18n/<code>/training.ts` for all eleven languages in the same change (NN-17). Helpers saved in `.ai/tools/` (`lang.py`, `add_i18n.py`): write `mN.py` next to them (a `lang('en', """key=text""")` block per language, then `T = build()`), run `python .ai/tools/add_i18n.py path/to/mN.py "Section name"`; it appends to every language and refuses duplicate keys. Avoid plural messages (reuse `count()` keys); Indonesian has no plural forms.
@@ -102,4 +102,4 @@ Setward 1.0 is **released** (2026-10-17): `launch` was merged into `main` as c3d
 - The Hevy removal is final (owner decision); do not reintroduce Hevy wording.
 
 ## Last updated
-2026-10-18 (1.1 M5 built on `training-tools`; 1.0 released 2026-10-17 and live)
+2026-10-18 (1.1 M6 built on `training-tools`; 1.0 released 2026-10-17 and live)

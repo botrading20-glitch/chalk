@@ -45,6 +45,7 @@ export function AboutSection() {
       <details className="card about-item">
         <summary>{t('about.privacy')}</summary>
         <p>{t('about.privacyText')}</p>
+        <p>{t('about.privacyVideos')}</p>
         <a className="btn btn-ghost btn-block" href={`${import.meta.env.BASE_URL}privacy.html`} target="_blank" rel="noreferrer">
           <IconExternal size={18} /> {t('about.privacyPage')}
         </a>

@@ -44,8 +44,9 @@ The origin-root file covers every path on the origin, so `/chalk/` is verified. 
   - Does the app collect or share any required user data types? **No.** Workouts, routines, settings and body weight stay on the device.
   - Optional cloud sync is started by the user and sends data only to a private GitHub repository that the user owns, with a token the user created. The privacy page says so. If the console asks about it, describe it as a user-initiated transfer to the user's own storage.
   - Data encrypted in transit: yes (HTTPS). Users can request deletion: yes, in the app (Settings → Your data → Erase all data) and by deleting the repository.
+  - Set videos (1.1): a video the user attaches to a set is stored only in the app's local storage on the phone. It is not synced, not in backups and never sent anywhere, so it is not collected or shared. The phone's camera app opens for recording (an `<input type="file" capture>`, no camera permission for the app).
   - No ads, no analytics, no third-party SDKs.
-- **Permissions:** the TWA asks for none. The web app uses vibration, audio, the Wake Lock API and the share sheet, none of which need an Android permission.
+- **Permissions:** the TWA asks for none. The web app uses vibration, audio, the Wake Lock API and the share sheet, none of which need an Android permission. Recording a set video hands off to the phone's camera app, which needs no permission either.
 
 ## Before the first upload (testing)
 

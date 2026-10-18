@@ -75,6 +75,10 @@ export function WorkoutSection() {
         <Toggle label={t('set.inlineStopwatch')} checked={s.inlineStopwatch} onChange={(inlineStopwatch) => updateSettings({ inlineStopwatch })} />
         <Toggle label={t('set.supersetScroll')} checked={s.supersetScroll} onChange={(supersetScroll) => updateSettings({ supersetScroll })} />
         <Toggle label={t('set.plateShortcut')} checked={s.plateShortcut} onChange={(plateShortcut) => updateSettings({ plateShortcut })} />
+        <div>
+          <Toggle label={t('set.setVideos')} checked={s.setVideos} onChange={(setVideos) => updateSettings({ setVideos })} />
+          <Note>{t('set.setVideosNote')}</Note>
+        </div>
       </Card>
     </>
   );

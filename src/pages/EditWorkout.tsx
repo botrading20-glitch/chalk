@@ -7,6 +7,7 @@ import { db } from '../db';
 import { useData } from '../lib/data';
 import { clearDraft, useDraft, useStoredDraft } from '../lib/drafts';
 import { defaultWorkoutTitle, uid } from '../lib/format';
+import { removeVideosForWorkout, setIdsOf } from '../lib/media';
 import { goBack, navigate } from '../lib/router';
 import { hasValues } from '../lib/stats';
 import { workoutFromDraft } from '../lib/workouts';
@@ -83,6 +84,16 @@ function Editor({
   const minutes = Math.round(((w.endTime ?? w.startTime) - w.startTime) / 60000);
   const back = original ? `/history/${original.id}` : '/history';
 
+  /** Writes the workout; videos on sets the editor dropped go with them. */
+  const saveWorkout = (workout: Workout) =>
+    db.transaction('rw', db.workouts, db.media, async () => {
+      await db.workouts.put(workout);
+      await removeVideosForWorkout(workout.id, setIdsOf(workout));
+    });
+
+  /** Throws away what this edit added: videos on sets the saved workout doesn't have (all of them for a new one). */
+  const dropAddedVideos = () => removeVideosForWorkout(w.id, original ? setIdsOf(original) : []);
+
   async function save() {
     // Without checkboxes in edit mode, any set with numbers in it counts as done.
     const workout = workoutFromDraft(
@@ -94,12 +105,12 @@ function Editor({
         toast(t('logPast.needSets'));
         return;
       }
-      await db.workouts.put(workout);
+      await saveWorkout(workout);
       await draft.clear();
       navigate(`/history/${workout.id}?saved=1`, { replace: true });
       return;
     }
-    await db.workouts.put(workout);
+    await saveWorkout(workout);
     await draft.clear();
     toast(t('editWorkout.updated'));
     goBack(back);
@@ -112,6 +123,7 @@ function Editor({
         onBack={async () => {
           if (!(await confirmDiscard(draft.dirty))) return;
           await clearDraft(draftKey);
+          await dropAddedVideos();
           goBack(back);
         }}
         title={original ? t('editWorkout.title') : t('logPast.title')}
@@ -121,7 +133,14 @@ function Editor({
           </button>
         }
       />
-      {stored && draft.dirty && <DraftBar onDiscard={draft.discard} />}
+      {stored && draft.dirty && (
+        <DraftBar
+          onDiscard={() => {
+            draft.discard();
+            void dropAddedVideos();
+          }}
+        />
+      )}
       <div className="form">
         <label className="field">
           <span>{t('form.name')}</span>
@@ -164,6 +183,7 @@ function Editor({
         previousBefore={original?.startTime ?? w.startTime}
         excludeWorkoutId={original?.id}
         routineId={original?.routineId}
+        videoWorkoutId={w.id}
       />
     </div>
   );

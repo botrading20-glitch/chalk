@@ -13,6 +13,7 @@ import { Link } from '../lib/router';
 import { fieldHeader, fieldsFor, fmtSet, setLabels } from '../lib/sets';
 import { useSettings } from '../lib/settings';
 import { beep, buzz, unlockAudio } from '../lib/timer';
+import { removeVideosForSets, useVideoSets } from '../lib/media';
 import { emptySet } from '../lib/workouts';
 import type { SetType, Stopwatch, WorkoutExercise, WorkoutSet } from '../types';
 import { confirmDialog, toast } from './dialogs';
@@ -32,8 +33,10 @@ import {
   IconTrash,
   IconTrophy,
   IconUp,
+  IconVideo,
 } from './Icons';
 import { PlateSheet } from './PlateCalculator';
+import { VideoSection, VideoSheet } from './SetVideo';
 import { ActionSheet, Sheet } from './Sheet';
 import { ExerciseAvatar } from './ui';
 import { t } from '../i18n';
@@ -58,6 +61,7 @@ export function WorkoutEditor({
   stopwatch,
   onStopwatch,
   trackRecords = true,
+  videoWorkoutId,
 }: {
   exercises: WorkoutExercise[];
   onChange: Update;
@@ -74,6 +78,8 @@ export function WorkoutEditor({
   onStopwatch?: (sw: Stopwatch | undefined) => void;
   /** Live mode: celebrate sets that beat a record. Off while editing a workout that was already saved. */
   trackRecords?: boolean;
+  /** The workout the sets belong to, which lets a set take a video. Absent for routines, which have none. */
+  videoWorkoutId?: string;
 }) {
   const { workouts, exerciseMap, records, typeOf } = useData();
   const settings = useSettings();
@@ -88,6 +94,9 @@ export function WorkoutEditor({
   const [platesFor, setPlatesFor] = useState<string | null>(null);
   /** The set that was just checked off, so only it plays the pop. */
   const [popId, setPopId] = useState<string | null>(null);
+  const videoSets = useVideoSets();
+  /** The set whose video is open in the player. */
+  const [watching, setWatching] = useState<string | null>(null);
 
   const supersetLetters = useMemo(() => {
     const map = new Map<number, string>();
@@ -261,6 +270,37 @@ export function WorkoutEditor({
     toast(t('warmup.added', { weight: fmtWeight(workingKg!, unit) }));
   }
 
+  /** Removes a set; one with a video asks first, since the video goes with it. */
+  async function removeSet(exId: string, setId: string) {
+    setSetMenu(null);
+    if (videoSets.has(setId)) {
+      const ok = await confirmDialog({
+        title: t('video.setConfirmTitle'),
+        message: t('video.setConfirmText'),
+        confirmLabel: t('editor.removeSet'),
+        danger: true,
+      });
+      if (!ok) return;
+      await removeVideosForSets([setId]);
+    }
+    updateEx(exId, (x) => ({ ...x, sets: x.sets.filter((s) => s.id !== setId) }));
+  }
+
+  async function removeExercise(we: WorkoutExercise) {
+    const withVideo = we.sets.filter((s) => videoSets.has(s.id)).map((s) => s.id);
+    if (withVideo.length) {
+      const ok = await confirmDialog({
+        title: t('video.setConfirmTitle'),
+        message: t('video.exerciseConfirmText'),
+        confirmLabel: t('editor.removeExercise'),
+        danger: true,
+      });
+      if (!ok) return;
+      await removeVideosForSets(withVideo);
+    }
+    onChange((list) => list.filter((x) => x.id !== we.id));
+  }
+
   function startTiming(setId: string) {
     unlockAudio();
     onStopwatch?.({ setId, startedAt: Date.now() });
@@ -405,12 +445,18 @@ export function WorkoutEditor({
                       onClick={() => setSetMenu({ ex: we.id, set: s.id })}
                       aria-label={
                         t('editor.setLabel', { label: labels[i], type: SET_TYPE_LABEL[s.type] }) +
-                        (liveBroken.has(s.id) ? `. ${t('record.setLabel', { label: labels[i] })}` : '')
+                        (liveBroken.has(s.id) ? `. ${t('record.setLabel', { label: labels[i] })}` : '') +
+                        (videoSets.has(s.id) ? `. ${t('video.hasVideo')}` : '')
                       }
                     >
                       {liveBroken.has(s.id) && (
                         <span className="badge-trophy" aria-hidden="true">
                           <IconTrophy size={10} />
+                        </span>
+                      )}
+                      {videoSets.has(s.id) && (
+                        <span className="badge-video" aria-hidden="true">
+                          <IconVideo size={10} />
                         </span>
                       )}
                       {labels[i]}
@@ -546,7 +592,7 @@ export function WorkoutEditor({
                   label: t('editor.removeExercise'),
                   icon: <IconTrash />,
                   danger: true,
-                  onSelect: () => onChange((list) => list.filter((x) => x.id !== menuEx.id)),
+                  onSelect: () => void removeExercise(menuEx),
                 },
               ]
             : []
@@ -612,18 +658,26 @@ export function WorkoutEditor({
                 <p className="muted small">{t('editor.rpeGuide')}</p>
               </>
             )}
-            <button
-              className="btn btn-danger-ghost btn-block"
-              onClick={() => {
-                updateEx(setMenuEx.id, (x) => ({ ...x, sets: x.sets.filter((s) => s.id !== setMenuSet.id) }));
-                setSetMenu(null);
-              }}
-            >
+            {videoWorkoutId && (
+              <VideoSection
+                target={{ setId: setMenuSet.id, workoutId: videoWorkoutId, exerciseId: setMenuEx.exerciseId }}
+                has={videoSets.has(setMenuSet.id)}
+                canAdd={settings.setVideos}
+                onWatch={() => {
+                  setWatching(setMenuSet.id);
+                  setSetMenu(null);
+                }}
+                onDone={() => setSetMenu(null)}
+              />
+            )}
+            <button className="btn btn-danger-ghost btn-block" onClick={() => void removeSet(setMenuEx.id, setMenuSet.id)}>
               <IconTrash size={18} /> {t('editor.removeSet')}
             </button>
           </div>
         )}
       </Sheet>
+
+      <VideoSheet setId={watching} onClose={() => setWatching(null)} />
 
       <Sheet open={!!restEx} onClose={() => setRestFor(null)} title={t('editor.restTitle')}>
         {restEx && (

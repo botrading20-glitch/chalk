@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { confirmDialog, toast } from '../components/dialogs';
 import { SavedCelebration } from '../components/Celebration';
-import { IconCopy, IconEdit, IconMore, IconPlay, IconShare, IconTrash, IconTrophy } from '../components/Icons';
+import { IconCopy, IconEdit, IconMore, IconPlay, IconShare, IconTrash, IconTrophy, IconVideo } from '../components/Icons';
 import { MuscleMap } from '../components/MuscleMap';
+import { VideoSheet } from '../components/SetVideo';
 import { ShareWorkoutSheet } from '../components/ShareWorkout';
 import { ActionSheet } from '../components/Sheet';
 import { Empty, ExerciseAvatar, PageHeader, Stat } from '../components/ui';
 import { db } from '../db';
 import { useData } from '../lib/data';
+import { removeVideosForWorkout, useVideoSets } from '../lib/media';
 import { fmtDateLong, fmtDuration, fmtTime, fmtVolume } from '../lib/format';
 import { muscleSets } from '../lib/muscles';
 import { Link, navigate } from '../lib/router';
@@ -26,6 +28,8 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
   const settings = useSettings();
   const [menu, setMenu] = useState(false);
   const [sharing, setSharing] = useState(false);
+  const videoSets = useVideoSets();
+  const [watching, setWatching] = useState<string | null>(null);
   const w = workouts.find((x) => x.id === id);
 
   if (!w) {
@@ -91,6 +95,11 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
                         {fmtSet(s, type, settings)}
                         {s.rpe !== undefined && <span className="muted">{t('detail.rpe', { n: s.rpe })}</span>}
                       </span>
+                      {videoSets.has(s.id) && (
+                        <button className="icon-btn video-btn" onClick={() => setWatching(s.id)} aria-label={t('video.watchSet', { label: labels[i] })}>
+                          <IconVideo size={18} />
+                        </button>
+                      )}
                       {kinds.length > 0 && (
                         <span className="pr-tags" title={kinds.map((k) => RECORD_LABEL[k]).join(', ')}>
                           <IconTrophy size={14} />
@@ -110,6 +119,8 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
         <h2 className="card-title">{t('muscles.worked')}</h2>
         <MuscleMap totals={muscleSets(w.exercises, exerciseMap)} />
       </section>
+
+      <VideoSheet setId={watching} onClose={() => setWatching(null)} />
 
       <ShareWorkoutSheet workout={w} open={sharing} onClose={() => setSharing(false)} />
 
@@ -145,7 +156,10 @@ export function WorkoutDetail({ id, justSaved }: { id: string; justSaved: boolea
                 danger: true,
               });
               if (!ok) return;
-              await db.workouts.delete(w.id);
+              await db.transaction('rw', db.workouts, db.media, async () => {
+                await db.workouts.delete(w.id);
+                await removeVideosForWorkout(w.id);
+              });
               toast(t('detail.deleted'));
               navigate('/history', { replace: true });
             },

@@ -135,6 +135,21 @@ export interface ActiveWorkout {
   endTime?: number;
 }
 
+/** A video attached to one set. It stays on this device: never synced, never in a backup. */
+export interface MediaRecord {
+  id: string;
+  setId: string;
+  /** The workout (or workout being edited) the set belongs to; videos follow its life. */
+  workoutId: string;
+  exerciseId: string;
+  blob: Blob;
+  /** MIME type, such as video/mp4. */
+  type: string;
+  /** Bytes. */
+  size: number;
+  createdAt: number;
+}
+
 /** One weigh-in per day; `date` is local midnight of that day. */
 export interface BodyWeight {
   id: string;

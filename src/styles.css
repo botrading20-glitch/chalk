@@ -4647,3 +4647,50 @@ html[data-controls='large'] .rest-actions button {
   gap: 8px;
   min-width: 0;
 }
+
+/* ---------- Set videos ---------- */
+
+/* A small camera on the set badge when the set has a video (the trophy takes the other corner). */
+.badge-video {
+  position: absolute;
+  bottom: -7px;
+  inset-inline-end: -7px;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 0 2px var(--surface);
+}
+
+.video-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.video-actions > .btn {
+  flex: 1 1 auto;
+  white-space: normal;
+}
+
+.video-sheet {
+  display: grid;
+  gap: 12px;
+}
+
+.video-player {
+  display: block;
+  width: 100%;
+  max-height: 60vh;
+  border-radius: var(--radius-sm);
+  background: #000;
+}
+
+.video-btn {
+  width: 32px;
+  height: 32px;
+  color: var(--accent-ink);
+}

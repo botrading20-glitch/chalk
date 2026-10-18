@@ -189,6 +189,14 @@ export const IconHelp = (p: P) =>
       <path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.2c-.8.4-1.2 1-1.2 1.8M12 17h.01" />
     </>,
   );
+export const IconVideo = (p: P) =>
+  base(
+    p,
+    <>
+      <rect x="3" y="6" width="13" height="12" rx="2" />
+      <path d="m16 10.5 5-3v9l-5-3" />
+    </>,
+  );
 export const IconInfo = (p: P) =>
   base(
     p,

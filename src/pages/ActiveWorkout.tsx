@@ -133,6 +133,7 @@ export function ActiveWorkoutPage() {
         }}
         stopwatch={active.stopwatch}
         trackRecords={!active.editingId}
+        videoWorkoutId={active.editingId ?? active.id}
         // Starting a timed set ends the rest, so its beep can't go off mid-set.
         onStopwatch={(stopwatch) =>
           void updateActive((a) => ({ ...a, stopwatch, ...(stopwatch ? { restEndsAt: undefined, restTotal: undefined } : {}) }))

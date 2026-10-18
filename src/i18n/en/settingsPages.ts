@@ -202,7 +202,6 @@ export default {
   'about.free': 'Free, with no account and no ads. Your workouts stay on your phone.',
   'about.privacy': 'Privacy',
   'about.privacyText': 'Setward has no account and no server of its own. Your workouts, routines and settings are stored on this device, in the browser’s storage. Nothing is sent anywhere unless you turn on cloud sync: then your data goes to the private GitHub repository you chose, using the token you pasted, and nowhere else. There are no ads, no analytics and no trackers. Exercise photos load from GitHub’s servers when you open an exercise, which tells GitHub that your device asked for them. To remove everything, use Erase all data under Your data.',
-  'about.help': 'Help and FAQ',
   'about.q1': 'What happens if I clear my browser’s data?',
   'about.a1': 'Your workouts are erased with it. Back up from Your data, or turn on cloud sync, and you can always restore.',
   'about.q2': 'Can I use Setward on two devices?',

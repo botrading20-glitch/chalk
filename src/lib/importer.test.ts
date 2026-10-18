@@ -2,7 +2,7 @@ import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '../db';
 import type { Exercise, Workout } from '../types';
-import { toCsv } from './csv';
+import { escapeCell, toCsv, unescapeCell } from './csv';
 import { parseSetwardCsv, toSetwardCsv } from './exportCsv';
 import { applyImport, planImport, readWorkoutCsv } from './importer';
 import { parseDuration, parseLocalDate, parseStrongCsv } from './strong';
@@ -196,6 +196,27 @@ describe('Setward CSV', () => {
     expect(header.split(',')).toContain('"distance_km"');
     expect(header.split(',')).toContain('"duration_s"');
     expect(row).toContain('"2026-09-24 21:30:12"');
+  });
+
+  it('keeps text that looks like a formula as text in the file and restores it on import', () => {
+    const tricky = ['=SUM(A1)', '-5 kg drop', '+1 set', '@home', "'=quoted", "''=double", "'plain", 'Leg day'];
+    const w = { ...workout(), title: tricky[0], description: tricky[1] };
+    w.exercises = [{ ...w.exercises[0], notes: tricky[3] }, w.exercises[1]];
+    const csv = toSetwardCsv([w], names);
+    // Spreadsheets run a cell that starts with = + - @, so each one has an apostrophe in front.
+    expect(csv).toContain(`"'=SUM(A1)"`);
+    expect(csv).toContain(`"'-5 kg drop"`);
+    expect(csv).not.toContain('"=SUM(A1)"');
+    const [back] = parseSetwardCsv(csv);
+    expect(back.title).toBe('=SUM(A1)');
+    expect(back.description).toBe('-5 kg drop');
+    expect(back.exercises[0].notes).toBe('@home');
+    // The mapping is invertible for every case, including text that already starts with apostrophes.
+    for (const text of tricky) expect(unescapeCell(escapeCell(text))).toBe(text);
+    expect(escapeCell("'plain")).toBe("'plain");
+    expect(escapeCell("'=quoted")).toBe("''=quoted");
+    // Numbers are not text: a negative number stays a plain number.
+    expect(toCsv([[-5, 'x']])).toBe('-5,"x"');
   });
 
   it('importing its own export again adds nothing', async () => {

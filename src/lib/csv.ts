@@ -47,6 +47,15 @@ export function cellNumber(s: string | undefined) {
   return Number.isFinite(v) ? v : undefined;
 }
 
+/**
+ * A spreadsheet runs a text cell that starts with = + - @ (or a tab or return) as a formula.
+ * One apostrophe in front keeps it text; a cell that already starts with apostrophes then a
+ * trigger gets one more, so `unescapeCell` can take exactly one back off.
+ */
+const FORMULA_START = /^'*[=+\-@\t\r]/;
+export const escapeCell = (s: string) => (FORMULA_START.test(s) ? `'${s}` : s);
+export const unescapeCell = (s: string) => (FORMULA_START.test(s.slice(1)) && s.startsWith("'") ? s.slice(1) : s);
+
 export function toCsv(rows: (string | number | undefined | null)[][]) {
   return rows
     .map((r) =>
@@ -54,7 +63,7 @@ export function toCsv(rows: (string | number | undefined | null)[][]) {
         .map((v) => {
           if (v === undefined || v === null) return '';
           if (typeof v === 'number') return String(v);
-          return `"${v.replace(/"/g, '""')}"`;
+          return `"${escapeCell(v).replace(/"/g, '""')}"`;
         })
         .join(','),
     )

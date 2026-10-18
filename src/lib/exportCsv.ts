@@ -1,5 +1,5 @@
 import type { Exercise, SetType, Workout } from '../types';
-import { cellNumber, detectDelimiter, parseCsv, toCsv } from './csv';
+import { cellNumber, detectDelimiter, parseCsv, toCsv, unescapeCell } from './csv';
 import type { ParsedExercise, ParsedWorkout } from './importer';
 import { parseLocalDate } from './strong';
 import { t } from '../i18n';
@@ -77,19 +77,24 @@ export function parseSetwardCsv(text: string): ParsedWorkout[] {
     const i = col.get(name);
     return i === undefined ? undefined : row[i];
   };
+  /** A text cell, with the apostrophe `toCsv` puts in front of formula-looking text taken back off. */
+  const textCell = (row: string[], name: string) => {
+    const v = get(row, name);
+    return v === undefined ? undefined : unescapeCell(v);
+  };
 
   const workouts = new Map<string, ParsedWorkout>();
   let lastSet = 0;
   for (const row of rows) {
     const startTime = parseLocalDate(get(row, 'date') ?? '');
     if (startTime === undefined) continue;
-    const title = get(row, 'workout')?.trim() || t('import.defaultWorkout');
+    const title = textCell(row, 'workout')?.trim() || t('import.defaultWorkout');
     const key = `${title}|${get(row, 'date')}`;
     let w = workouts.get(key);
     if (!w) {
       w = {
         title,
-        description: get(row, 'notes')?.trim() || undefined,
+        description: textCell(row, 'notes')?.trim() || undefined,
         startTime,
         endTime: Math.max(startTime, parseLocalDate(get(row, 'end') ?? '') ?? startTime),
         exercises: [],
@@ -97,14 +102,14 @@ export function parseSetwardCsv(text: string): ParsedWorkout[] {
       workouts.set(key, w);
       lastSet = 0;
     }
-    const name = get(row, 'exercise')?.trim() || t('import.unknownExercise');
+    const name = textCell(row, 'exercise')?.trim() || t('import.unknownExercise');
     const index = cellNumber(get(row, 'set')) ?? lastSet + 1;
     let block: ParsedExercise | undefined = w.exercises.at(-1);
     // A repeated exercise is a new run whose set number starts again.
     if (!block || block.name !== name || index <= lastSet) {
       block = {
         name,
-        notes: get(row, 'exercise_notes')?.trim() || undefined,
+        notes: textCell(row, 'exercise_notes')?.trim() || undefined,
         supersetId: cellNumber(get(row, 'superset')),
         sets: [],
       };

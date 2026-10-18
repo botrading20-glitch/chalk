@@ -21,6 +21,7 @@ import { count, t } from '../../i18n';
 import type { Key } from '../../i18n/catalog';
 import type { WeightUnit } from '../../types';
 import { backupSummary } from './Home';
+import { VideosCard } from './VideosCard';
 import { Card, Note, StackRow } from './controls';
 
 /** A CSV the user picked: kept as text so the plan can be redone when they correct the weight unit. */
@@ -192,6 +193,8 @@ export function DataSection() {
           <IconDownload size={18} /> {t('set.exportCsv')}
         </button>
       </Card>
+
+      <VideosCard />
 
       <Card>
         <button className="btn btn-ghost btn-block" onClick={() => setCheckingData(true)}>

@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { count, t } from '../i18n';
+import { motionOff } from '../lib/motion';
 import { IconShare } from './Icons';
 
 /** Fourteen slanted shards, one burst: angle (deg), travel (px) and delay (ms). */
@@ -9,10 +10,6 @@ const SHARDS = Array.from({ length: 14 }, (_, i) => ({
   delay: (i % 4) * 45,
   long: i % 3 === 0,
 }));
-
-function motionOff() {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.dataset.motion === 'reduce';
-}
 
 /** Counts 0 → target once, easing out; jumps straight to the target when motion is off. */
 function useCountUp(target: number, ms = 900) {

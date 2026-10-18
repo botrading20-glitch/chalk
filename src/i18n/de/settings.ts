@@ -259,7 +259,6 @@ export default {
   'about.free': 'Kostenlos, ohne Konto und ohne Werbung. Deine Trainings bleiben auf deinem Telefon.',
   'about.privacy': 'Datenschutz',
   'about.privacyText': 'Setward hat kein Konto und keinen eigenen Server. Deine Trainings, Routinen und Einstellungen werden auf diesem Gerät im Speicher des Browsers abgelegt. Nichts wird irgendwohin gesendet, außer du schaltest die Cloud-Synchronisierung ein: Dann gehen deine Daten in das private GitHub-Repository, das du gewählt hast, mit dem Token, das du eingefügt hast, und sonst nirgendwohin. Es gibt keine Werbung, keine Analyse und keine Tracker. Übungsfotos werden von GitHub-Servern geladen, wenn du eine Übung öffnest; dadurch erfährt GitHub, dass dein Gerät sie angefordert hat. Um alles zu entfernen, nutze „Alle Daten löschen“ unter „Deine Daten“.',
-  'about.help': 'Hilfe und häufige Fragen',
   'about.q1': 'Was passiert, wenn ich die Daten meines Browsers lösche?',
   'about.a1': 'Deine Trainings werden damit gelöscht. Sichere sie unter „Deine Daten“ oder schalte die Cloud-Synchronisierung ein, dann kannst du sie jederzeit wiederherstellen.',
   'about.q2': 'Kann ich Setward auf zwei Geräten nutzen?',

@@ -6,10 +6,14 @@ import {
   IconChevron,
   IconCloud,
   IconDatabase,
+  IconFlame,
   IconGlobe,
+  IconHelp,
   IconInfo,
+  IconList,
   IconPalette,
   IconPlate,
+  IconPlay,
   IconRuler,
   IconTimer,
   IconTrophy,
@@ -20,6 +24,7 @@ import { useNow } from '../../lib/data';
 import { fmtDate, fmtRest, startOfDay } from '../../lib/format';
 import { usePref } from '../../lib/prefs';
 import { Link } from '../../lib/router';
+import { warmupSummary } from './WarmupSection';
 import { useSettings } from '../../lib/settings';
 import { useSyncStatus } from '../../lib/sync';
 import { LOCALES } from '../../i18n/locales';
@@ -56,6 +61,7 @@ function useSummaries(s: Settings) {
 
   return {
     workout: s.defaultRest ? t('set.sum.rest', { rest: fmtRest(s.defaultRest) }) : t('set.sum.restOff'),
+    warmup: warmupSummary(s),
     timer: alert,
     plates: t('set.sum.plates', { n: (s.weightUnit === 'kg' ? s.platesKg : s.platesLbs).length }),
     goals: s.weeklyGoal ? t('set.sum.goal', { n: s.weeklyGoal }) : t('set.sum.noGoal'),
@@ -68,6 +74,9 @@ function useSummaries(s: Settings) {
     language,
     sync: sync.phase === 'off' ? t('set.sum.syncOff') : sync.phase === 'error' ? t('sync.pillAttention') : t('sync.pillOn'),
     data: lastBackupAt ? backupSummary(lastBackupAt, now) : lastBackupAt === 0 ? t('set.sum.neverBackedUp') : '',
+    guide: t('set.sum.guide'),
+    routines: t('set.sum.routines'),
+    faq: t('set.sum.faq'),
     about: t('set.sum.version', { version: __APP_VERSION__ }),
   };
 }
@@ -81,6 +90,7 @@ export function SettingsHome() {
       title: 'set.group.training',
       rows: [
         { id: 'workout', icon: <IconBarbell size={20} />, label: 'set.workout', value: sum.workout },
+        { id: 'warmup', icon: <IconFlame size={20} />, label: 'set.warmup', value: sum.warmup },
         { id: 'timer', icon: <IconTimer size={20} />, label: 'set.timer', value: sum.timer },
         { id: 'plates', icon: <IconPlate size={20} />, label: 'set.plates', value: sum.plates },
       ],
@@ -105,6 +115,14 @@ export function SettingsHome() {
       rows: [
         { id: 'sync', icon: <IconCloud size={20} />, label: 'set.sync', value: sum.sync },
         { id: 'data', icon: <IconDatabase size={20} />, label: 'set.data', value: sum.data },
+      ],
+    },
+    {
+      title: 'set.group.help',
+      rows: [
+        { id: 'guide', icon: <IconPlay size={20} />, label: 'set.guide', value: sum.guide },
+        { id: 'routines', icon: <IconList size={20} />, label: 'home.routines', value: sum.routines },
+        { id: 'faq', icon: <IconHelp size={20} />, label: 'set.faq', value: sum.faq },
       ],
     },
     {

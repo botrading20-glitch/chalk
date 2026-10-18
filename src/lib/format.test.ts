@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import type { WorkoutSet } from '../types';
 import { parseCsv, toCsv } from './csv';
 import { setCalcContext } from './context';
-import { fmtClock, fmtDuration, fmtRest, fmtTime, inputNum, kgTo, parseClock, parseNum, startOfWeek, toKg } from './format';
+import { fmtClock, fmtDuration, fmtRest, fmtTime, inputNum, KG_PER_LB, kgTo, parseClock, parseNum, startOfWeek, toKg } from './format';
 import { fmtSet } from './sets';
 
 describe('number input', () => {
@@ -23,6 +23,15 @@ describe('number input', () => {
   it('converts kg and lbs without drift', () => {
     expect(toKg(kgTo(100, 'lbs'), 'lbs')).toBeCloseTo(100, 10);
     expect(kgTo(100, 'kg')).toBe(100);
+  });
+
+  it('uses the exact pound: 1 lb is 0.45359237 kg', () => {
+    expect(KG_PER_LB).toBe(0.45359237);
+    expect(toKg(100, 'lbs')).toBeCloseTo(45.359237, 9);
+    expect(kgTo(45.359237, 'lbs')).toBeCloseTo(100, 9);
+    expect(toKg(1, 'lbs')).toBe(0.45359237);
+    // A round trip through kg keeps a typed weight, to the precision it was typed.
+    for (const lb of [2.5, 45, 135, 225.5, 1000]) expect(kgTo(toKg(lb, 'lbs'), 'lbs')).toBeCloseTo(lb, 9);
   });
 });
 

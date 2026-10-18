@@ -2,6 +2,18 @@
 
 Completed roadmap work, newest first. Evidence is in `TEST_STATUS.md` and on each task in `DEVELOPMENT_ROADMAP.md`.
 
+## 2026-10-18: Setward 1.1, training tools (branch `training-tools`, not merged)
+
+| Task | Result | Notes |
+|------|--------|-------|
+| TT-M1 | Settings fields, CSV formula escaping, exact pound, half-point RPE | roadmap TT-M1; c6e8ba3 |
+| TT-M2 | Warm-up calculator and page, live record alerts, plate button, superset scroll, stopwatch toggle | roadmap TT-M2; 2c85ed2 |
+| TT-M3 | Muscle map | roadmap TT-M3; ecfa27e |
+| TT-M4 | Monthly report, Home card, Reps and 3 / 6 / 12 month chart | roadmap TT-M4; daa4c63 |
+| TT-M5 | Help guides and questions | roadmap TT-M5; 71cb1d0 |
+| TT-M6 | Set videos kept on the phone (Dexie version 3) | roadmap TT-M6; e1dafee |
+| TT-M7 | Version 1.1.0, What's new, full verification, REL-105 | `TEST_STATUS.md`, `RELEASE_CHECKLIST.md` |
+
 ## 2026-10-17: Setward 1.0 (merged as c3da695 and deployed)
 
 | Task | Result | Notes |

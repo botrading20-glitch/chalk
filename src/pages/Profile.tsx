@@ -2,21 +2,26 @@ import { useMemo, useState } from 'react';
 import { BodyWeightCard } from '../components/BodyWeight';
 import { BarChart, HBars } from '../components/Charts';
 import { useUsageCounts } from '../components/ExerciseList';
-import { IconSettings, IconTrophy } from '../components/Icons';
+import { IconChevron, IconSettings } from '../components/Icons';
+import { MuscleMap } from '../components/MuscleMap';
+import { RecordList } from '../components/RecordList';
 import { Empty, ExerciseAvatar, PageHeader, Segmented, Stat } from '../components/ui';
 import { useData } from '../lib/data';
-import { addDays, fmtDate, fmtDayMonth, fmtDuration, fmtMonthShort, fmtNum, fmtRelativeDay, fmtWeekdayDate, fmtWeekdayShort, isolate, kgTo, startOfDay, startOfWeek } from '../lib/format';
+import { addDays, fmtDate, fmtDayMonth, fmtDuration, fmtMonth, fmtMonthShort, fmtNum, fmtWeekdayDate, fmtWeekdayShort, isolate, kgTo, startOfDay, startOfWeek } from '../lib/format';
+import { mergeMuscleSets, muscleSets } from '../lib/muscles';
 import { recentRecords } from '../lib/records';
-import { recordFormat } from '../lib/recordFormat';
+import { monthKey } from '../lib/report';
 import { MUSCLE_LABEL } from '../lib/meta';
 import { Link } from '../lib/router';
 import { useSettings } from '../lib/settings';
-import { RECORD_LABEL, weekStreak, weeklyBuckets, workoutSets, type WeekBucket } from '../lib/stats';
+import { weekStreak, weeklyBuckets, workoutSets, type WeekBucket } from '../lib/stats';
 import type { Muscle } from '../types';
 import { count as count_, t } from '../i18n';
 
-type WeekMetric = 'duration' | 'volume' | 'sets';
-const WEEKS = 12;
+type WeekMetric = 'duration' | 'volume' | 'sets' | 'reps';
+type WeekRange = '3' | '6' | '12';
+/** The weekly chart's range, in months, as the weeks it shows. */
+const RANGE_WEEKS: Record<WeekRange, number> = { '3': 13, '6': 26, '12': 52 };
 const CAL_WEEKS = 17;
 
 export function Profile() {
@@ -24,8 +29,9 @@ export function Profile() {
   const settings = useSettings();
   const usage = useUsageCounts();
   const [metric, setMetric] = useState<WeekMetric>('duration');
+  const [range, setRange] = useState<WeekRange>('3');
 
-  const buckets = useMemo(() => weeklyBuckets(workouts, typeOf, WEEKS), [workouts, typeOf]);
+  const buckets = useMemo(() => weeklyBuckets(workouts, typeOf, RANGE_WEEKS[range]), [workouts, typeOf, range]);
   const streak = useMemo(() => weekStreak(workouts), [workouts]);
   const totalSeconds = useMemo(() => workouts.reduce((n, w) => n + (w.endTime - w.startTime) / 1000, 0), [workouts]);
 
@@ -44,6 +50,12 @@ export function Profile() {
     const rest = sorted.slice(8).reduce((n, [, v]) => n + v, 0);
     if (rest) rows.push({ label: t('progress.everythingElse'), value: rest });
     return rows;
+  }, [workouts, exerciseMap]);
+
+  // The same 30 days as the bars, for the figure: a helper muscle counts half a set.
+  const muscleTotals = useMemo(() => {
+    const since = Date.now() - 30 * 86_400_000;
+    return mergeMuscleSets(workouts.filter((w) => w.startTime >= since).map((w) => muscleSets(w.exercises, exerciseMap)));
   }, [workouts, exerciseMap]);
 
   const top = useMemo(
@@ -75,17 +87,20 @@ export function Profile() {
   }
 
   const value = (b: WeekBucket) =>
-    metric === 'duration' ? b.duration / 3600 : metric === 'volume' ? kgTo(b.volume, settings.weightUnit) : b.sets;
+    metric === 'duration' ? b.duration / 3600 : metric === 'volume' ? kgTo(b.volume, settings.weightUnit) : metric === 'reps' ? b.reps : b.sets;
   const format = (v: number) =>
     metric === 'duration'
       ? fmtDuration(v * 3600)
       : metric === 'volume'
         ? isolate(`${fmtNum(Math.round(v), 0)} ${settings.weightUnit}`)
-        : count_('set', Math.round(v));
+        : metric === 'reps'
+          ? count_('rep', Math.round(v))
+          : count_('set', Math.round(v));
   const titles: Record<WeekMetric, string> = {
     duration: t('progress.titleTime'),
     volume: t('progress.titleVolume', { unit: settings.weightUnit }),
     sets: t('progress.titleSets'),
+    reps: t('progress.titleReps'),
   };
   const thisWeek = buckets.at(-1)!;
 
@@ -99,6 +114,14 @@ export function Profile() {
         <Stat label={t('progress.streak')} value={fmtNum(streak, 0)} />
         <Stat label={t('progress.timeTrained')} value={t('progress.hours', { n: Math.round(totalSeconds / 3600) })} />
       </div>
+
+      <Link to={`/profile/report/${monthKey(Date.now())}`} className="card report-link">
+        <span className="report-link-text">
+          <strong>{t('report.title')}</strong>
+          <span className="muted small">{fmtMonth(Date.now())}</span>
+        </span>
+        <IconChevron size={18} className="flip-rtl" />
+      </Link>
 
       <RecentRecords />
 
@@ -123,6 +146,17 @@ export function Profile() {
             { value: 'duration', label: t('progress.metricTime') },
             { value: 'volume', label: t('progress.metricVolume') },
             { value: 'sets', label: t('progress.metricSets') },
+            { value: 'reps', label: t('progress.metricReps') },
+          ]}
+        />
+        <Segmented
+          label={t('progress.rangeLabel')}
+          value={range}
+          onChange={setRange}
+          options={[
+            { value: '3', label: t('progress.range3') },
+            { value: '6', label: t('progress.range6') },
+            { value: '12', label: t('progress.range12') },
           ]}
         />
       </section>
@@ -135,7 +169,10 @@ export function Profile() {
       <section className="card">
         <h2 className="card-title">{t('progress.muscles')}</h2>
         {muscleRows.length ? (
-          <HBars rows={muscleRows} format={(v) => fmtNum(v, 0)} />
+          <>
+            <MuscleMap totals={muscleTotals} table={false} />
+            <HBars rows={muscleRows} format={(v) => fmtNum(v, 0)} />
+          </>
         ) : (
           <p className="muted">{t('progress.noMuscles')}</p>
         )}
@@ -161,38 +198,14 @@ export function Profile() {
 
 /** The latest personal records, each linking to the workout that set it. */
 function RecentRecords() {
-  const { workouts, records, exerciseMap } = useData();
-  const settings = useSettings();
+  const { workouts, records } = useData();
   const list = useMemo(() => recentRecords(workouts, records), [workouts, records]);
   if (!list.length) return null;
 
   return (
     <section className="card">
       <h2 className="card-title">{t('progress.recent')}</h2>
-      <ul className="top-list">
-        {list.map((r) => {
-          const exercise = exerciseMap.get(r.exerciseId);
-          return (
-            <li key={`${r.workoutId}:${r.exerciseId}`}>
-              <Link to={`/history/${r.workoutId}`} className="rec-row">
-                <ExerciseAvatar exercise={exercise} size={36} />
-                <span className="rec-text">
-                  <span className="rec-head">
-                    <span className="ex-row-name">{exercise?.name ?? t('exercise.deleted')}</span>
-                    <span className="muted small">{fmtRelativeDay(r.time)}</span>
-                  </span>
-                  <span className="rec-items">
-                    <span className="pr-pill">
-                      <IconTrophy size={13} /> {RECORD_LABEL[r.items[0].kind]} {recordFormat(r.items[0].kind, r.items[0].value, settings)}
-                    </span>
-                    {r.items.length > 1 && <span className="muted small">{t('progress.recentExtra', { n: r.items.length - 1 })}</span>}
-                  </span>
-                </span>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+      <RecordList list={list} />
     </section>
   );
 }

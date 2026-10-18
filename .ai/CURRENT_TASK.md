@@ -1,5 +1,28 @@
 # Current task
 
+## RESUME HERE: Setward 1.1 is built and verified on `training-tools`; waiting for the owner (2026-10-18)
+
+**Branch `training-tools`** (cut from `main` @ 032513f; `main` is untouched, nothing pushed or merged, NN-15). All seven milestones are done and committed: M1 c6e8ba3 (e55f6ce), M2 2c85ed2, M3 ecfa27e, M4 daa4c63, M5 71cb1d0, M6 e1dafee, M7 the release-prep commit on top. Plan: `~/.claude/plans/c-users-ousse-downloads-fitness-app-imp-iridescent-hickey.md`. Details, evidence and limits per milestone: `DEVELOPMENT_ROADMAP.md` (TT-M1 to TT-M7), `TEST_STATUS.md` (Training tools), release record `RELEASE_CHECKLIST.md` REL-105.
+
+**Baseline at the stop:** version 1.1.0; typecheck clean; 217 tests pass (2 skipped); contrast 0 of 732 failing; `/chalk/` production build fine (index chunk 112.6 kB gzip, 39 precache entries). No server is running. The dev browser origin (localhost:5173) holds the sample data; its language is back to English.
+
+### Next exact action
+1. **Ask the owner** whether to merge `training-tools` into `main` with `--no-ff` and push (this deploys, NN-15; rollback `git revert -m 1 <merge>`). The monthly report's mid-month comparison is settled: a month in progress is compared with the same days of the month before (2026-10-18).
+2. After the merge and push: watch the Pages run, check the live page as for REL-104 (bundle, manifest, What's new once, a new install), and record it in REL-105 and `TEST_STATUS.md`.
+3. Owner's phone checks: REL-105 (camera capture, video playback and sharing, the record toast, warm-ups, the report, Help), plus the older REL-101 to REL-104 ones.
+4. Still open from before: the copyright holder in `LICENSE`, the Google Play decisions in `.ai/PLAY_STORE.md` (the data-safety and permissions notes now cover set videos), a native-speaker look at the translations. FEAT-007 (Contact page) stays deferred until Google sign-in.
+
+### Working notes for the next session
+- **New strings:** add to `src/i18n/<code>/training.ts` for all eleven languages in the same change (NN-17). Helpers saved in `.ai/tools/` (`lang.py`, `add_i18n.py`): write `mN.py` next to them (a `lang('en', """key=text""")` block per language, then `T = build()`), run `python .ai/tools/add_i18n.py path/to/mN.py "Section name"`; it appends to every language and refuses duplicate keys. Avoid plural messages (reuse `count()` keys); Indonesian has no plural forms.
+- **Shell limits:** one Bash command over about 6 KB fails with "unexpected EOF" (split it); doubled backslashes are collapsed, so inside Python write `chr(92)` for a backslash and never type `\t` or `\r` in a Python string meant for TypeScript.
+- **Vite sometimes serves a stale file** after an edit (seen once with `WorkoutDetail.tsx`): `touch` the file and reload.
+- The working tree is CRLF (autocrlf); new files are LF, which is fine.
+- **Sweeps in a hidden Browser pane** run at about one route load per second; start them in the page (`localStorage.__sweepSrc` holds the one used for 1.1) and poll `window.__sweep`. Check results against `document.documentElement.clientWidth`.
+
+---
+
+(Earlier handoff, Setward 1.0, below.)
+
 ## Task
 Setward 1.0 is **released** (2026-10-17): `launch` was merged into `main` as c3da695 (`--no-ff`), pushed at the owner's request, deployed by Pages run 39056196923, and the live page was checked (`RELEASE_CHECKLIST.md` REL-104). The launch plan (`.ai/LAUNCH_PLAN.md`) is complete: M1 to M8. REL-101 to REL-103 are live and still wait on the owner's phone checks.
 
@@ -78,4 +101,4 @@ Setward 1.0 is **released** (2026-10-17): `launch` was merged into `main` as c3d
 - The Hevy removal is final (owner decision); do not reintroduce Hevy wording.
 
 ## Last updated
-2026-10-17 (1.0 released and checked live)
+2026-10-18 (1.1 built and verified on `training-tools`, waiting for the owner; 1.0 released 2026-10-17 and live)

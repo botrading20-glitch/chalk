@@ -1,20 +1,28 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useData, useNow, usePreviousSets } from '../lib/data';
 import { previousSession } from '../lib/previous';
-import { fmtClock, fmtRest, kgTo, kmTo, toKg, toKm, uid } from '../lib/format';
+import { fmtClock, fmtRest, fmtWeight, kgTo, kmTo, toKg, toKm, uid } from '../lib/format';
+import { motionOff } from '../lib/motion';
+import { barInUnit, defaultBar } from '../lib/plates';
+import { liveRecordSets, newLiveRecords } from '../lib/records';
+import { recordFormat } from '../lib/recordFormat';
+import { RECORD_LABEL, recordValue, type RecordKind } from '../lib/stats';
+import { isPlateLoaded, warmupSets } from '../lib/warmup';
 import { SET_TYPE_LABEL, type Field } from '../lib/meta';
 import { Link } from '../lib/router';
 import { fieldHeader, fieldsFor, fmtSet, setLabels } from '../lib/sets';
 import { useSettings } from '../lib/settings';
 import { beep, buzz, unlockAudio } from '../lib/timer';
+import { removeVideosForSets, useVideoSets } from '../lib/media';
 import { emptySet } from '../lib/workouts';
 import type { SetType, Stopwatch, WorkoutExercise, WorkoutSet } from '../types';
-import { toast } from './dialogs';
+import { confirmDialog, toast } from './dialogs';
 import { ExercisePicker } from './ExercisePicker';
 import { BufferedTextarea, DurationField, NumberField } from './fields';
 import {
   IconArrowDown,
   IconCheck,
+  IconFlame,
   IconLink,
   IconMore,
   IconNote,
@@ -23,9 +31,12 @@ import {
   IconSwap,
   IconTimer,
   IconTrash,
+  IconTrophy,
   IconUp,
+  IconVideo,
 } from './Icons';
 import { PlateSheet } from './PlateCalculator';
+import { VideoSection, VideoSheet } from './SetVideo';
 import { ActionSheet, Sheet } from './Sheet';
 import { ExerciseAvatar } from './ui';
 import { t } from '../i18n';
@@ -34,7 +45,7 @@ import type { Key } from '../i18n/catalog';
 export type EditorMode = 'live' | 'edit' | 'routine';
 
 const REST_OPTIONS = [0, 30, 45, 60, 75, 90, 120, 150, 180, 240, 300];
-const RPE_OPTIONS = [6, 7, 7.5, 8, 8.5, 9, 9.5, 10];
+const RPE_OPTIONS = [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10];
 const SET_TYPES: SetType[] = ['warmup', 'normal', 'failure', 'dropset'];
 
 type Update = (fn: (list: WorkoutExercise[]) => WorkoutExercise[]) => void;
@@ -49,6 +60,8 @@ export function WorkoutEditor({
   onRest,
   stopwatch,
   onStopwatch,
+  trackRecords = true,
+  videoWorkoutId,
 }: {
   exercises: WorkoutExercise[];
   onChange: Update;
@@ -63,8 +76,12 @@ export function WorkoutEditor({
   /** Live mode: the timed set in progress, and how to start or clear it. */
   stopwatch?: Stopwatch;
   onStopwatch?: (sw: Stopwatch | undefined) => void;
+  /** Live mode: celebrate sets that beat a record. Off while editing a workout that was already saved. */
+  trackRecords?: boolean;
+  /** The workout the sets belong to, which lets a set take a video. Absent for routines, which have none. */
+  videoWorkoutId?: string;
 }) {
-  const { workouts, exerciseMap } = useData();
+  const { workouts, exerciseMap, records, typeOf } = useData();
   const settings = useSettings();
   const previous = usePreviousSets(
     exercises.map((e) => e.exerciseId),
@@ -77,6 +94,9 @@ export function WorkoutEditor({
   const [platesFor, setPlatesFor] = useState<string | null>(null);
   /** The set that was just checked off, so only it plays the pop. */
   const [popId, setPopId] = useState<string | null>(null);
+  const videoSets = useVideoSets();
+  /** The set whose video is open in the player. */
+  const [watching, setWatching] = useState<string | null>(null);
 
   const supersetLetters = useMemo(() => {
     const map = new Map<number, string>();
@@ -85,6 +105,13 @@ export function WorkoutEditor({
     }
     return map;
   }, [exercises]);
+
+  // The records this workout has broken so far, from the same rules the saved total uses.
+  const recordsOn = mode === 'live' && settings.liveRecords && trackRecords;
+  const liveBroken = useMemo(
+    () => (recordsOn ? liveRecordSets(exercises, typeOf, records.best) : new Map<string, RecordKind[]>()),
+    [recordsOn, exercises, typeOf, records.best],
+  );
 
   const updateEx = (id: string, fn: (we: WorkoutExercise) => WorkoutExercise) =>
     onChange((list) => list.map((we) => (we.id === id ? fn(we) : we)));
@@ -180,7 +207,98 @@ export function WorkoutEditor({
     setPopId(s.id);
     if (settings.vibrateOnCheck) navigator.vibrate?.(12);
     updateSet(we.id, s.id, { ...filled, completed: true });
+    if (recordsOn) announceRecord(we, { ...s, ...filled, completed: true });
+    if (settings.supersetScroll) scrollToNextInSuperset(we);
     if (settings.autoRest) onRest?.(restAfter(we, s));
+  }
+
+  /** A toast for the headline record a just-checked set started to hold. */
+  function announceRecord(we: WorkoutExercise, next: WorkoutSet) {
+    const after = liveRecordSets(
+      exercises.map((x) => (x.id === we.id ? { ...x, sets: x.sets.map((st) => (st.id === next.id ? next : st)) } : x)),
+      typeOf,
+      records.best,
+    );
+    const [kind] = newLiveRecords(liveBroken, after, next.id);
+    if (!kind) return;
+    const record = `${RECORD_LABEL[kind]} ${recordFormat(kind, recordValue(kind, next), settings)}`;
+    toast(t('record.toast', { exercise: exerciseMap.get(we.exerciseId)?.name ?? t('exercise.deleted'), record }));
+    if (settings.vibrateOnCheck) navigator.vibrate?.([20, 40, 20]);
+  }
+
+  /** In a superset, brings the next exercise that still has sets to do into view. */
+  function scrollToNextInSuperset(we: WorkoutExercise) {
+    if (we.supersetId === undefined) return;
+    const group = exercises.filter((x) => x.supersetId === we.supersetId);
+    const at = group.findIndex((x) => x.id === we.id);
+    const next = [...group.slice(at + 1), ...group.slice(0, at)].find((x) => x.sets.some((st) => !st.completed));
+    if (next) document.getElementById(`ex-${next.id}`)?.scrollIntoView({ behavior: motionOff() ? 'auto' : 'smooth', block: 'center' });
+  }
+
+  /** Puts the warm-up ladder for this exercise before its other sets (see lib/warmup.ts). */
+  async function addWarmups(we: WorkoutExercise) {
+    const ex = exerciseMap.get(we.exerciseId);
+    const unit = settings.weightUnit;
+    // The working weight: the first work set that has one, else last session's weight for a work set.
+    const work = we.sets.map((s, i) => ({ s, i })).filter(({ s }) => s.type !== 'warmup');
+    let workingKg = work.map(({ s }) => s.weight).find((w) => w !== undefined && w > 0);
+    if (workingKg === undefined) for (const { i } of work) workingKg = workingKg ?? placeholderFor(we, i)?.weight;
+    const remembered = ex ? settings.plateBars[ex.id] : undefined;
+    const bar = !isPlateLoaded(ex?.equipment) ? 0 : remembered !== undefined ? barInUnit(remembered, unit) : defaultBar(ex?.equipment, unit);
+    const result = warmupSets({
+      workingKg,
+      unit,
+      equipment: ex?.equipment,
+      bar,
+      plates: unit === 'kg' ? settings.platesKg : settings.platesLbs,
+      steps: settings.warmupSteps,
+      emptyBar: settings.warmupEmptyBar,
+      round: unit === 'kg' ? settings.warmupRoundKg : settings.warmupRoundLbs,
+    });
+    if (result.reason) {
+      toast(t(result.reason === 'noWeight' ? 'warmup.needWeight' : 'warmup.tooLight'));
+      return;
+    }
+    if (we.sets.some((s) => s.type === 'warmup')) {
+      const ok = await confirmDialog({ title: t('warmup.replaceTitle'), message: t('warmup.replaceText'), confirmLabel: t('warmup.replaceConfirm') });
+      if (!ok) return;
+    }
+    updateEx(we.id, (x) => ({
+      ...x,
+      sets: [...result.sets.map((w) => ({ ...emptySet('warmup'), weight: w.weight, reps: w.reps })), ...x.sets.filter((s) => s.type !== 'warmup')],
+    }));
+    toast(t('warmup.added', { weight: fmtWeight(workingKg!, unit) }));
+  }
+
+  /** Removes a set; one with a video asks first, since the video goes with it. */
+  async function removeSet(exId: string, setId: string) {
+    setSetMenu(null);
+    if (videoSets.has(setId)) {
+      const ok = await confirmDialog({
+        title: t('video.setConfirmTitle'),
+        message: t('video.setConfirmText'),
+        confirmLabel: t('editor.removeSet'),
+        danger: true,
+      });
+      if (!ok) return;
+      await removeVideosForSets([setId]);
+    }
+    updateEx(exId, (x) => ({ ...x, sets: x.sets.filter((s) => s.id !== setId) }));
+  }
+
+  async function removeExercise(we: WorkoutExercise) {
+    const withVideo = we.sets.filter((s) => videoSets.has(s.id)).map((s) => s.id);
+    if (withVideo.length) {
+      const ok = await confirmDialog({
+        title: t('video.setConfirmTitle'),
+        message: t('video.exerciseConfirmText'),
+        confirmLabel: t('editor.removeExercise'),
+        danger: true,
+      });
+      if (!ok) return;
+      await removeVideosForSets(withVideo);
+    }
+    onChange((list) => list.filter((x) => x.id !== we.id));
   }
 
   function startTiming(setId: string) {
@@ -261,10 +379,11 @@ export function WorkoutEditor({
         const cols = `var(--badge-w) minmax(0,1fr) ${fields.map(() => 'var(--field-w)').join(' ')}${mode === 'live' ? ' var(--check-w)' : ''}`;
         const timedIndex = stopwatch ? we.sets.findIndex((s) => s.id === stopwatch.setId) : -1;
         const nextIndex = we.sets.findIndex((s) => !s.completed);
-        const canTime = mode === 'live' && !!onStopwatch && fields.includes('duration') && !timing && nextIndex >= 0;
+        const canTime = mode === 'live' && settings.inlineStopwatch && !!onStopwatch && fields.includes('duration') && !timing && nextIndex >= 0;
+        const plateButton = settings.plateShortcut && isPlateLoaded(ex?.equipment) && fields.includes('weight');
 
         return (
-          <section key={we.id} className={`ex-block ${letter ? 'in-superset' : ''}`}>
+          <section key={we.id} id={`ex-${we.id}`} className={`ex-block ${letter ? 'in-superset' : ''}`}>
             <header className="ex-head">
               <Link to={`/exercises/${we.exerciseId}`} className="ex-title">
                 <ExerciseAvatar exercise={ex} size={38} />
@@ -273,6 +392,11 @@ export function WorkoutEditor({
                   <span className="ex-name">{ex?.name ?? t('exercise.deleted')}</span>
                 </span>
               </Link>
+              {plateButton && (
+                <button className="icon-btn" onClick={() => setPlatesFor(we.id)} aria-label={t('editor.plates')}>
+                  <IconPlate />
+                </button>
+              )}
               <button className="icon-btn" onClick={() => setMenuFor(we.id)} aria-label={t('editor.options', { name: ex?.name ?? t('exercise.deleted') })}>
                 <IconMore />
               </button>
@@ -319,8 +443,22 @@ export function WorkoutEditor({
                       className="set-badge"
                       data-type={s.type}
                       onClick={() => setSetMenu({ ex: we.id, set: s.id })}
-                      aria-label={t('editor.setLabel', { label: labels[i], type: SET_TYPE_LABEL[s.type] })}
+                      aria-label={
+                        t('editor.setLabel', { label: labels[i], type: SET_TYPE_LABEL[s.type] }) +
+                        (liveBroken.has(s.id) ? `. ${t('record.setLabel', { label: labels[i] })}` : '') +
+                        (videoSets.has(s.id) ? `. ${t('video.hasVideo')}` : '')
+                      }
                     >
+                      {liveBroken.has(s.id) && (
+                        <span className="badge-trophy" aria-hidden="true">
+                          <IconTrophy size={10} />
+                        </span>
+                      )}
+                      {videoSets.has(s.id) && (
+                        <span className="badge-video" aria-hidden="true">
+                          <IconVideo size={10} />
+                        </span>
+                      )}
                       {labels[i]}
                       {settings.showRpe && s.rpe !== undefined && <sup>@{s.rpe}</sup>}
                     </button>
@@ -417,6 +555,12 @@ export function WorkoutEditor({
                   onSelect: () => updateEx(menuEx.id, (x) => ({ ...x, notes: '' })),
                 },
                 {
+                  label: t('editor.warmups'),
+                  icon: <IconFlame />,
+                  hidden: (exerciseMap.get(menuEx.exerciseId)?.type ?? 'weight_reps') !== 'weight_reps',
+                  onSelect: () => void addWarmups(menuEx),
+                },
+                {
                   label: t('editor.plates'),
                   icon: <IconPlate />,
                   hidden: !fieldsFor(exerciseMap.get(menuEx.exerciseId)?.type ?? 'weight_reps').includes('weight'),
@@ -448,7 +592,7 @@ export function WorkoutEditor({
                   label: t('editor.removeExercise'),
                   icon: <IconTrash />,
                   danger: true,
-                  onSelect: () => onChange((list) => list.filter((x) => x.id !== menuEx.id)),
+                  onSelect: () => void removeExercise(menuEx),
                 },
               ]
             : []
@@ -511,20 +655,29 @@ export function WorkoutEditor({
                     </button>
                   ))}
                 </div>
+                <p className="muted small">{t('editor.rpeGuide')}</p>
               </>
             )}
-            <button
-              className="btn btn-danger-ghost btn-block"
-              onClick={() => {
-                updateEx(setMenuEx.id, (x) => ({ ...x, sets: x.sets.filter((s) => s.id !== setMenuSet.id) }));
-                setSetMenu(null);
-              }}
-            >
+            {videoWorkoutId && (
+              <VideoSection
+                target={{ setId: setMenuSet.id, workoutId: videoWorkoutId, exerciseId: setMenuEx.exerciseId }}
+                has={videoSets.has(setMenuSet.id)}
+                canAdd={settings.setVideos}
+                onWatch={() => {
+                  setWatching(setMenuSet.id);
+                  setSetMenu(null);
+                }}
+                onDone={() => setSetMenu(null)}
+              />
+            )}
+            <button className="btn btn-danger-ghost btn-block" onClick={() => void removeSet(setMenuEx.id, setMenuSet.id)}>
               <IconTrash size={18} /> {t('editor.removeSet')}
             </button>
           </div>
         )}
       </Sheet>
+
+      <VideoSheet setId={watching} onClose={() => setWatching(null)} />
 
       <Sheet open={!!restEx} onClose={() => setRestFor(null)} title={t('editor.restTitle')}>
         {restEx && (

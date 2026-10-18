@@ -7,6 +7,14 @@ import { setPref, usePref } from './prefs';
 
 /** What changed in each release the user should hear about: a title key and a text key per entry. */
 export const WHATS_NEW: Record<string, [Key, Key][]> = {
+  '1.1.0': [
+    ['new.warmups.title', 'new.warmups.text'],
+    ['new.muscles.title', 'new.muscles.text'],
+    ['new.report.title', 'new.report.text'],
+    ['new.videos.title', 'new.videos.text'],
+    ['new.tools.title', 'new.tools.text'],
+    ['new.help.title', 'new.help.text'],
+  ],
   '1.0.0': [
     ['new.look.title', 'new.look.text'],
     ['new.languages.title', 'new.languages.text'],

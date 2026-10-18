@@ -5,6 +5,8 @@ import { t } from '../../i18n';
 import type { Key } from '../../i18n/catalog';
 import { AboutSection } from './AboutSection';
 import { DataSection } from './DataSection';
+import { GuideSection, QuestionsSection, RoutinesGuideSection } from './HelpSections';
+import { WarmupSection } from './WarmupSection';
 import {
   AccessSection,
   AppearanceSection,
@@ -20,6 +22,7 @@ import {
 /** `#/settings/<id>`: the page for one row of the Settings home. */
 const SECTIONS: Record<string, { title: Key; page: () => ReactElement }> = {
   workout: { title: 'set.workout', page: WorkoutSection },
+  warmup: { title: 'set.warmup', page: WarmupSection },
   timer: { title: 'set.timer', page: TimerSection },
   plates: { title: 'set.plates', page: PlatesSection },
   goals: { title: 'set.goals', page: GoalsSection },
@@ -29,6 +32,9 @@ const SECTIONS: Record<string, { title: Key; page: () => ReactElement }> = {
   language: { title: 'set.language', page: LanguageSection },
   sync: { title: 'set.sync', page: SyncSection },
   data: { title: 'set.data', page: DataSection },
+  guide: { title: 'set.guide', page: GuideSection },
+  routines: { title: 'home.routines', page: RoutinesGuideSection },
+  faq: { title: 'set.faq', page: QuestionsSection },
   about: { title: 'set.about', page: AboutSection },
 };
 

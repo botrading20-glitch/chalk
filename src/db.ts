@@ -1,6 +1,6 @@
 import Dexie, { type EntityTable } from 'dexie';
 import { DEFAULT_PLATES } from './lib/plates';
-import type { BodyWeight, Exercise, Routine, Settings, Workout } from './types';
+import type { BodyWeight, Exercise, MediaRecord, Routine, Settings, Workout } from './types';
 
 interface KV {
   key: string;
@@ -12,6 +12,7 @@ export const db = new Dexie('chalk') as Dexie & {
   workouts: EntityTable<Workout, 'id'>;
   routines: EntityTable<Routine, 'id'>;
   bodyweight: EntityTable<BodyWeight, 'id'>;
+  media: EntityTable<MediaRecord, 'id'>;
   kv: EntityTable<KV, 'key'>;
 };
 
@@ -24,6 +25,11 @@ db.version(1).stores({
 
 db.version(2).stores({
   bodyweight: 'id, date',
+});
+
+// Set videos: one blob per set, found by set or by workout. Never synced or backed up.
+db.version(3).stores({
+  media: 'id, setId, workoutId, createdAt',
 });
 
 /** Bump when src/data/exercises.json changes so existing installs pick it up. */
@@ -65,6 +71,20 @@ export const DEFAULT_SETTINGS: Settings = {
   reduceMotion: 'system',
   largeControls: false,
   backupReminder: 'weekly',
+  warmupSteps: [
+    { percent: 50, reps: 10 },
+    { percent: 70, reps: 5 },
+    { percent: 85, reps: 3 },
+  ],
+  warmupEmptyBar: true,
+  warmupRoundKg: 2.5,
+  warmupRoundLbs: 5,
+  liveRecords: true,
+  inlineStopwatch: true,
+  supersetScroll: false,
+  plateShortcut: true,
+  setVideos: true,
+  monthlyReport: true,
 };
 
 export async function getKV<T>(key: string): Promise<T | undefined> {

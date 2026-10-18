@@ -1,5 +1,21 @@
 # Session log
 
+## Session: 2026-10-17 to 2026-10-18 (Setward 1.1 training tools)
+
+The owner chose Hevy-inspired settings plus the free, offline parts of `FITNESS_APP_IMPLEMENTATION_SPEC_HARDENED.md`, with set videos kept on the phone, RPE only and the Contact page deferred. Seven milestones on the local branch `training-tools`, each committed when the owner asked, with notes in the roadmap (TT-M1 to TT-M7) and evidence in `TEST_STATUS.md`. All of it is verified (REL-105); nothing is merged or pushed.
+
+What changed for users: warm-up sets rounded to the plates they own, a trophy and note when a set beats a record, a plate button, stopwatch and superset toggles, a muscle map, a monthly report with a Home card, reps and a 12-month range on the weekly chart, Help guides, videos on sets that stay on the phone, half-point RPE, exact pounds and safer CSV exports.
+
+Problems met and what they taught:
+- A Browser pane that is not on screen runs its page about one route load per second, so the 385-load language sweep took about 15 minutes; run long sweeps in the background and poll.
+- The in-app browser cannot pick a file: set videos were tested with a clip made in the page (`canvas.captureStream` and `MediaRecorder`) and attached through `attachVideo`.
+- The full sweep still found a real overflow (the French Home backup card) after six milestones had each been checked on their own screens: keep running the all-routes sweep at the end.
+- Dexie's `transaction` takes at most seven tables as arguments; use the array form for more.
+- A shell command over about 6 KB fails; the edits went through small Python helpers in the scratchpad that keep the files' CRLF endings.
+- The screenshot tool can lag a frame behind the page: read the DOM or shoot again before trusting a picture.
+
+Open for the owner: whether to merge `training-tools` into `main` and push (it deploys), the phone checks in REL-105, a native-speaker look at the translations.
+
 ## Session: 2026-10-16 to 2026-10-17 (Setward 1.0 launch work)
 
 The owner approved a launch plan (`LAUNCH_PLAN.md`) and then released each milestone to me in turn: M1 to M8 on the local branch `launch`, each committed, each with its checks in `TEST_STATUS.md`. At the end all of it was verified (REL-104); the owner then said "Yes: merge launch into main with --no-ff and push it, then check the live site and record it." It was merged as c3da695, pushed, deployed (Pages run 39056196923) and checked live. (`git merge -F -` does not read stdin; the merge message went through a file.)

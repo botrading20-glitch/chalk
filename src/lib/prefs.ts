@@ -14,9 +14,11 @@ export interface Prefs {
   backupSnoozedUntil: number;
   /** The app version whose "What's new" was last shown. */
   lastSeenVersion: string;
+  /** The month ("yyyy-mm") whose report Home offered and was opened or dismissed. */
+  reportSeenMonth: string;
 }
 
-export const PREF_DEFAULTS: Prefs = { welcomeSeen: false, lastBackupAt: 0, backupSnoozedUntil: 0, lastSeenVersion: '' };
+export const PREF_DEFAULTS: Prefs = { welcomeSeen: false, lastBackupAt: 0, backupSnoozedUntil: 0, lastSeenVersion: '', reportSeenMonth: '' };
 
 const storageKey = (key: keyof Prefs) => `pref:${key}`;
 

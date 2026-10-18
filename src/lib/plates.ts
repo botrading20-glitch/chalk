@@ -1,4 +1,5 @@
 import type { Equipment, WeightUnit } from '../types';
+import { kgTo } from './format';
 
 // Plate maths for the plate calculator. Everything here works in the unit the
 // user trains in (kg plates for kg, lb plates for lbs), not in storage kg.
@@ -20,6 +21,12 @@ export function defaultBar(equipment: Equipment | undefined, unit: WeightUnit) {
   if (equipment === 'ez_bar') return ez;
   // Plate-loaded machines, Smith machines (bar weights vary a lot) and the rest.
   return 0;
+}
+
+/** A remembered bar (stored in kg) in the current unit, snapped to the standard bar it stands for: 20 kg ↔ 45 lb. */
+export function barInUnit(kg: number, unit: WeightUnit) {
+  const v = kgTo(kg, unit);
+  return BAR_OPTIONS[unit].find((o) => Math.abs(o - v) <= Math.max(0.5, o * 0.05)) ?? Math.round(v * 2) / 2;
 }
 
 export interface Load {

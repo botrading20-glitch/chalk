@@ -3,11 +3,12 @@
 ## Project
 - **Name:** Setward (formerly Chalk), live since 2026-10-05.
 - **Purpose:** a free, offline-first workout logger with its own identity, live as a public web app since 2026-10-17 (Play Store later, groundwork in `PLAY_STORE.md`)
-- **Version:** 1.0.0 (`package.json`), live since 2026-10-17. The live app at https://botrading20-glitch.github.io/chalk/ runs `main` @ c3da695 (Setward 1.0, merge of `launch`), deployed 2026-10-17 (Pages run 39056196923). Earlier releases: the data check 2026-10-16 (e7ad7fe), the stopwatch, routine reordering and orange warm-up badge 2026-10-05 (c232c2d).
+- **Version:** 1.1.0 on the local branch `training-tools` (`package.json`, not merged or deployed); 1.0.0 is live since 2026-10-17. The live app at https://botrading20-glitch.github.io/chalk/ runs `main` @ c3da695 (Setward 1.0, merge of `launch`), deployed 2026-10-17 (Pages run 39056196923). Earlier releases: the data check 2026-10-16 (e7ad7fe), the stopwatch, routine reordering and orange warm-up badge 2026-10-05 (c232c2d).
 - **Stack:** React 19, TypeScript 7, Vite 8, vite-plugin-pwa (Workbox), Dexie 4 (IndexedDB), Vitest 5 (+ fake-indexeddb in tests). No backend.
 
 ## Current status
-- **Phase:** released. Setward 1.0 (REL-104, 2026-10-17) is live, on top of the quality pass (REL-100), Setward with UX-002, UX-003, A11Y-002 and DOC-002 (REL-101), REL-102 and the data check (REL-103). Waiting on the owner's phone checks.
+- **Ready for the owner's decision (2026-10-18):** branch `training-tools` (Setward 1.1.0, local only, not merged): warm-up sets, live record alerts and Workout toggles, the muscle map, the monthly report and the Reps / range chart, Help guides, set videos kept on the phone, CSV formula escaping, exact pound, half-point RPE, What's new. Verified in `TEST_STATUS.md`, release record REL-105; merging and deploying need the owner's go-ahead (NN-15). `main` and the live app are still 1.0.0 (c3da695).
+- **Phase:** 1.0 released; 1.1 verified on its branch, waiting for the merge decision. Setward 1.0 (REL-104, 2026-10-17) is live, on top of the quality pass (REL-100), Setward with UX-002, UX-003, A11Y-002 and DOC-002 (REL-101), REL-102 and the data check (REL-103). Waiting on the owner's phone checks.
 - **Branches:** `main` = live (c3da695). `launch` is merged (kept locally, with `quality-pass`, `setward`, `features` and `data-check`). `google-sync` is parked (FEAT-001).
 - **Completion:** all product requirements work. Quality requirements REQ-Q01–Q05 are done, apart from screen-reader and real-device checks.
 - **Release decision:** READY WITH DOCUMENTED LIMITATIONS, released 2026-10-17 (`RELEASE_CHECKLIST.md`, REL-104).
@@ -25,22 +26,26 @@ Setward identity: an angular split-S mark and “Forward, one set at a time.” 
 - Merging to `main` deploys (NN-15).
 
 ## Protected invariants
-See `NON_NEGOTIABLES.md` (NN-01 to NN-18). NN-17 (every language has every message) and NN-18 (the privacy promise) were added for 1.0; NN-16 was amended for the Forward look.
+See `NON_NEGOTIABLES.md` (NN-01 to NN-19). NN-17 (every language has every message) and NN-18 (the privacy promise) were added for 1.0, NN-19 (set videos stay on the device) for 1.1; NN-16 was amended for the Forward look.
 
 ## Current problems
 None known at medium or high severity. Low-severity items left in the roadmap "Discovered" table: UX-004 (DATA-002 is done and live). Deploy runners pinned to Ubuntu 24.04 (ENV-002). No linter by the owner's choice (DX-002 cancelled).
 
 ## Current risks
+- The first real-device exercise of 1.1 is the owner's: camera capture, video playback and sharing, and the Dexie upgrade to version 3 on an installed copy (`RELEASE_CHECKLIST.md`, REL-105).
 - Neither release has been checked on the owner's Android phone yet (`RELEASE_CHECKLIST.md`).
 - iPhone is untested (no device).
 - Sync is shipped but unused by the owner. A Google Drive replacement is parked on the local-only branch `google-sync`; merging it needs its origins added to the CSP `connect-src`.
 
 ## Immediate next steps
+0. The owner decides whether to merge `training-tools` into `main` (REL-105).
 1. The owner runs the phone checks in `RELEASE_CHECKLIST.md` (REL-101 to REL-104) and, if wanted, the sharing-tool checks for the link preview.
 2. Owner decisions that are open: the copyright holder in `LICENSE`, the Google Play steps in `PLAY_STORE.md` (account fee, closed test, package name, contact email), a native-speaker look at the ten translations.
 3. Retake the Play screenshots on a phone (1080 × 1920) before any Play submission.
 
 ## Last verified
+
+2026-10-18 (branch `training-tools`, Setward 1.1.0): typecheck clean, 217 tests passed (2 skipped), contrast 732 pairs 0 failing, `/chalk/` build (index chunk 112.6 kB gzip, 39 precache entries); the report's same-days comparison rechecked after the sweep. Browser: every route in all eleven languages at 320 px (385 loads) against `clientWidth`, one fix; the What's new sheet in all eleven; every set-video path with a generated clip; the upgrade from 1.0 data; a blob video under the production CSP. Phone, iPhone, screen reader and native speakers not run. See `TEST_STATUS.md` (Training tools).
 
 2026-10-17 (`main` @ c3da695, live): typecheck clean, 163 tests passed (2 skipped), contrast 732 pairs 0 failing, `/chalk/` build main chunk 168.55 kB gzip. Browser: smoke S-01 to S-16 on dev and on the empty-storage preview, offline reload in French, every route in ten languages and in English across setting combinations at 320 to 412 px against `clientWidth`, keyboard and reduced motion. Live page checked after the deploy (Pages run 39056196923). Phone, iPhone, screen reader and native speakers not run. See `TEST_STATUS.md` (LAUNCH-M8).
 

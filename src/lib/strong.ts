@@ -1,5 +1,6 @@
 import type { SetType } from '../types';
 import { cellNumber, detectDelimiter, parseCsv } from './csv';
+import { KG_PER_LB } from './format';
 import type { ParsedExercise, ParsedWorkout } from './importer';
 import { t } from '../i18n';
 
@@ -23,7 +24,6 @@ export interface ReadResult {
   needsWeightUnit: boolean;
 }
 
-const LB = 2.20462262;
 const MI = 1.609344;
 
 /** "2026-09-24 21:30:12" (local), with or without seconds; anything else goes through Date.parse. */
@@ -143,7 +143,7 @@ export function parseStrongCsv(text: string, options: ReadOptions): ReadResult {
     const dUnit = (get(row, col.distanceUnit) ?? headerUnit(col.distance)).trim().toLowerCase();
     block.sets.push({
       type: kind.type,
-      weight: raw ? (pounds ? raw / LB : raw) : undefined,
+      weight: raw ? (pounds ? raw * KG_PER_LB : raw) : undefined,
       reps: cellNumber(get(row, col.reps)) || undefined,
       distance: distanceKm(cellNumber(get(row, col.distance)), dUnit),
       duration: cellNumber(get(row, col.seconds)) || undefined,

@@ -8,6 +8,7 @@ import { InstallBanner } from '../components/InstallPrompt';
 import { FolderSheet, MoveToFolderSheet, ReorderSheet } from '../components/RoutineFolders';
 import { ActionSheet } from '../components/Sheet';
 import { Empty, PageHeader } from '../components/ui';
+import { ReportCard } from '../components/ReportCard';
 import { WeekCard } from '../components/WeekCard';
 import { db } from '../db';
 import { useData, useNow } from '../lib/data';
@@ -76,6 +77,7 @@ export function WorkoutHome() {
       <BackupReminder />
       {active ? <ResumeCard /> : null}
       <WeekCard />
+      <ReportCard />
       <InstallBanner />
 
       <button className="btn btn-glow btn-block btn-hero" onClick={() => beginWorkout()}>

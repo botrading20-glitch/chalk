@@ -117,8 +117,9 @@ export async function importBackup(text: string) {
 }
 
 export async function wipeAllData() {
-  await db.transaction('rw', db.workouts, db.routines, db.bodyweight, db.kv, db.exercises, async () => {
+  await db.transaction('rw', [db.workouts, db.routines, db.bodyweight, db.kv, db.exercises, db.media], async () => {
     await db.workouts.clear();
+    await db.media.clear();
     await db.routines.clear();
     await db.bodyweight.clear();
     await db.exercises.where('source').equals('custom').delete();

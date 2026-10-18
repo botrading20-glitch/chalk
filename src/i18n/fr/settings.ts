@@ -259,7 +259,6 @@ export default {
   'about.free': 'Gratuit, sans compte et sans publicité. Vos séances restent sur votre téléphone.',
   'about.privacy': 'Confidentialité',
   'about.privacyText': 'Setward n’a ni compte ni serveur propre. Vos séances, routines et réglages sont stockés sur cet appareil, dans le stockage du navigateur. Rien n’est envoyé nulle part, sauf si vous activez la synchronisation cloud : vos données vont alors dans le dépôt GitHub privé que vous avez choisi, avec le jeton que vous avez collé, et nulle part ailleurs. Il n’y a ni publicité, ni statistiques, ni traceurs. Les photos d’exercices se chargent depuis les serveurs de GitHub quand vous ouvrez un exercice, ce qui indique à GitHub que votre appareil les a demandées. Pour tout supprimer, utilisez Effacer toutes les données dans Vos données.',
-  'about.help': 'Aide et questions fréquentes',
   'about.q1': 'Que se passe-t-il si j’efface les données de mon navigateur ?',
   'about.a1': 'Vos séances sont effacées avec elles. Sauvegardez depuis Vos données, ou activez la synchronisation cloud, et vous pourrez toujours restaurer.',
   'about.q2': 'Puis-je utiliser Setward sur deux appareils ?',

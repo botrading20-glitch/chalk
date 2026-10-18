@@ -111,8 +111,11 @@
 
       <h2>What stays on your device</h2>
       <p>
-        Your workouts, routines, exercises you add, body-weight entries, settings and the workout in progress are stored in your browser's storage (IndexedDB) on the device you use. Setward cannot read them from anywhere
+        Your workouts, routines, exercises you add, body-weight entries, settings, the workout in progress and any videos you attach to sets are stored in your browser's storage (IndexedDB) on the device you use. Setward cannot read them from anywhere
         else, and nobody at Setward receives them. The app's own files are saved in the browser's cache so it works offline. Setward sets no cookies.
+      </p>
+      <p>
+        Set videos are the largest thing it can hold. They stay on that one device: they are not part of cloud sync and are not in backup files, so they exist only there until you delete them or erase the app's data.
       </p>
 
       <h2>What leaves your device</h2>
@@ -138,7 +141,7 @@
         <li>It has no accounts, sign-in or profile on a server.</li>
         <li>It has no advertising and no analytics, and it does not use trackers or third-party scripts.</li>
         <li>It does not sell, share or send your data to anyone, because it never has your data.</li>
-        <li>It does not use your location, camera, microphone, contacts or any other device data. The optional rest alert plays a sound and, on Android, can vibrate.</li>
+        <li>It does not use your location, microphone, contacts or any other device data, and it has no camera access of its own. If you choose to record a video for a set, your phone's camera app opens and hands the finished video to Setward; if you choose a file instead, you pick it yourself. The optional rest alert plays a sound and, on Android, can vibrate.</li>
       </ul>
 
       <h2>Health information</h2>
@@ -152,6 +155,7 @@
         <li><strong>Keep a copy:</strong> Settings → Your data → Back up now saves a file you control; Restore backup brings it back.</li>
         <li><strong>Remove everything from a device:</strong> Settings → Your data → Erase all data. Clearing the browser's site data for this address does the same, and uninstalling the app removes its storage.</li>
         <li><strong>Stop syncing:</strong> Settings → Cloud sync → Turn off sync on this device. Delete the access token in GitHub and the repository whenever you like; the copy there is yours.</li>
+        <li><strong>Remove videos:</strong> Settings → Your data → Set videos shows how many there are and how much room they take, and removes them all, or only those no longer linked to a set.</li>
         <li><strong>Move data between devices:</strong> use cloud sync or a backup file. Setward does not move it any other way.</li>
       </ul>
 

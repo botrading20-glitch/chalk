@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { db, getKV, setKV } from '../db';
+import { db, DEFAULT_SETTINGS, getKV, setKV } from '../db';
 import type { Exercise, Routine, Workout } from '../types';
 import { exportBackup, importBackup, parseBackup, wipeAllData } from './backup';
 
@@ -193,5 +193,32 @@ describe('new settings in a backup', () => {
       cleanSettings({ language: 'klingon', weeklyGoal: 12, newExerciseSets: 2.5, accent: 'red', profileName: 7, showRpe: 'yes', textSize: 'huge' }),
     ).toEqual({});
     expect(cleanSettings({ profileName: 'x'.repeat(100) })?.profileName).toHaveLength(40);
+  });
+
+  it('checks the warm-up steps as a whole and the rounding steps as fractions', async () => {
+    const { cleanSettings, cleanWarmupSteps } = await import('./validate');
+    const steps = [
+      { percent: 40, reps: 8 },
+      { percent: 80, reps: 3 },
+    ];
+    expect(cleanSettings({ warmupSteps: steps, warmupRoundKg: 1.25, warmupRoundLbs: 2.5, warmupEmptyBar: false, liveRecords: false, setVideos: false })).toEqual({
+      warmupSteps: steps,
+      warmupRoundKg: 1.25,
+      warmupRoundLbs: 2.5,
+      warmupEmptyBar: false,
+      liveRecords: false,
+      setVideos: false,
+    });
+    // One bad step drops the list so the defaults stay; so do an empty list and one that is too long.
+    expect(cleanWarmupSteps([{ percent: 40, reps: 8 }, { percent: 100, reps: 3 }])).toBeUndefined();
+    expect(cleanWarmupSteps([{ percent: 40.5, reps: 8 }])).toBeUndefined();
+    expect(cleanWarmupSteps([{ percent: 40, reps: 0 }])).toBeUndefined();
+    expect(cleanWarmupSteps([])).toBeUndefined();
+    expect(cleanWarmupSteps(Array.from({ length: 7 }, () => ({ percent: 50, reps: 5 })))).toBeUndefined();
+    expect(cleanWarmupSteps('50')).toBeUndefined();
+    // A rounding step of zero would divide by zero in the calculator; a typo like 2500 is out of range.
+    expect(cleanSettings({ warmupRoundKg: 0, warmupRoundLbs: 2500, warmupSteps: 'x', plateShortcut: 'yes' })).toEqual({});
+    // The defaults themselves pass their own checks.
+    expect(cleanWarmupSteps(DEFAULT_SETTINGS.warmupSteps)).toEqual(DEFAULT_SETTINGS.warmupSteps);
   });
 });

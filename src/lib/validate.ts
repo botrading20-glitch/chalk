@@ -1,5 +1,5 @@
 import { DEFAULT_SETTINGS } from '../db';
-import type { BodyWeight, Exercise, Routine, Settings, SetType, Workout, WorkoutExercise, WorkoutSet } from '../types';
+import type { BodyWeight, Exercise, Routine, Settings, SetType, WarmupStep, Workout, WorkoutExercise, WorkoutSet } from '../types';
 import { LOCALE_CODES } from '../i18n/locales';
 import { EQUIPMENT, EXERCISE_TYPES, MUSCLES } from './meta';
 
@@ -133,6 +133,19 @@ export function cleanBodyWeight(v: unknown): BodyWeight | null {
   return withUnknown<BodyWeight>(v, BODYWEIGHT_KEYS, { id: v.id, date: v.date, weight: v.weight, updatedAt: isNum(v.updatedAt) ? v.updatedAt : v.date });
 }
 
+/** One to six steps with a whole percent from 5 to 95 and whole reps from 1 to 30; anything else is dropped as a whole. */
+export function cleanWarmupSteps(v: unknown): WarmupStep[] | undefined {
+  if (!Array.isArray(v) || v.length < 1 || v.length > 6) return undefined;
+  const steps: WarmupStep[] = [];
+  for (const s of v) {
+    if (!isObj(s) || !isNum(s.percent) || !isNum(s.reps)) return undefined;
+    if (!Number.isInteger(s.percent) || s.percent < 5 || s.percent > 95) return undefined;
+    if (!Number.isInteger(s.reps) || s.reps < 1 || s.reps > 30) return undefined;
+    steps.push({ percent: s.percent, reps: s.reps });
+  }
+  return steps;
+}
+
 /** Keeps the settings whose type matches Chalk's own; the rest fall back to the defaults. */
 export function cleanSettings(v: unknown): Partial<Settings> | undefined {
   if (!isObj(v)) return undefined;
@@ -160,11 +173,22 @@ export function cleanSettings(v: unknown): Partial<Settings> | undefined {
     warmupRest: [-1, 600],
     defaultRest: [0, 3600],
   };
+  // Rounding steps are fractions of a unit, so they get a float range instead of whole numbers.
+  const floats: Partial<Record<keyof Settings, [number, number]>> = {
+    warmupRoundKg: [0.25, 25],
+    warmupRoundLbs: [0.5, 50],
+  };
   for (const key of Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[]) {
     const value = v[key];
     const fallback = DEFAULT_SETTINGS[key];
     if (value === undefined) continue;
-    if (enums[key]) {
+    if (key === 'warmupSteps') {
+      const steps = cleanWarmupSteps(value);
+      if (steps) out[key] = steps;
+    } else if (floats[key]) {
+      const [min, max] = floats[key]!;
+      if (isNum(value) && value >= min && value <= max) out[key] = value;
+    } else if (enums[key]) {
       if (enums[key]!.includes(value as string)) out[key] = value;
     } else if (Array.isArray(fallback)) {
       if (Array.isArray(value) && value.length && value.every((n) => isNum(n) && n > 0)) out[key] = value;

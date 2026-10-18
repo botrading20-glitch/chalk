@@ -259,7 +259,6 @@ export default {
   'about.free': 'Ücretsiz, hesapsız ve reklamsız. Antrenmanların telefonunda kalır.',
   'about.privacy': 'Gizlilik',
   'about.privacyText': 'Setward’in hesabı da kendi sunucusu da yok. Antrenmanların, rutinlerin ve ayarların bu cihazda, tarayıcının depolamasında tutulur. Bulut eşitlemeyi açmadıkça hiçbir şey hiçbir yere gönderilmez: açarsan verilerin seçtiğin özel GitHub deposuna, yapıştırdığın belirteçle gider ve başka hiçbir yere gitmez. Reklam, analiz ya da izleyici yok. Egzersiz fotoğrafları bir egzersizi açtığında GitHub sunucularından yüklenir; bu, GitHub’a cihazının onları istediğini bildirir. Her şeyi kaldırmak için Verilerin altındaki Tüm verileri sil seçeneğini kullan.',
-  'about.help': 'Yardım ve sık sorulanlar',
   'about.q1': 'Tarayıcımın verilerini silersem ne olur?',
   'about.a1': 'Antrenmanların onlarla birlikte silinir. Verilerin bölümünden yedekle ya da bulut eşitlemeyi aç, böylece her zaman geri yükleyebilirsin.',
   'about.q2': 'Setward’i iki cihazda kullanabilir miyim?',

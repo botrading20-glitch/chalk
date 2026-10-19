@@ -2,7 +2,7 @@
 Usage: python add_i18n.py <module.py> [section comment]
 The module defines T: dict key -> [en, fr, ar, es, de, pt, it, tr, nl, pl, id]."""
 import importlib.util, os, sys, re
-ROOT = r'C:\Users\ousse\Fitness\src\i18n'
+ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'src', 'i18n'))
 LANGS = ['en', 'fr', 'ar', 'es', 'de', 'pt', 'it', 'tr', 'nl', 'pl', 'id']
 HEADER = {
   'en': "import type { Message } from '../message';\n\n// Training tools: warm-ups, muscle map, monthly report, guides, set videos.\nexport default {\n",
